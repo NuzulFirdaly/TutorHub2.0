@@ -1,0 +1,61 @@
+.form-inline input[type='number'] {
+    max-width: 100px;
+}
+
+
+.input-spinner{ width: 125px;  flex-wrap: nowrap; display:inline-flex; vertical-align: middle;
+  input.form-control{ text-align: center; max-width: 46px; font-weight: bold;  
+	flex-basis:46px;  border-color:$border-color; flex-grow: 0; 
+   }
+  .btn{ width: 42px; text-align: center; padding-left: 0.5rem; padding-right: 0.5rem; }
+}
+
+.checkbox-btn{ position:relative;
+	input {
+	    position: absolute;
+	    z-index: -1;
+	    opacity: 0;
+	}
+	input:checked ~ .btn{
+		 border-color:$primary; background-color:$primary; color:#fff; 
+	}
+}
+
+.btn-check{ 
+	position:relative; display: inline-block; border:2px solid $gray-300; transition:0s!important;
+	input {
+	    position: absolute;
+	    z-index: -1;
+	    opacity: 0;
+	}
+	input:checked ~ .btn{
+		 border-color:$primary; background-color:$primary; color:#fff; 
+	}
+
+	&:hover:not(.active){
+		border-color:#bbb;
+	}
+}
+
+.js-check{ 
+	position: relative;
+	.title{
+		margin-left: 22px;
+	}
+	input {
+		position: absolute; top: 21px; left: 18px;
+	}
+	&.active{ border-color: $primary}
+	&:hover:not(.active){
+		border-color:#ccc;
+	}
+}
+
+.js-check.box{
+	width: 100%; border-width:3px; 
+}
+
+
+.card-header{
+	.form-check{ margin-bottom:0; padding-top:5px; padding-bottom: 5px; }
+}
