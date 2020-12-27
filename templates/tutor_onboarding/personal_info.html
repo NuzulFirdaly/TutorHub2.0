@@ -1,0 +1,64 @@
+{% extends "tutor_onboarding/tutor_onboarding_base.html" %}
+{% block title %}Personal Info{% endblock %}
+
+{% from "tutor_onboarding/__formhelperwithoutlabel.html" import render_field  %}
+
+{% block links %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bs-stepper/dist/css/bs-stepper.min.css">
+{% endblock %}
+{% block content %}
+ <div class="container">
+   <h1> Personal Info </h1>
+   <p>Tell us a bit about yourself. This information will appear on your public profile, so that potential tutees can get to know you better.</p>
+   <br>
+   <hr>
+
+<!-- ============================ COMPONENT SIGNUP 2  ================================= -->
+<div class="card">
+<article class="card-body">
+<form class="block-register" method="POST" action="" enctype="multipart/form-data" >
+  <div class="form-group form-row">
+    <label class="col-md-3 col-form-label">Full Name <br> <span class="text-muted">This will be private</span></label>
+    <div class="col">
+        {{ render_field(form.first_name, class="form-control", placeholder="First name", value=session['firstname']) }}
+    </div>
+    <div class="col">
+        {{ render_field(form.last_name, class="form-control", placeholder="Last name", value=session['lastname'])  }}
+    </div>
+  </div>
+  <div class="form-group form-row">
+    <label class="col-md-3 col-form-label">Profile Picture</label>
+    <div class="col-md-3">
+      <img  src="..\static\images\profilepictures\{{ session['profile_pic'] }}" class="img-md rounded-circle border">
+        <div style="position:relative; ">
+          <input type="file" name="image" id="image">
+           {% if extensionerror %}
+            <p  style="color:red;" class="error"><strong>Error:</strong> {{ extensionerror }}
+          {% endif %}
+        </div>
+    </div>
+
+  </div>
+   <div class="form-group form-row">
+    <label class="col-md-3 col-form-label">Description</label>
+     <div class="col-9">
+         {{ render_field(form.description,class = "form-control",placeholder="Share a bit about your work experience, cool projects you’ve completed, and your area of expertise.", maxlength="600", value=session['description']) }}
+     </div>
+  </div>
+  <div class="form-group form-row">
+    <label class="col-md-3 col-form-label">Languages</label>
+    <div class="col">
+        {{ render_field(form.language,class="form-control",placeholder="Language", value="English" )}}
+    </div>
+    <div>
+        {{ render_field(form.proficiency,class="form-control", placeholder="Proficiency") }}
+    </div>
+  </div>
+  <button class="btn btn-primary float-right" type="submit">Continue</button>
+
+</form>
+</article> <!-- card-body end .// -->
+</div> <!-- card.// -->
+<!-- ============================ COMPONENT SIGNUP 2 END.// ================================= -->
+ </div>
+{% endblock %}
