@@ -57,7 +57,7 @@ def createUser():
         return redirect(url_for("home"))
     else:
         createUserForm = CreateUserForm(request.form)
-        if request.method == 'POST' and createUserForm.validate_on_submit():
+        if request.method == 'POST' and createUserForm.validate():
             print("posting")
             email = request.form['email']
             username = request.form['username']
