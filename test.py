@@ -1,5 +1,7 @@
 import shelve
 try:
-    shelve.open('databases/user.db','c')
+    db = shelve.open('databases/pendingtutor.db','c')
+    for pendingtutors in db:
+        print(db[pendingtutors])
 except IOError:
     print("Error opening user.db")

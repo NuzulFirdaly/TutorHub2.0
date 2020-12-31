@@ -1,0 +1,77 @@
+{% extends "tutor_onboarding/tutor_onboarding_base.html" %}
+{% block title %}Professional Info{% endblock %}
+
+{% from "tutor_onboarding/__formhelperwithoutlabel.html" import render_field  %}
+
+{% block links %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bs-stepper/dist/css/bs-stepper.min.css">
+{% endblock %}
+{% block content %}
+ <div class="container">
+   <h1> Professional Info </h1>
+   <p>This is your time to shine. Let potential tutees know what you do best and how you gained your skills, certifications and experience.</p>
+   <br>
+   <hr>
+
+<!-- ============================ COMPONENT SIGNUP 2  ================================= -->
+<div class="card">
+<article class="card-body">
+<form class="block-register" method="POST" action="" enctype="multipart/form-data" >
+  <div class="form-group form-row">
+    <label class="col-md-3 col-form-label">Your Occupation </label>
+    <div class="col">
+        {{ render_field(form.occupation, class="form-control", placeholder="Current occupation") }}
+    </div>
+    <div class="col-s-1 col-form-label"><label>From</label></div>
+    <div class="col-md-1">
+        {{ render_field(form.fromyear, class="form-control", placeholder="Year")  }}
+    </div>
+    <div class="col-s-1 col-form-label"><label>To</label></div>
+    <div class="col-md-1">
+        {{ render_field(form.toyear, class="form-control", placeholder="Year")  }}
+    </div>
+  </div>
+  <div class="form-group form-row">
+    <label class="col-md-3 col-form-label">Education</label>
+      <div class="col">
+          {{ render_field(form.college_country, class="form-control", placeholder="Country of College/University")  }}
+      </div>
+      <div class="col">
+          {{ render_field(form.college_name, class="form-control", placeholder="College/University Name")  }}
+      </div>
+  </div>
+  <div class="form-group form-row">
+    <label class="col-md-3 col-form-label"></label>
+    <div class="col">
+        {{ render_field(form.major, class="form-control", placeholder="Major")  }}
+    </div>
+    <div class="col-md-1">
+        {{ render_field(form.graduateyear, class="form-control", placeholder="Year")  }}
+    </div>
+  </div>
+   <div class="form-group form-row">
+    <label class="col-md-3 col-form-label">Certification <br> <p class="text-muted" style="max-width:200px;">For verification purposes, this will remain private</p>  </label>
+    <div class="col">
+      <input type="file" name="cert" id="cert">
+       {% if emptyfileerror %}
+        <p  style="color:red;" class="error"><strong>Error:</strong> {{ emptyfileerror }}
+      {% endif %}
+    </div>
+      <div class="col-s-1 col-form-label"><label>Date of Birth</label></div>
+      <div class="col">
+          {{ render_field(form.dob, class="form-control", placeholder="d/m/y")  }}
+      </div>
+      <div class="col-s-1 col-form-label"><label>NRIC</label></div>
+       <div class="col">
+          {{ render_field(form.nric, class="form-control", placeholder="NRIC")  }}
+      </div>
+
+  </div>
+  <button class="btn btn-primary float-right" type="submit">Finish</button>
+
+</form>
+</article> <!-- card-body end .// -->
+</div> <!-- card.// -->
+<!-- ============================ COMPONENT SIGNUP 2 END.// ================================= -->
+ </div>
+{% endblock %}
