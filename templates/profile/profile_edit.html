@@ -14,8 +14,8 @@
       <h4 class="card-title mb-4">Edit My Profile</h4>
       <form action="" method="POST" enctype="multipart/form-data">
           <div class="form-group">
-			  {{ render_field(form.username, class="form-control") }}
-		  </div> <!-- form-group// -->
+			  {{ render_field(form.username, class="form-control", value=session['username']) }}
+		  </div>
           <div class="form-group form-row">
             <label class="col-md-3 col-form-label">Profile Picture</label>
               <div class='col'>
@@ -28,6 +28,19 @@
                           {% endif %}
               </div>
             </div>
+          <hr>
+          <div class="form-group">
+			  {{ render_field(form.first_name, class="form-control", value=session['username']) }}
+		  </div>
+          <div class="form-group">
+			  {{ render_field(form.first_name, class="form-control", value=session['username']) }}
+		  </div>
+          <div class="form-group">
+			  {{ render_field(form.first_name, class="form-control", value=session['username']) }}
+		  </div>
+          <div class="form-group">
+			  {{ render_field(form.first_name, class="form-control", value=session['username']) }}
+		  </div>
           <button class="btn btn-primary float-right" type="submit">Save Changes</button>
       </form>
      <br><br>

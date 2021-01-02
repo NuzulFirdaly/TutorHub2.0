@@ -245,10 +245,17 @@ def profilemain():
         db = shelve.open('databases/user.db', 'r')
         userObj = db[session['user_id']]
         session['email'] = userObj.get_user_email()
+        session['username'] = userObj.get_username()
+        session['firstname'] = userObj.get_user_firstname()
+        session['lastname'] = userObj.get_user_lastname()
+        session['profile_pic'] = userObj.get_user_profile_pic()
+        db.close()
         return render_template("profile/profile_main.html")
 
 @app.route('/profile/profile_edit', methods=['GET', 'POST'])
 def profileedit():
+    db = shelve.open('databases/user.db', 'w')
+    userObj = db[session['user_id']]
     if session.get('loggedin') != True:
         return redirect(url_for("home"))
     else:
@@ -256,6 +263,9 @@ def profileedit():
         if request.method == 'POST' and form.validate():
             print("posting")
             username = request.form['username']
+            userObj.set_username(username)
+            session['username'] = username
+
             if request.files['image'].filename != "":
                 image = request.files["image"]  # our name attribute inside our input form field.  this will return a file object in this case should be image/png
                 if not allowed_image(image.filename):
@@ -270,6 +280,7 @@ def profileedit():
                     db = shelve.open('databases/user.db', 'r')
                     userObj = db[session['user_id']]
                     userObj.set_user_profile_pic(profile_pic)
+        db.close()
         return render_template('profile/profile_edit.html', form=form)
 
 categories = {'GRAPHICS & DESIGN':['LOGO DESIGN','BRAND STYLE GUIDES','GAME ART','RESUME DESIGN'],

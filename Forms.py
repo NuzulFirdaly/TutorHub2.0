@@ -46,6 +46,11 @@ class ProfessionalInfoForm(Form):
 
 class ProfileEditForm(Form):
     username = StringField('Username', [validators.Length(min=8), validators.DataRequired()])
+    first_name = StringField("First Name", [validators.Length(max=150), validators.DataRequired()])
+    last_name = StringField([validators.Length(min=1, max=150), validators.DataRequired()])
+    description = TextAreaField([validators.Length(min=30, max=600), validators.InputRequired()])
+    language = StringField('Language', [validators.Length(min=1, max=20), validators.DataRequired()],
+                           render_kw={'placeholder': "Language"})
 
 categorykeys = ['GRAPHICS & DESIGN','DIGITAL MARKETING','WRITING & TRANSLATION','PROGRAMMING & TECH']
 categories = {'GRAPHICS & DESIGN':['LOGO DESIGN','BRAND STYLE GUIDES','GAME ART','RESUME DESIGN'],
