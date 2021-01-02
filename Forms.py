@@ -44,6 +44,8 @@ class ProfessionalInfoForm(Form):
     dob = DateField(format='%Y-%m-%d')
     nric = StringField(validators =[DataRequired(), Length(min=9,max=9), nric_check])
 
+class ProfileEditForm(Form):
+    username = StringField('Username', [validators.Length(min=8), validators.DataRequired()])
 
 categorykeys = ['GRAPHICS & DESIGN','DIGITAL MARKETING','WRITING & TRANSLATION','PROGRAMMING & TECH']
 categories = {'GRAPHICS & DESIGN':['LOGO DESIGN','BRAND STYLE GUIDES','GAME ART','RESUME DESIGN'],

@@ -237,6 +237,41 @@ def tutor_onboarding_professional_info():
 def finish():
    return render_template('tutor_onboarding/finish.html')
 
+@app.route('/profile/profile_main', methods=['GET', 'POST'])
+def profilemain():
+    if session.get('loggedin') != True:
+        return redirect(url_for("home"))
+    else:
+        db = shelve.open('databases/user.db', 'r')
+        userObj = db[session['user_id']]
+        session['email'] = userObj.get_user_email()
+        return render_template("profile/profile_main.html")
+
+@app.route('/profile/profile_edit', methods=['GET', 'POST'])
+def profileedit():
+    if session.get('loggedin') != True:
+        return redirect(url_for("home"))
+    else:
+        form = ProfileEditForm(request.form)
+        if request.method == 'POST' and form.validate():
+            print("posting")
+            username = request.form['username']
+            if request.files['image'].filename != "":
+                image = request.files["image"]  # our name attribute inside our input form field.  this will return a file object in this case should be image/png
+                if not allowed_image(image.filename):
+                    extensionerror = "That image extension is not allowed"
+                    print(extensionerror)
+                    return render_template('/profile/profile_edit.html', form=form, extensionerror=extensionerror)
+                else:
+                    filename = secure_filename(image.filename)
+                    image.save(os.path.join(app.config["PROFILE_PIC_UPLOADS"], filename))
+                    profile_pic = filename
+                    session['profile_pic'] = profile_pic
+                    db = shelve.open('databases/user.db', 'r')
+                    userObj = db[session['user_id']]
+                    userObj.set_user_profile_pic(profile_pic)
+        return render_template('profile/profile_edit.html', form=form)
+
 categories = {'GRAPHICS & DESIGN':['LOGO DESIGN','BRAND STYLE GUIDES','GAME ART','RESUME DESIGN'],
               'DIGITAL MARKETING':['SOCIAL MEDIA ADVERTISING','SEO','PODCAST MARKETING','SURVEY','WEB TRAFFIC'],
               'WRITING & TRANSLATION':['ARTICLES & BLOG POSTS'],
