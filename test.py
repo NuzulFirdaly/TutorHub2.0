@@ -63,4 +63,7 @@ def delete_courses():
     db.clear()
     db.close()
 
-delete_courses()
+def check_user():
+    db = shelve.open('databases/user.db')
+    for i in db.values():
+        i.get_language
