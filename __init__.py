@@ -95,6 +95,16 @@ def logout():
     else:
         return redirect(url_for("home"))
 
+@app.route("/AllInstitutions")
+def AllInstitutions():
+    return render_template('AllInstitutions.html')
 
+@app.route("/InstitutionPage")
+def InstitutionPage():
+    return render_template('InstitutionPage.html')
+
+@app.route("/AllInstitutionCourses")
+def AllInstitutionCourses():
+    return render_template('AllInstitutionCourses.html')
 if __name__ =='__main__':
     app.run(debug=True)
