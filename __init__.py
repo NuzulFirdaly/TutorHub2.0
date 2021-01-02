@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session,jsonify
 from Forms import *
 from Models import *
 import shelve
@@ -11,7 +11,10 @@ app.config['SECRET_KEY'] = 'tutormeplease' #this is to encrypt data passing alon
 
 @app.route("/", methods=['GET'])
 def home():
-    return render_template('home.html')
+    if session.get('istutor') == True:
+        return  render_template('tutor_interface/tutorhome.html')
+    else:
+        return render_template('home.html')
 @app.route('/login', methods=['GET', 'POST'])
 def Login():
     if session.get('loggedin') == True:
@@ -37,6 +40,11 @@ def Login():
                     if session['user_id'] in db:
                         session['verifying'] = True
                     db.close()
+                    #checking is user is a tutor, if so redirect them to the tutor interface
+                    tutordb = shelve.open('databases/tutor.db','r')
+                    if session['user_id'] in tutordb:
+                        session['istutor'] = True
+                    tutordb.close()
                     try:
                         if request.form['remember']:
                             session['remember'] = True
@@ -182,7 +190,7 @@ def tutor_onboarding_personal_info():
             session['profile_pic'] = userObj.get_user_profile_pic()
             db = shelve.open('databases/user.db','w')
             db[session['user_id']] = userObj
-            db.close
+            db.close()
             return  redirect(url_for('tutor_onboarding_professional_info'))
 
         return render_template('/tutor_onboarding/personal_info.html',form=form)
@@ -229,5 +237,141 @@ def tutor_onboarding_professional_info():
 def finish():
    return render_template('tutor_onboarding/finish.html')
 
+categories = {'GRAPHICS & DESIGN':['LOGO DESIGN','BRAND STYLE GUIDES','GAME ART','RESUME DESIGN'],
+              'DIGITAL MARKETING':['SOCIAL MEDIA ADVERTISING','SEO','PODCAST MARKETING','SURVEY','WEB TRAFFIC'],
+              'WRITING & TRANSLATION':['ARTICLES & BLOG POSTS'],
+             'PROGRAMMING & TECH':['WEB PROGRAMMING','E-COMMERCE DEVELOPMENT','MOBILE APPLS','DESKTOP APPLICATIONS','DATABASES','USER TESTING']
+              }
+subcategoryArr = []
+for key,values in categories.items():
+    subcategoryArr.extend(values)
+
+app.config["COURSE_THUMBNAIL_UPLOADS"] = 'static/images/coursethumbnails'
+@app.route('/createcourse',methods=['GET', 'POST'])
+def createcourse():
+    if (session.get('loggedin') != True) or (session.get('istutor') != True):
+        return redirect(url_for("home"))
+    else:
+        # retrieving user object by using user session id
+        form = CreateCourseForm(request.form)
+        if request.method == "POST" and form.validate():
+            course_title = request.form['course_title']
+            category = request.form['category']
+            subcategory = request.form['subcategory']
+            description = request.form['description']
+            course = Courses(course_title,category,subcategory,description,session['user_id'])
+            if request.files['image'].filename != "":
+                image = request.files["image"] #our name attribute inside our input form field.  this will return a file object in this case should be image/png
+                if not allowed_image(image.filename):
+                    extensionerror = "That image extension is not allowed"
+                    print("That image extension is not allowed")
+                    return render_template('/tutor_interface/createcourse.html', form=form, extensionerror=extensionerror)
+                else:
+                    filename = secure_filename(image.filename)
+                    image.save(os.path.join(app.config["COURSE_THUMBNAIL_UPLOADS"],filename))
+
+
+                    course_thumbnail_pic = filename
+                    course.course_thumbnail = course_thumbnail_pic
+            #posting course object to courses.db
+            db = shelve.open('databases/courses.db')
+            db[course.course_id] = course
+            db.close()
+            return redirect(url_for('createsession',course_id=course.course_id))
+    return render_template('tutor_interface/createcourse.html', form=form)
+
+@app.route('/category/<category>')
+def category(category):
+    choicesArray = categories[category]
+    return jsonify({'subcategories' : choicesArray})
+
+#Sessions By Nuzul
+@app.route('/createsession/<course_id>', methods=['GET','POST'])
+def createsession(course_id):
+    #retrieving course obj so can retrieve the sessions array
+    db = shelve.open('databases/courses.db')
+    course = db[course_id]
+    db[course_id] = course
+    db.close()
+    print('retrieving from shelve')
+    session_list_objects = course.sessions
+    return render_template('tutor_interface/createsession.html', session_list_objects=session_list_objects, course_id = course_id)
+
+@app.route('/updatesession/<course_id>/<session_no>',methods=['GET','POST'])
+def updatesession(course_id,session_no):
+    #retrieving the session object from the course.sessions list of objects. maybe this just for delete
+    db = shelve.open('databases/courses.db')
+    course_object = db[course_id]
+    print(course_object)
+    db.close()
+    print((int(session_no)-1))
+    for sessions in course_object.sessions:
+        print(sessions)
+    sessionobject = course_object.sessions[(int(session_no)-1)] #basically we are using the session no as the index for the session list in the course object.
+    print(sessionobject)
+    form = UpdateSessionForm(request.form)
+    if request.method == "POST" and form.validate():
+        sessionobject.session_title = request.form['session_title']
+        sessionobject.session_description = request.form['session_description']
+        sessionobject.time_approx = request.form['time_approx']
+        updatedsessionobject = sessionobject
+        print(updatedsessionobject)
+        print('setting session object')
+        #updating the session and posting back to courses.db
+        db = shelve.open('databases/courses.db')
+        courseobject = db[course_id]
+        for sessions in courseobject.sessions:
+            print(sessions)
+        courseobject.sessions[int(session_no) - 1] = updatedsessionobject
+        db[course_id] = course_object
+        db.close()
+        print('object posted now should be redirecting')
+        return redirect(url_for("createsession",course_id=course_id))
+
+    return render_template('tutor_interface/updatesession.html', form=form,sessionobject=sessionobject)
+
+@app.route("/addnewsession/<course_id>",methods=["GET","POST"])
+def addnewsession(course_id):
+    form = UpdateSessionForm(request.form)
+
+    #retrive previous sessions there is inside the course to get the new course number
+    #actually dont need coz session_no is a class attribute so can just call it
+    #oh my god, cannot use class attribute or else other user's new session also increases the number
+    coursedb = shelve.open('databases/courses.db')
+    course = coursedb[course_id]
+    coursedb.close()
+    sessionobject = Session()
+    if request.method == "POST" and form.validate():
+        sessionobject.session_title = request.form['session_title']
+        sessionobject.session_description = request.form['session_description']
+        sessionobject.time_approx = request.form['time_approx']
+        #getting the len of the list and making that the session no
+        sessionobject.session_no = len(course.sessions) + 1
+        updatedsessionobject = sessionobject
+        #posting new session object the course object sessions array
+        coursedb = shelve.open('databases/courses.db')
+        courseobject = coursedb[course_id]
+        courseobject.sessions.append(updatedsessionobject)
+        coursedb[course_id] = courseobject
+        coursedb.close()
+        return redirect(url_for("createsession",course_id=course_id))
+    return render_template('tutor_interface/addnewsession.html', form=form)
+
+@app.route("/deletesession/<course_id>/<session_no>", methods=['POST'])
+def deletesession(course_id,session_no):
+    coursedb = shelve.open('databases/courses.db')
+    courseobject = coursedb[course_id]
+    sessionlist = courseobject.sessions
+    #removing the session the users wants to delete
+    sessionlist.pop(int(session_no)-1)
+    newsessionlist = []
+    #in case the user deletes a session inbetween so we must reorder the session no
+    for index, sessions in enumerate(sessionlist,1):
+        sessions.session_no = index
+        newsessionlist.append(sessions)
+    courseobject.sessions = newsessionlist
+    coursedb[course_id] = courseobject
+    coursedb.close()
+    return redirect(url_for("createsession", course_id=course_id))
 if __name__ =='__main__':
     app.run(debug=True)
