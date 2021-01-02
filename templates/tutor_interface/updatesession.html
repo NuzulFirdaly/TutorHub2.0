@@ -1,0 +1,37 @@
+{% extends 'tutor_interface/base.html' %}
+{% block title %} Update Session {% endblock %}
+{% from "tutor_onboarding/__formhelperwithoutlabel.html" import render_field  %}
+
+{% block content %}
+<section class="section-content padding-y container">
+   <h1>Update Session {{sessionobject.session_no}}</h1>
+
+<!-- ============================ COMPONENT SIGNUP 2  ================================= -->
+<div class="card">
+<article class="card-body">
+<form class="block-register" method="POST" action="" enctype="multipart/form-data" >
+  <div class="form-group form-row">
+    <label class="col-md-3 col-form-label">Session Title</label>
+    <div class="col">
+        {{ render_field(form.session_title, class="form-control", value=sessionobject.session_title) }}
+    </div>
+  </div>
+  <div class="form-group form-row">
+    <label class="col-md-3 col-form-label">Description</label>
+    <div class="col">
+        {{ render_field(form.session_description, class="form-control", value=sessionobject.session_description) }}
+    </div>
+  </div>
+    <div class="form-group form-row">
+    <label class="col-md-3 col-form-label">Time Approximation</label>
+    <div class="col-md-1">
+        {{ render_field(form.time_approx, class="form-control", value=sessionobject.time_approx, min="1",max="8") }}
+    </div>
+  </div>
+  <button class="btn btn-primary float-right" type="submit" value="Submit">Finish</button>
+</form>
+</article> <!-- card-body end .// -->
+</div> <!-- card.// -->
+<!-- ============================ COMPONENT SIGNUP 2 END.// ================================= -->
+</section>
+{% endblock %}

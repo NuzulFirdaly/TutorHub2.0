@@ -1,0 +1,76 @@
+{% extends 'tutor_interface/base.html' %}
+{% block title %} Create Courses {% endblock %}
+{% from "tutor_onboarding/__formhelperwithoutlabel.html" import render_field  %}
+{% block content %}
+<div class="container">
+   <h1>Create Course</h1>
+   <hr>
+
+<!-- ============================ COMPONENT SIGNUP 2  ================================= -->
+<div class="card">
+<article class="card-body">
+<form class="block-register" method="POST" action="" enctype="multipart/form-data" >
+  <div class="form-group form-row">
+    <label class="col-md-3 col-form-label">Course Title</label>
+    <div class="col">
+        {{ render_field(form.course_title, class="form-control", placeholder="Enter Something Eye-Catching") }}
+    </div>
+  </div>
+  <div class="form-group form-row">
+    <label class="col-md-3 col-form-label">Course Thumbnail</label>
+    <div class="col-md-3">
+      <img  src="..\static\images\coursethumbnails\default.jpg" width="240" height="135" class="border">
+        <div style="position:relative; ">
+          <input type="file" name="image" id="image">
+           {% if extensionerror %}
+            <p  style="color:red;" class="error"><strong>Error:</strong> {{ extensionerror }}
+          {% endif %}
+        </div>
+    </div>
+  </div>
+  <div class="form-group form-row">
+    <label class="col-md-3 col-form-label">Categories</label>
+    <div class="col">
+        {{ render_field(form.category, class="form-control", id='category') }}
+    </div>
+      <div class="col">
+         {{ render_field(form.subcategory, class="form-control", id='subcategory') }}
+
+    </div>
+    <div>
+    </div>
+  </div>
+  <div class="form-group form-row">
+    <label class="col-md-3 col-form-label">Description</label>
+     <div class="col-9">
+         {{render_field(form.description, class="form-control")}}
+     </div>
+  </div>
+  <button class="btn btn-primary float-right" type="submit">Continue</button>
+
+</form>
+</article> <!-- card-body end .// -->
+</div> <!-- card.// -->
+<!-- ============================ COMPONENT SIGNUP 2 END.// ================================= -->
+ </div>
+<script>
+    let category_select = document.getElementById('category');
+    let subcategory_select = document.getElementById('subcategory');
+
+    category_select.onchange = function() {
+        category = category_select.value;
+
+        fetch('/category/' + category).then(function(response){
+            response.json().then(function(data) {
+                console.table(data);
+                let optionHTML = '';
+                for(let subcategories in data.subcategories){
+
+                    optionHTML += '<option value ="' + data.subcategories[subcategories] + '">' + data.subcategories[subcategories] + '</option>';
+                }
+                subcategory_select.innerHTML = optionHTML;
+            });
+        });
+    }
+</script>
+{% endblock %}
