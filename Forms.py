@@ -22,12 +22,13 @@ class LoginForm(Form):
                                                             ), validators.DataRequired()])
     remember = BooleanField('Remember me')
 
+language = ['English', '简体中文', '繁体中文', 'Bahasa Melayu', 'Bahasa Indonesia', 'Tamil']
 
 class PersonalInfoForm(Form):
     first_name = StringField("First Name",[validators.Length(max=150), validators.DataRequired()])
     last_name = StringField([validators.Length(min=1, max=150), validators.DataRequired()])
-    description = TextAreaField([validators.Length(min=30,max=600), validators.InputRequired()])
-    language = StringField('Language', [validators.Length(min=1, max=20), validators.DataRequired()], render_kw={'placeholder':"Language"})
+    description = TextAreaField([validators.Length(min=30,max=600)])
+    language = SelectField(validators=[DataRequired()], choices=[(lang, lang) for lang in language])
     proficiency = SelectField('Proficiency', choices=[('Basic', 'Basic'), ('Conversational', 'Conversational'), ('Fluent', 'Fluent'), ('Native','Native/Bilingual')],render_kw={'placeholder':"proficiency"})
 
 def nric_check(form,field):
@@ -44,6 +45,12 @@ class ProfessionalInfoForm(Form):
     dob = DateField(format='%Y-%m-%d')
     nric = StringField(validators =[DataRequired(), Length(min=9,max=9), nric_check])
 
+class ProfileEditForm(Form):
+    username = StringField('Username', [validators.Length(min=8), validators.DataRequired()])
+    first_name = StringField("First Name", [validators.Length(max=150), validators.DataRequired()])
+    last_name = StringField([validators.Length(min=1, max=150), validators.DataRequired()])
+    description = TextAreaField([validators.Length(min=30, max=600)])
+    language = SelectField(validators=[DataRequired()],choices = [(lang,lang) for lang in language])
 
 categorykeys = ['GRAPHICS & DESIGN','DIGITAL MARKETING','WRITING & TRANSLATION','PROGRAMMING & TECH']
 categories = {'GRAPHICS & DESIGN':['LOGO DESIGN','BRAND STYLE GUIDES','GAME ART','RESUME DESIGN'],
