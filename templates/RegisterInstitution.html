@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}TutorHub - Register{% endblock %}
+
+{% block content %}
+
+{% from "components/__formhelper.html" import render_field  %}
+<!-- ========================= SECTION CONTENT ========================= -->
+<section class="section-content padding-y">
+
+<!-- ============================ COMPONENT REGISTER   ================================= -->
+	<div class="card mx-auto" style="max-width:520px; margin-top:40px;">
+      <article class="card-body">
+		<header class="mb-4"><h4 class="card-title">Sign up</h4></header>
+		<form method="POST" action="">
+				<div class="form-row">
+					<div class="col form-group">
+						{{ render_field(form.first_name, class="form-control") }}
+					</div> <!-- form-group end.// -->
+					<div class="col form-group">
+						{{ render_field(form.last_name, class="form-control") }}
+					</div> <!-- form-group end.// -->
+				</div> <!-- form-row end.// -->
+				<div class="form-group">
+						{{ render_field(form.username, class="form-control") }}
+						{% if usernameerror %}
+							<p  style="color:red;" class="error"><strong>Error:</strong> {{ usernameerror }}
+						{% endif %}
+				</div> <!-- form-group end.// -->
+				<div class="form-group">
+						{{ render_field(form.email, class="form-control") }}
+						{% if emailerror %}
+							<p  style="color:red;" class="error"><strong>Error:</strong> {{ emailerror }}
+						{% endif %}
+					<small class="form-text text-muted">We'll never share your email with anyone else.</small>
+				</div> <!-- form-group end.// -->
+				<div class="form-row">
+					<div class="form-group col-md-6">
+					    {{ render_field(form.password, class="form-control") }}
+					</div> <!-- form-group end.// -->
+					<div class="form-group col-md-6">
+					    {{ render_field(form.confirm, class="form-control") }}
+					</div> <!-- form-group end.// -->
+				</div>
+			    <div class="form-group">
+			        <button type="submit" value="Submit" class="btn btn-primary btn-block"> Register  </button>
+			    </div> <!-- form-group// -->
+			    <div class="form-group">
+		            <label class="custom-control custom-checkbox"> <input type="checkbox" class="custom-control-input" checked=""> <div class="custom-control-label"> I agree with the <a href="#">terms and contitions</a>  </div> </label>
+		        </div> <!-- form-group end.// -->
+				{% if similarerror %}
+					<p  style="color:red;" class="error"><strong>Error:</strong> {{ similarerror }}
+				{% endif %}
+			</form>
+		</article><!-- card-body.// -->
+    </div> <!-- card .// -->
+    <p class="text-center mt-4">Have an account? <a href="/login">Log In</a></p>
+    <br><br>
+<!-- ============================ COMPONENT REGISTER  END.// ================================= -->
+
+
+</section>
+<!-- ========================= SECTION CONTENT END// ========================= -->
+{% endblock %}
