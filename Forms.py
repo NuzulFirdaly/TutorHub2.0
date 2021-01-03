@@ -27,7 +27,7 @@ language = ['English', '简体中文', '繁体中文', 'Bahasa Melayu', 'Bahasa 
 class PersonalInfoForm(Form):
     first_name = StringField("First Name",[validators.Length(max=150), validators.DataRequired()])
     last_name = StringField([validators.Length(min=1, max=150), validators.DataRequired()])
-    description = TextAreaField([validators.Length(min=30,max=600), validators.InputRequired()])
+    description = TextAreaField([validators.Length(min=30,max=600)])
     language = SelectField(validators=[DataRequired()], choices=[(lang, lang) for lang in language])
     proficiency = SelectField('Proficiency', choices=[('Basic', 'Basic'), ('Conversational', 'Conversational'), ('Fluent', 'Fluent'), ('Native','Native/Bilingual')],render_kw={'placeholder':"proficiency"})
 
@@ -49,7 +49,7 @@ class ProfileEditForm(Form):
     username = StringField('Username', [validators.Length(min=8), validators.DataRequired()])
     first_name = StringField("First Name", [validators.Length(max=150), validators.DataRequired()])
     last_name = StringField([validators.Length(min=1, max=150), validators.DataRequired()])
-    description = TextAreaField([validators.Length(min=30, max=600), validators.InputRequired()])
+    description = TextAreaField([validators.Length(min=30, max=600)])
     language = SelectField(validators=[DataRequired()],choices = [(lang,lang) for lang in language])
 
 categorykeys = ['GRAPHICS & DESIGN','DIGITAL MARKETING','WRITING & TRANSLATION','PROGRAMMING & TECH']
