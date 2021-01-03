@@ -1,0 +1,77 @@
+{% extends 'tutor_interface/base.html' %}
+{% block title %} Create Sessions {% endblock %}
+{% from "tutor_onboarding/__formhelperwithoutlabel.html" import render_field  %}
+
+{% block content %}
+<section class="section-content padding-y container">
+   <h1>Add Pricing</h1>
+
+<!-- ============================ COMPONENT SIGNUP 2  ================================= -->
+    <div class="row">
+        <div class="col-md-6 overflow-auto card" style="max-height:600px;">
+            {% for sessions in session_list_objects %}
+                <article class="card-body">
+                    <div class="card padding-y">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <p class="text-center text-muted">SESSION</p>
+                                <h4 class="text-center">{{sessions.session_no}}</h4>
+                            </div>
+                            <div class="col-md-6">
+                                <i class="icon mr-2 fas fa-stopwatch">Approx. {{sessions.time_approx}} hours</i>
+                                <h4>{{sessions.session_title}}</h4>
+                                <p>{{sessions.session_description}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </article> <!-- card-body end .// -->
+            {% endfor %}
+        </div>
+        <div class="col-md-6">
+         <div class="card">
+        <article class="card-body">
+        <form class="block-register" method="POST" action="" enctype="multipart/form-data" >
+            <h2 class="text-center">Number of Sessions: {{sessioncount}} <br> Total Approximate Hours: {{totalhours}}</h2>
+          <div class="form-group form-row">
+            <label class="col-md-3 col-form-label">Hourly Rates</label>
+            <div class="col">
+                {{ render_field(form.hourlyrate, class="form-control", placeholder="How much do you charge per session?") }}
+            </div>
+          </div>
+          <div class="form-group form-row">
+              <div class="col-md-3 col-form-label">
+                  <label >Maximum hours per session</label>
+                  <p class="text-muted">Indicate the maximum hours that you can do per lesson with the tutee</p>
+                </div>
+            <div class="col">
+                {{ render_field(form.maximumhourspersession, class="form-control", placeholder="How long would a lesson last?") }}
+            </div>
+          </div>
+            <div class="form-group form-row">
+                <div class="col-md-3 col-form-label">
+                  <label>Minimum Days</label>
+                  <p class="text-muted">Minimum number of days needed for a tutee to finish your course</p>
+                </div>
+                 <div class="col">
+                    {{ render_field(form.minimumdays, class="form-control", placeholder="Minimum No. Days to finish course") }}
+                </div>
+          </div>
+            <div class="form-group form-row">
+                <div class="col-md-3 col-form-label">
+                  <label>Maximum Days</label>
+                  <p class="text-muted">Maximum number of days you would reserve for one course</p>
+                </div>
+                <div class="col">
+                    {{ render_field(form.maximumdays, class="form-control", placeholder="Maximum No. Days that can be spent on one tutee") }}
+                </div>
+          </div>
+          <button class="btn btn-lg btn-primary float-right" type="submit" value="Submit">Finish</button>
+        </form>
+        </article> <!-- card-body end .// -->
+        </div> <!-- card.// -->
+        </div>
+    </div>
+
+<!-- ============================ COMPONENT SIGNUP 2 END.// ================================= -->
+</section>
+{% endblock %}

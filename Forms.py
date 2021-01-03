@@ -66,3 +66,9 @@ class UpdateSessionForm(Form):
     session_title = StringField(validators=[DataRequired(), Length(max=30)])
     session_description = TextAreaField(validators=[length(max=150)])
     time_approx = IntegerField(validators=[DataRequired()])
+
+class AddPricingForm(Form):
+    hourlyrate= IntegerField(validators=[DataRequired()])
+    maximumhourspersession = IntegerField(validators=[DataRequired()])
+    minimumdays = IntegerField(validators=[DataRequired()])
+    maximumdays = IntegerField(validators=[DataRequired()])

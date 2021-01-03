@@ -63,4 +63,52 @@ def delete_courses():
     db.clear()
     db.close()
 
-delete_courses()
+def delete_users():
+    db = shelve.open('databases/user.db')
+    db.clear()
+    db.close()
+
+def generate_stuff():
+    #generating tutee
+    userdb = shelve.open('databases/user.db')
+    # def __init__(self,user_email,username,user_pw,user_firstname,user_lastname):
+    user1 = User('user1@mail.com','user1testing', 'password','user1','tutee')
+    user2 = User('user2@mail.com','user2testing', 'password','user2','tutor')
+    userdb[user1.get_user_id()] = user1
+    userdb[user2.get_user_id()] = user2
+    userdb.close()
+
+    #making user 2 a pendingtutor
+    #    def __init__(self, user_id, occupation,fromyear,toyear,college_country,college_name,major, year ,dob,nric):
+
+    pendingdb = shelve.open('databases/pendingtutor.db')
+    p1 = PendingTutor(user2.get_user_id(),'Student',2020,2023,'Singapore','Nanyang Polytechnic','Diploma in Information technology','2023','2003-12-02','T03009F')
+    pendingdb[p1.user_id] = p1
+    pendingdb.close()
+
+    #auto certifying all tutors in pending tutors
+    auto_certify_all()
+    #moving tutor
+    move_tutors()
+def delete_pending():
+    db = shelve.open('databases/pendingtutor.db')
+    db.clear()
+    db.close()
+
+def delete_everything():
+    coursedb = shelve.open('databases/courses.db')
+    coursedb.clear()
+    coursedb.close()
+    pendingdb = shelve.open('databases/pendingtutor.db')
+    pendingdb.clear()
+    pendingdb.close()
+    tutordb = shelve.open('databases/tutor.db')
+    tutordb.clear()
+    tutordb.close()
+    userdb = shelve.open('databases/user.db')
+    userdb.clear()
+    userdb.close()
+    print('everything is deleted')
+
+auto_certify_all()
+move_tutors()

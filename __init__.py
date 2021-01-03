@@ -45,6 +45,11 @@ def Login():
                     if session['user_id'] in tutordb:
                         session['istutor'] = True
                     tutordb.close()
+                    #checking is user is being certified, if so they cant go to becometutor
+                    pendingdb = shelve.open('databases/pendingtutor.db')
+                    if session['user_id'] in pendingdb:
+                        session['verifying'] = True
+                    pendingdb.close()
                     try:
                         if request.form['remember']:
                             session['remember'] = True
@@ -79,26 +84,42 @@ def createUser():
                 return render_template('register.html', form=createUserForm, similarerror=similarerror)
 
             #retrieving user.db
-            db = shelve.open('databases/user.db', 'r')
-            for user in db:
-                user = db[user]
-                if user.get_user_email() == email:
-                    emailerror = 'This email is in use, please enter another email.'
-                    return render_template('register.html', form=createUserForm, emailerror=emailerror)
-                if user.get_username() == username:
-                    usernameerror = 'This username is in use, please enter another username.'
-                    return render_template('register.html', form=createUserForm, usernameerror=usernameerror)
-                else:
-                    db.close()
+            print('opening db')
+            db = shelve.open('databases/user.db')
+            print('successfully opened db')
+            #i think got error because its running a for loop on an empty database. so need do an if statement
+            #if db is empty just create the user
+            if len(db) == 0:
+                user = User(email, username, password, firstname, lastname)  # user object
+                db[user.get_user_id()] = user
+                # testing code
+                print("successfully posted")
+                db.close()
+                return redirect(url_for("home"))
+            else:
+                for user in db:
+                    user = db[user]
+                    print('checking each loop')
+                    if user.get_user_email() == email:
+                        print('email error')
+                        emailerror = 'This email is in use, please enter another email.'
+                        return render_template('register.html', form=createUserForm, emailerror=emailerror)
+                    elif user.get_username() == username:
+                        print('no email error')
+                        usernameerror = 'This username is in use, please enter another username.'
+                        return render_template('register.html', form=createUserForm, usernameerror=usernameerror)
+                    else:
+                        print('no username error')
+                        db.close()
 
-                    #posting to user.db after no errors
-                    db = shelve.open('databases/user.db')
-                    user = User(email,username,password,firstname,lastname) #user object
-                    db[user.get_user_id()] = user
+                        #posting to user.db after no errors
+                        db = shelve.open('databases/user.db')
+                        user = User(email,username,password,firstname,lastname) #user object
+                        db[user.get_user_id()] = user
 
-                    #testing code
-                    print("successfully posted")
-                    db.close()
+                        #testing code
+                        print("successfully posted")
+                        db.close()
                     return redirect(url_for("home"))
     return render_template('register.html', form=createUserForm)
 
@@ -277,6 +298,12 @@ def createcourse():
             db = shelve.open('databases/courses.db')
             db[course.course_id] = course
             db.close()
+            #posting the course_id to the tutors.courses
+            tutordb = shelve.open('databases/tutor.db')
+            tutorobject = tutordb[session['user_id']]
+            tutorobject.courses.append(course.course_id)
+            tutordb[session['user_id']] =  tutorobject
+            tutordb.close()
             return redirect(url_for('createsession',course_id=course.course_id))
     return render_template('tutor_interface/createcourse.html', form=form)
 
@@ -373,5 +400,60 @@ def deletesession(course_id,session_no):
     coursedb[course_id] = courseobject
     coursedb.close()
     return redirect(url_for("createsession", course_id=course_id))
+@app.route("/addpricing/<course_id>", methods=['GET','POST'])
+def addpricing(course_id):
+    form = AddPricingForm(request.form)
+    #retrieving the courses to add the pricing inside
+    coursedb = shelve.open('databases/courses.db')
+    courseobject = coursedb[course_id]
+    coursedb.close()
+    #calculating all of the session approximate hours
+    sessioncount = 0
+    totalhours = 0
+    for sessions in courseobject.sessions:
+        totalhours += int(sessions.time_approx)
+        sessioncount +=1
+
+    if request.method == 'POST' and form.validate():
+        hourlyrate = request.form['hourlyrate']
+        maximumhourspersession = request.form['maximumhourspersession']
+        minimumdays = request.form['minimumdays']
+        maximumdays = request.form['maximumdays']
+        courseobject.hourlyrate = hourlyrate
+        courseobject.maximumhoursperssion = maximumhourspersession
+        courseobject.minimumdays = minimumdays
+        courseobject.maximumdays = maximumdays
+        #posting inside coursedb
+        coursesdb = shelve.open('databases/courses.db')
+        coursesdb[course_id] = courseobject
+        coursesdb.close()
+        return redirect(url_for('home'))
+    return render_template('tutor_interface/addpricing.html',form=form,totalhours=totalhours,sessioncount=sessioncount,session_list_objects=courseobject.sessions)
+
+@app.route('/mycourses',methods=['GET'])
+def mycourses():
+    if session.get('istutor') == True:
+        #retrieving user object
+        userdb = shelve.open('databases/user.db')
+        userobject = userdb[session['user_id']]
+        userdb.close()
+        #retrieving tutor object to retrieve their courses id
+        tutordb = shelve.open('databases/tutor.db')
+        tutorobject = tutordb[session['user_id']]
+        tutordb.close()
+        coursesarray = []
+        #retrieving
+        coursedb = shelve.open('databases/courses.db')
+        for course_id in tutorobject.courses:
+            coursesarray.append(coursedb[course_id])
+        coursedb.close()
+
+        return render_template('tutor_interface/mycourses.html', userobject=userobject,coursesarray=coursesarray)
+    else:
+        pass
+@app.route('/updatecourse/<course_id>',methods=['GET'])
+def updatecourse(course_id):
+    return render_template('tutor_interface/updatecourse.html')
+print('please work')
 if __name__ =='__main__':
     app.run(debug=True)

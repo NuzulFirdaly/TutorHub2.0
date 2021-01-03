@@ -128,6 +128,7 @@ class Tutor(PendingTutor):
         self.__certified = True
         self.reviews = {}
         self.subjects = []
+        self.courses = []
 
 class Courses():
     def __init__(self,course_title,category,subcategory,description,tutor):
@@ -136,9 +137,14 @@ class Courses():
         self.category = category
         self.subcategory = subcategory
         self.description =description
+        #tutor id/ userid
         self.tutor = tutor
-        self.course_thumbnail = ""
+        self.course_thumbnail = "default.jpg"
         self.sessions = [Session()]
+        self.hourlyrate = 0
+        self.maximumdays = 0
+        self.maximumhoursperssion = 0
+        self.minimumdays = 0
     def __str__(self):
         return 'Course ID:{} \n Course Title:{} \n Category:{} Subcategory: {} \n ' \
                'Description:{} \n Tutor ID: {} ' \
