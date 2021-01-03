@@ -497,9 +497,27 @@ def mycourses():
         return render_template('tutor_interface/mycourses.html', userobject=userobject,coursesarray=coursesarray)
     else:
         pass
+
 @app.route('/updatecourse/<course_id>',methods=['GET'])
 def updatecourse(course_id):
     return render_template('tutor_interface/updatecourse.html')
+
+@app.route("InstitutionAdmin//AllInstitutions")
+def AllInstitutions():
+    return render_template('AllInstitutions.html')
+
+@app.route("/InstitutionPage")
+def InstitutionPage():
+    return render_template('InstitutionPage.html')
+
+@app.route("/AllInstitutionCourses")
+def AllInstitutionCourses():
+    return render_template('AllInstitutionCourses.html')
+
+@app.route("/RegisterInstitution")
+def RegisterInstitution():
+    return render_template('RegisterInstitution.html')
+
 print('please work')
 if __name__ =='__main__':
     app.run(debug=True)
