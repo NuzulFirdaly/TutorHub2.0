@@ -8,7 +8,7 @@ from werkzeug.utils import secure_filename
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'tutormeplease' #this is to encrypt data passing along our server, this includes our session data
 
-
+# Tutors
 @app.route("/", methods=['GET'])
 def home():
     if session.get('istutor') == True:

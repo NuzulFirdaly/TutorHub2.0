@@ -1,40 +1,48 @@
-{% extends "profile/__profile_base.html" %}
+{% extends "profile/__profile_base_form.html" %}
 {% block title %}TutorHub - Profile Page{% endblock %}
 
 {% block content %}
 
-{% from "components/__formhelper.html" import render_field  %}
+{% from "tutor_onboarding/__formhelperwithoutlabel.html" import render_field  %}
 
 <!-- ========================= SECTION CONTENT ========================= -->
-<section class="section-content padding-y container" style="min-height:84vh">
-
+<section class="container-fluid" style="min-height:84vh; width:90%;"
 <!-- ============================ COMPONENT LOGIN   ================================= -->
 	<div class="card mx-auto">
       <div class="card-body">
       <h4 class="card-title mb-4">Edit My Profile</h4>
-      <form action="" method="POST" enctype="multipart/form-data">
-          <div class="form-group">
-			  {{ render_field(form.username, class="form-control", value=session['username']) }}
+      <form class='block-register' action="" method="POST" enctype="multipart/form-data">
+          <div class="form-group form-row">
+              <label class="col-md-1 col-form-label">Username</label>
+              <div class="col-md-7">
+                  {{ render_field(form.username, class="form-control", value=session['username']) }}
+              </div>
 		  </div>
           <div class="form-group form-row">
-            <label class="col-md-3 col-form-label">Profile Picture</label>
-              <div class='col'>
+            <label class="col-md-1 col-form-label">First Name</label>
+            <div class="col-md-3">
+                {{ render_field(form.first_name, class="form-control", placeholder="First name", value=session['firstname']) }}
+            </div>
+            <label class="col-md-1 col-form-label">Last Name</label>
+            <div class="col-md-3">
+                {{ render_field(form.last_name, class="form-control", placeholder="Last name", value=session['lastname'])  }}
+            </div>
+          </div>
+          <div class="form-group form-row">
+            <label class="col-md-1 col-form-label">Profile Picture</label>
+              <div class='col-md-3'>
                   <img  src="..\static\images\profilepictures\{{ session['profile_pic'] }}" class="img-md rounded-circle border">
-              </div>
-              <div class='col'>
-                  <input type="file" name="image" id="image" style="margin-left:150px;">
+                <div style="position:relative;">
+                  <input type="file" name="image" id="image">
                            {% if extensionerror %}
                             <p  style="color:red;" class="error"><strong>Error:</strong> {{ extensionerror }}
-                          {% endif %}
+                        {% endif %}
+                    </div>
+                  </div>
+
               </div>
-            </div>
           <hr>
-          <div class="form-group">
-			  {{ render_field(form.first_name, class="form-control", value=session['username']) }}
-		  </div>
-          <div class="form-group">
-			  {{ render_field(form.first_name, class="form-control", value=session['username']) }}
-		  </div>
+
           <div class="form-group">
 			  {{ render_field(form.first_name, class="form-control", value=session['username']) }}
 		  </div>
