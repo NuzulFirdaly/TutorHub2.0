@@ -75,6 +75,7 @@ def createUser():
             email = request.form['email']
             username = request.form['username']
             password = request.form['password']
+            confirm = request.form['confirm']
             firstname= request.form['first_name']
             lastname= request.form['last_name']
 
@@ -82,6 +83,11 @@ def createUser():
             if username == password:
                 similarerror = 'Username and password cannot be the same'
                 return render_template('register.html', form=createUserForm, similarerror=similarerror)
+
+            if confirm != password:
+                sameerror = 'password does not match'
+                return render_template('register.html', form=createUserForm, sameerror=sameerror)
+
 
             #retrieving user.db
             print('opening db')
@@ -265,11 +271,15 @@ def profilemain():
     else:
         db = shelve.open('databases/user.db', 'r')
         userObj = db[session['user_id']]
+        print(userObj)
         session['email'] = userObj.get_user_email()
         session['username'] = userObj.get_username()
         session['firstname'] = userObj.get_user_firstname()
         session['lastname'] = userObj.get_user_lastname()
         session['profile_pic'] = userObj.get_user_profile_pic()
+        session['description'] = userObj.get_user_description()
+        session['language'] = userObj.get_user_language()
+        session['proficiency'] = userObj.get_user_language_proficiency()
         db.close()
         return render_template("profile/profile_main.html")
 
@@ -277,6 +287,7 @@ def profilemain():
 def profileedit():
     db = shelve.open('databases/user.db', 'w')
     userObj = db[session['user_id']]
+    db.close()
     if session.get('loggedin') != True:
         return redirect(url_for("home"))
     else:
@@ -284,8 +295,28 @@ def profileedit():
         if request.method == 'POST' and form.validate():
             print("posting")
             username = request.form['username']
-            userObj.set_username(username)
+            userObj.set_user_username(username)
             session['username'] = username
+
+            firstname = request.form['firstname']
+            userObj.set_user_firstname(firstname)
+            session['firstname'] = firstname
+
+            lastname = request.form['lastname']
+            userObj.set_user_lastname(lastname)
+            session['lastname'] = lastname
+
+            description = request.form['description']
+            userObj.set_user_description(description)
+            session['description'] = description
+
+            language = request.form['language']
+            userObj.set_user_language(language)
+            session['language'] = language
+
+            proficiency = request.form['proficiency']
+            userObj.set_user_language_proficiency(proficiency)
+            session['proficiency'] = proficiency
 
             if request.files['image'].filename != "":
                 image = request.files["image"]  # our name attribute inside our input form field.  this will return a file object in this case should be image/png
@@ -301,7 +332,12 @@ def profileedit():
                     db = shelve.open('databases/user.db', 'r')
                     userObj = db[session['user_id']]
                     userObj.set_user_profile_pic(profile_pic)
-        db.close()
+                    db.close()
+            db = shelve.open('databases/user.db', 'w')
+            db[session['user_id']] = userObj
+            db.close()
+
+        print('back')
         return render_template('profile/profile_edit.html', form=form)
 
 categories = {'GRAPHICS & DESIGN':['LOGO DESIGN','BRAND STYLE GUIDES','GAME ART','RESUME DESIGN'],
@@ -502,21 +538,21 @@ def mycourses():
 def updatecourse(course_id):
     return render_template('tutor_interface/updatecourse.html')
 
-@app.route("InstitutionAdmin//AllInstitutions")
+@app.route("/InstitutionAdmin/AllInstitutions")
 def AllInstitutions():
-    return render_template('AllInstitutions.html')
+    return render_template('InstitutionAdmin/AllInstitutions.html')
 
-@app.route("/InstitutionPage")
+@app.route("/InstitutionAdmin/InstitutionPage")
 def InstitutionPage():
-    return render_template('InstitutionPage.html')
+    return render_template('InstitutionAdmin/InstitutionPage.html')
 
-@app.route("/AllInstitutionCourses")
+@app.route("/InstitutionAdmin/AllInstitutionCourses")
 def AllInstitutionCourses():
-    return render_template('AllInstitutionCourses.html')
+    return render_template('InstitutionAdmin/AllInstitutionCourses.html')
 
-@app.route("/RegisterInstitution")
+@app.route("/InstitutionAdmin/RegisterInstitution")
 def RegisterInstitution():
-    return render_template('RegisterInstitution.html')
+    return render_template('InstitutionAdmin/RegisterInstitution.html')
 
 print('please work')
 if __name__ =='__main__':

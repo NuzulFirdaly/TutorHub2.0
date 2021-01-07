@@ -6,30 +6,34 @@
 {% from "tutor_onboarding/__formhelperwithoutlabel.html" import render_field  %}
 
 <!-- ========================= SECTION CONTENT ========================= -->
-<section class="container-fluid" style="min-height:84vh; width:90%;"
+<section class="container-fluid" style="min-height:84vh; width:90%;">
 <!-- ============================ COMPONENT LOGIN   ================================= -->
 	<div class="card mx-auto">
       <div class="card-body">
-      <h4 class="card-title mb-4">Edit My Profile</h4>
+      <h2 class="card-title mb-4">Edit My Profile</h2>
+      <hr>
+        <h4 class="text-muted">Introduction</h4>
+        <h6 class="text-muted">How do you want others to know you?</h6>
+          <br>
       <form class='block-register' action="" method="POST" enctype="multipart/form-data">
           <div class="form-group form-row">
-              <label class="col-md-1 col-form-label">Username</label>
+              <label class="col-md-2 col-form-label">Username</label>
               <div class="col-md-7">
                   {{ render_field(form.username, class="form-control", value=session['username']) }}
               </div>
 		  </div>
           <div class="form-group form-row">
-            <label class="col-md-1 col-form-label">First Name</label>
+            <label class="col-md-2 col-form-label">First Name</label>
             <div class="col-md-3">
-                {{ render_field(form.first_name, class="form-control", placeholder="First name", value=session['firstname']) }}
+                {{ render_field(form.firstname, class="form-control", placeholder="First name", value=session['firstname']) }}
             </div>
             <label class="col-md-1 col-form-label">Last Name</label>
             <div class="col-md-3">
-                {{ render_field(form.last_name, class="form-control", placeholder="Last name", value=session['lastname'])  }}
+                {{ render_field(form.lastname, class="form-control", placeholder="Last name", value=session['lastname'])  }}
             </div>
           </div>
           <div class="form-group form-row">
-            <label class="col-md-1 col-form-label">Profile Picture</label>
+            <label class="col-md-2 col-form-label">Profile Picture</label>
               <div class='col-md-3'>
                   <img  src="..\static\images\profilepictures\{{ session['profile_pic'] }}" class="img-md rounded-circle border">
                 <div style="position:relative;">
@@ -42,15 +46,29 @@
 
               </div>
           <hr>
-
-          <div class="form-group">
-			  {{ render_field(form.first_name, class="form-control", value=session['username']) }}
-		  </div>
-          <div class="form-group">
-			  {{ render_field(form.first_name, class="form-control", value=session['username']) }}
-		  </div>
+          <h4 class="text-muted">More About You</h4>
+        <h6 class="text-muted">Tell others more about yourself. Find others like you.</h6>
+          <br>
+          <div class="form-group form-row">
+            <label class="col-md-2 col-form-label">About Me</label>
+              <div class="col-md-7">
+                  {{ render_field(form.description, class="form-control", default=session['description']) }}
+              </div>
+          </div>
+          <div class="form-group form-row">
+            <label class="col-md-2 col-form-label">Language</label>
+              <div class="col-md-4">
+			    {{ render_field(form.language, class="form-control", value=session['language']) }}
+              </div>
+              <div class="col-md-3">
+                {{ render_field(form.proficiency, class="form-control", value=session['proficiency']) }}
+              </div>
+          </div>
           <button class="btn btn-primary float-right" type="submit">Save Changes</button>
+
       </form>
+      </div>
+    </div>
      <br><br>
 <!-- ============================ COMPONENT LOGIN  END.// ================================= -->
 

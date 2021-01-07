@@ -110,5 +110,4 @@ def delete_everything():
     userdb.close()
     print('everything is deleted')
 
-auto_certify_all()
-move_tutors()
+delete_everything()

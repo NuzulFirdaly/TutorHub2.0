@@ -14,7 +14,8 @@ class User():
         self.__user_lastname =user_lastname
         self.__user_profile_pic = "avatar3.jpg"
         self.__user_description = ""
-        self.__user_language = {'English': "Basic"}
+        self.__user_language = 'English'
+        self.__user_language_proficiency = 'Basic'
 
     # User_Model Accessor
     def get_user_email(self):
@@ -40,30 +41,44 @@ class User():
 
     def get_user_profile_pic(self):
         return self.__user_profile_pic
+
     def get_user_description(self):
         return self.__user_description
+
     def get_user_language(self):
-        languagelist = []
-        for languages in self.__user_language:
-            languagelist.append(languages)
-        liststring = ','.join(languagelist)
-        return liststring
+        # languagelist = []
+        # for languages in self.__user_language:
+        #     languagelist.append(languages)
+        # liststring = ','.join(languagelist)
+        return self.__user_language
+
+    def get_user_language_proficiency(self):
+        return self.__user_language_proficiency
 
     #Set methods, i actually dont know why we didnt just make this a public data attribute
-    def set_user_email(self,email):
+    def set_user_email(self, email):
         self.__user_email = email
-    def set_username(self,username):
+
+    def set_user_username(self, username):
         self.__username = username
-    def set_user_firstname(self,firstname):
+
+    def set_user_firstname(self, firstname):
         self.__user_firstname = firstname
-    def set_user_lastname(self,lastname):
+
+    def set_user_lastname(self, lastname):
         self.__user_lastname = lastname
-    def set_user_profile_pic(self,profile_pic):
+
+    def set_user_profile_pic(self, profile_pic):
         self.__user_profile_pic = profile_pic
-    def set_user_description(self,description):
+
+    def set_user_description(self, description):
         self.__user_description = description
-    def set_user_language(self,language):
+
+    def set_user_language(self, language):
         self.__user_language = language
+
+    def set_user_language_proficiency(self, proficiency):
+        self.__user_language_proficiency = proficiency
 
     def __str__(self):
         return ' user_id:{} \n username: {} \n email: {} \n password:{} \n firstname:{} \n lastname:{} \n fullname:{} \n languages:{} \n description:{} '.format(
