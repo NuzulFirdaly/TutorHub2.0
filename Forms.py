@@ -11,8 +11,7 @@ class CreateUserForm(Form):
     username = StringField('Username', [validators.Length(min=8
                                                           ), validators.DataRequired()])
     password = PasswordField('Password', [validators.Length(min=8
-                                                            ), validators.DataRequired(),
-                                          EqualTo('confirm', message='Passwords must match')])
+                                                            ), validators.DataRequired()])
     confirm = PasswordField('Confirm Password', [validators.DataRequired()])
 
 class LoginForm(Form):
@@ -69,12 +68,13 @@ class CreateCourseForm(Form):
     course_title = StringField(validators=[DataRequired(), Length(max=80)])
     category = SelectField(validators=[DataRequired()],choices = [(categories,categories) for categories in categorykeys])
     subcategory = SelectField(validators=[DataRequired()], choices = [(subcategory,subcategory) for subcategory in subcategoryArr])
+    short_description = StringField(validators=[DataRequired(),Length(max=80)])
     description = TextAreaField(validators=[DataRequired()])
 
 
 class UpdateSessionForm(Form):
     session_title = StringField(validators=[DataRequired(), Length(max=30)])
-    session_description = TextAreaField(validators=[length(max=150)])
+    session_description = TextAreaField(validators=[])
     time_approx = IntegerField(validators=[DataRequired()])
 
 class AddPricingForm(Form):

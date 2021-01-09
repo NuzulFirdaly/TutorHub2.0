@@ -146,11 +146,12 @@ class Tutor(PendingTutor):
         self.courses = []
 
 class Courses():
-    def __init__(self,course_title,category,subcategory,description,tutor):
+    def __init__(self,course_title,category,subcategory,description,tutor,short_description):
         self.course_id = uuid.uuid4().hex
         self.course_title = course_title
         self.category = category
         self.subcategory = subcategory
+        self.short_description = short_description
         self.description =description
         #tutor id/ userid
         self.tutor = tutor

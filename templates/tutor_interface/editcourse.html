@@ -1,9 +1,9 @@
 {% extends 'tutor_interface/base.html' %}
-{% block title %} Create Courses {% endblock %}
+{% block title %} Edit Course {% endblock %}
 {% from "tutor_onboarding/__formhelperwithoutlabel.html" import render_field  %}
 {% block content %}
 <div class="container padding-y">
-   <h1>Create Course</h1>
+   <h1>Edit Course</h1>
    <hr>
 
 <!-- ============================ COMPONENT SIGNUP 2  ================================= -->
@@ -52,7 +52,7 @@
          {{render_field(form.description, class="form-control")}}
      </div>
   </div>
-  <button class="btn btn-primary float-right" type="submit">Continue</button>
+  <button class="btn btn-primary float-right" type="submit">Finish</button>
 
 </form>
 </article> <!-- card-body end .// -->
