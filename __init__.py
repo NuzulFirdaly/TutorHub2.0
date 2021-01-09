@@ -74,12 +74,16 @@ def createUser():
             print("posting")
             email = request.form['email']
             username = request.form['username']
+            confirm = request.form['confirm']
             password = request.form['password']
             firstname= request.form['first_name']
             lastname= request.form['last_name']
-
+            if confirm != password:
+                sameerror = 'password does not match'
+                return render_template('register.html', form=createUserForm,sameerror=sameerror)
             #Validating form(if similar)
             if username == password:
+                print('similar error')
                 similarerror = 'Username and password cannot be the same'
                 return render_template('register.html', form=createUserForm, similarerror=similarerror)
 
@@ -216,7 +220,7 @@ def tutor_onboarding_personal_info():
 
         return render_template('/tutor_onboarding/personal_info.html',form=form)
 
-app.config['CERT_UPLOADS'] = 'databases/pendingcerts'
+app.config['CERT_UPLOADS'] = 'static/pendingcerts'
 @app.route('/tutor_onboarding/professional_info', methods=['GET', 'POST'])
 def tutor_onboarding_professional_info():
     form = ProfessionalInfoForm(request.form)
@@ -325,8 +329,9 @@ def createcourse():
             course_title = request.form['course_title']
             category = request.form['category']
             subcategory = request.form['subcategory']
+            short_description = request.form['short_description']
             description = request.form['description']
-            course = Courses(course_title,category,subcategory,description,session['user_id'])
+            course = Courses(course_title,category,subcategory,description,session['user_id'],short_description)
             if request.files['image'].filename != "":
                 image = request.files["image"] #our name attribute inside our input form field.  this will return a file object in this case should be image/png
                 if not allowed_image(image.filename):
@@ -498,25 +503,174 @@ def mycourses():
     else:
         pass
 
-@app.route('/updatecourse/<course_id>',methods=['GET'])
+@app.route('/updatecourse/<course_id>',methods=['GET','POST'])
 def updatecourse(course_id):
-    return render_template('tutor_interface/updatecourse.html')
+    coursedb = shelve.open('databases/courses.db')
+    courseobject = coursedb[course_id]
+    coursedb.close()
 
-@app.route("InstitutionAdmin//AllInstitutions")
+    return render_template('tutor_interface/updatecourse.html', courseobject=courseobject, course_id=course_id)
+
+@app.route('/editcourse/<course_id>',methods=['GET','POST'])
+def editcourse(course_id):
+    form = CreateCourseForm(request.form)
+    coursedb = shelve.open('databases/courses.db')
+    courseobject = coursedb[course_id]
+    coursedb.close()
+    form.course_title.data = courseobject.course_title
+    form.category.data = courseobject.category
+    form.subcategory.data = courseobject.subcategory
+    form.short_description.data = courseobject.short_description
+    form.description.data = courseobject.description
+    if request.method == 'POST' and form.validate():
+        course_title = request.form['course_title']
+        category = request.form['category']
+        subcategory = request.form['subcategory']
+        short_description = request.form['short_description']
+        description = request.form['description']
+        courseobject.course_title = course_title
+        courseobject.category = category
+        courseobject.subcategory = subcategory
+        courseobject.short_description = short_description
+        courseobject.description = description
+        if request.files['image'].filename != "":
+            image = request.files[
+                "image"]  # our name attribute inside our input form field.  this will return a file object in this case should be image/png
+            if not allowed_image(image.filename):
+                extensionerror = "That image extension is not allowed"
+                print("That image extension is not allowed")
+                return render_template('/tutor_interface/editcourse.html', form=form, extensionerror=extensionerror)
+            else:
+                filename = secure_filename(image.filename)
+                image.save(os.path.join(app.config["COURSE_THUMBNAIL_UPLOADS"], filename))
+
+                course_thumbnail_pic = filename
+                courseobject.course_thumbnail = course_thumbnail_pic
+        #posting to coursedb
+        coursedb = shelve.open('databases/courses.db')
+        coursedb[course_id] = courseobject
+        return redirect(url_for('updatecourse', course_id=courseobject.course_id))
+
+    return render_template('tutor_interface/editcourse.html', form=form)
+
+@app.route('/editcoursesession/<course_id>',methods=['GET', 'POST'])
+def editcoursesession(course_id):
+    # retrieving course obj so can retrieve the sessions array
+    db = shelve.open('databases/courses.db')
+    course = db[course_id]
+    db[course_id] = course
+    db.close()
+    print('retrieving from shelve')
+    session_list_objects = course.sessions
+    return render_template('tutor_interface/editcoursesession.html', session_list_objects=session_list_objects,course_id=course_id)
+
+@app.route('/editupdatesession/<course_id>/<session_no>',methods=['GET','POST'])
+def editupdatesession(course_id,session_no):
+    #retrieving the session object from the course.sessions list of objects. maybe this just for delete
+    db = shelve.open('databases/courses.db')
+    course_object = db[course_id]
+    print(course_object)
+    db.close()
+    print((int(session_no)-1))
+    for sessions in course_object.sessions:
+        print(sessions)
+    sessionobject = course_object.sessions[(int(session_no)-1)] #basically we are using the session no as the index for the session list in the course object.
+    print(sessionobject)
+    form = UpdateSessionForm(request.form)
+    if request.method == "POST" and form.validate():
+        sessionobject.session_title = request.form['session_title']
+        sessionobject.session_description = request.form['session_description']
+        sessionobject.time_approx = request.form['time_approx']
+        updatedsessionobject = sessionobject
+        print(updatedsessionobject)
+        print('setting session object')
+        #updating the session and posting back to courses.db
+        db = shelve.open('databases/courses.db')
+        courseobject = db[course_id]
+        for sessions in courseobject.sessions:
+            print(sessions)
+        courseobject.sessions[int(session_no) - 1] = updatedsessionobject
+        db[course_id] = course_object
+        db.close()
+        print('object posted now should be redirecting')
+        return redirect(url_for("editcoursesession",course_id=course_id))
+
+    return render_template('tutor_interface/updatesession.html', form=form,sessionobject=sessionobject)
+
+@app.route("/editdeletesession/<course_id>/<session_no>", methods=['POST'])
+def editdeletesession(course_id,session_no):
+    coursedb = shelve.open('databases/courses.db')
+    courseobject = coursedb[course_id]
+    sessionlist = courseobject.sessions
+    #removing the session the users wants to delete
+    sessionlist.pop(int(session_no)-1)
+    newsessionlist = []
+    #in case the user deletes a session inbetween so we must reorder the session no
+    for index, sessions in enumerate(sessionlist,1):
+        sessions.session_no = index
+        newsessionlist.append(sessions)
+    courseobject.sessions = newsessionlist
+    coursedb[course_id] = courseobject
+    coursedb.close()
+    return redirect(url_for("editcoursesession", course_id=course_id))
+
+@app.route("/editaddnewsession/<course_id>",methods=["GET","POST"])
+def editaddnewsession(course_id):
+    form = UpdateSessionForm(request.form)
+
+    #retrive previous sessions there is inside the course to get the new course number
+    #actually dont need coz session_no is a class attribute so can just call it
+    #oh my god, cannot use class attribute or else other user's new session also increases the number
+    coursedb = shelve.open('databases/courses.db')
+    course = coursedb[course_id]
+    coursedb.close()
+    sessionobject = Session()
+    if request.method == "POST" and form.validate():
+        sessionobject.session_title = request.form['session_title']
+        sessionobject.session_description = request.form['session_description']
+        sessionobject.time_approx = request.form['time_approx']
+        #getting the len of the list and making that the session no
+        sessionobject.session_no = len(course.sessions) + 1
+        updatedsessionobject = sessionobject
+        #posting new session object the course object sessions array
+        coursedb = shelve.open('databases/courses.db')
+        courseobject = coursedb[course_id]
+        courseobject.sessions.append(updatedsessionobject)
+        coursedb[course_id] = courseobject
+        coursedb.close()
+        return redirect(url_for("editcoursesession",course_id=course_id))
+    return render_template('tutor_interface/addnewsession.html', form=form)
+
+@app.route('/deletecourse/<course_id>',methods=['POST'])
+def deletecourse(course_id):
+    print(session['user_id'])
+    #removing course_id from tutor
+    tutordb = shelve.open('databases/tutor.db')
+    tutorobject = tutordb[session['user_id']]
+    tutorobject.courses.remove(course_id)
+    tutordb[session['user_id']] = tutorobject
+    tutordb.close()
+    #removing course_id from course db
+    coursedb = shelve.open('databases/courses.db')
+    coursedb.pop(course_id)
+    coursedb.close()
+    # removing the session the users wants to delete
+    return redirect(url_for("mycourses"))
+@app.route("/InstitutionAdmin/AllInstitutions")
 def AllInstitutions():
-    return render_template('AllInstitutions.html')
+    return render_template('InstitutionAdmin/AllInstitutions.html')
 
-@app.route("/InstitutionPage")
+@app.route("/InstitutionAdmin/InstitutionPage")
 def InstitutionPage():
-    return render_template('InstitutionPage.html')
+    return render_template('InstitutionAdmin/InstitutionPage.html')
 
-@app.route("/AllInstitutionCourses")
+@app.route("/InstitutionAdmin/AllInstitutionCourses")
 def AllInstitutionCourses():
-    return render_template('AllInstitutionCourses.html')
+    return render_template('InstitutionAdmin/AllInstitutionCourses.html')
 
-@app.route("/RegisterInstitution")
+@app.route("/InstitutionAdmin/RegisterInstitution")
 def RegisterInstitution():
-    return render_template('RegisterInstitution.html')
+    return render_template('InstitutionAdmin/RegisterInstitution.html')
 
 print('please work')
 if __name__ =='__main__':

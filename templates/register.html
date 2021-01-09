@@ -49,6 +49,8 @@
 		        </div> <!-- form-group end.// -->
 				{% if similarerror %}
 					<p  style="color:red;" class="error"><strong>Error:</strong> {{ similarerror }}
+				{% elif sameerror %}
+					<p  style="color:red;" class="error"><strong>Error:</strong> {{ sameerror }}
 				{% endif %}
 			</form>
 		</article><!-- card-body.// -->
