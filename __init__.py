@@ -341,7 +341,7 @@ def profileedit():
 
     return render_template('profile/profile_edit.html', form=form)
 
-@app.route('/profile/recent<course_id>', methods=['GET', 'POST'])
+@app.route('/profile/recent/<course_id>', methods=['GET', 'POST'])
 def recentcourses(course_id):
     db = shelve.open('databases/user.db','w')
     userObj = db[session['user_id']]
@@ -372,7 +372,7 @@ def recentcourses(course_id):
     coursedb.close()
     userdb.close()
 
-    return render_template('profile/profile_main.html', coursearray=recentcourse)
+    return redirect(url_for(profilemain, coursearray=recentcourse))
 
 
 
