@@ -105,8 +105,10 @@ def generate_stuff():
     #               'PROGRAMMING & TECH': ['WEB PROGRAMMING', 'E-COMMERCE DEVELOPMENT', 'MOBILE APPLS',
     #                                      'DESKTOP APPLICATIONS', 'DATABASES', 'USER TESTING']
     #               }
-    c1 = Courses('Flask App Development','PROGRAMMING & TECH', 'WEB PPROGRAMMING', 'Blah Blah Blah Blah', p1.user_id, "Developing an application using Flask")
-    c2 = Courses('NodeJS App Development','PROGRAMMING & TECH', 'WEB PPROGRAMMING', 'Blah Blah Blah Blah', p1.user_id, "Developing an application using NodeJS")
+    c1 = Courses('Flask App Development','PROGRAMMING & TECH', 'WEB PROGRAMMING', 'Blah Blah Blah Blah', p1.user_id, "Developing an application using Flask")
+    c1.course_thumbnail = 'flasklol.png'
+    c2 = Courses('NodeJS App Development','PROGRAMMING & TECH', 'WEB PROGRAMMING', 'Blah Blah Blah Blah', p1.user_id, "Developing an application using NodeJS")
+    c2.course_thumbnail = 'blah.jpg'
     c3 = Courses('SQL 101','PROGRAMMING & TECH', 'DATABASES', 'Blah Blah Blah Blah', p1.user_id, "Learning the basics of SQL")
     c4 = Courses('User Research Methods', 'PROGRAMMING & TECH', 'USER TESTING', 'Blah Blah Blah Blah', p1.user_id,"Understanding User Researching Methods")
 
@@ -162,5 +164,5 @@ def delete_specific_course_from_tutor(user_id,course_id):
     tutordb[user_id] = tutorobject
     tutordb.close()
 
-# delete_everything()
-# generate_stuff()
+delete_everything()
+generate_stuff()
