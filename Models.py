@@ -16,6 +16,7 @@ class User():
         self.__user_description = ""
         self.__user_language = 'English'
         self.__user_language_proficiency = 'Basic'
+        self.__user_recent = []
 
     # User_Model Accessor
     def get_user_email(self):
@@ -55,6 +56,9 @@ class User():
     def get_user_language_proficiency(self):
         return self.__user_language_proficiency
 
+    def get_user_recent(self):
+        return self.__user_recent
+
     #Set methods, i actually dont know why we didnt just make this a public data attribute
     def set_user_email(self, email):
         self.__user_email = email
@@ -79,6 +83,9 @@ class User():
 
     def set_user_language_proficiency(self, proficiency):
         self.__user_language_proficiency = proficiency
+
+    def set_user_recent(self, recent):
+        self.__user_recent = recent
 
     def __str__(self):
         return ' user_id:{} \n username: {} \n email: {} \n password:{} \n firstname:{} \n lastname:{} \n fullname:{} \n languages:{} \n description:{} '.format(

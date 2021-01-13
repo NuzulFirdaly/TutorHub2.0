@@ -2,9 +2,46 @@
 {% block title %}TutorHub - Profile Page{% endblock %}
 
 {% block content %}
+<script type="text/javascript">
+/// some script
+
+// jquery ready start
+$(document).ready(function() {
+	// jQuery code
+
+
+    /////////////////  items slider. /plugins/owlslider/
+    if ($('.slider-items-owl').length > 0) { // check if element exists
+        $('.slider-items-owl').owlCarousel({
+        //change the loop daddy
+            loop:false,
+            margin:15,
+            nav:true,
+            autoWidth:true,
+            navText: ["<i class='fa fa-chevron-left'></i>", "<i class='fa fa-chevron-right'></i>"],
+            responsive:{
+                0:{
+                    items:1
+                },
+                640:{
+                    items:3
+                },
+                1024:{
+                    items: 3
+                }
+            }
+        })
+    } // end if
+
+
+
+
+});
+// jquery end
+</script>
 
 <!-- ========================= SECTION PAGETOP ========================= -->
-<section class="section-pagetop bg">
+<section class="section-pagetop bg padding-y">
 <div class="container">
 	<h2 class="title-page">My Profile</h2>
 </div> <!-- container //  -->
@@ -18,8 +55,8 @@
 <div class="row">
 	<aside class="col-md-3">
 		<ul class="list-group">
-			<a class="list-group-item active" href="#"> Account overview  </a>
-			<a class="list-group-item" href="#"> My Orders </a>
+			<a class="list-group-item active" href="#"> My Account</a>
+			<a class="list-group-item" href="#"> My Courses </a>
 			<a class="list-group-item" href="#"> My wishlist </a>
 			<a class="list-group-item" href="#"> Return and refunds </a>
 			<a class="list-group-item" href="#">Settings </a>
@@ -43,38 +80,17 @@
 						</div>
 				</figure>
 				<hr>
-				<p>
-					<i class="fa fa-map-marker text-muted"></i> &nbsp; My address:
-					 <br>
-					Tashkent city, Street name, Building 123, House 321 &nbsp
-					<a href="#" class="btn-link"> Edit</a>
-				</p>
-
-
-
 				<article class="card-group">
 					<figure class="card bg">
 						<div class="p-3">
-							 <h5 class="card-title">38</h5>
-							<span>Orders</span>
+							 <h5 class="card-title">0</h5>
+							<span>No. of Sessions</span>
 						</div>
 					</figure>
 					<figure class="card bg">
 						<div class="p-3">
-							 <h5 class="card-title">5</h5>
-							<span>Wishlists</span>
-						</div>
-					</figure>
-					<figure class="card bg">
-						<div class="p-3">
-							 <h5 class="card-title">12</h5>
-							<span>Awaiting delivery</span>
-						</div>
-					</figure>
-					<figure class="card bg">
-						<div class="p-3">
-							 <h5 class="card-title">50</h5>
-							<span>Delivered items</span>
+							 <h5 class="card-title">0</h5>
+							<span>Total No. of Hours</span>
 						</div>
 					</figure>
 				</article>
@@ -83,46 +99,29 @@
 			</div> <!-- card-body .// -->
 		</article> <!-- card.// -->
 
-		<article class="card  mb-3">
-			<div class="card-body">
-				<h5 class="card-title mb-4">Recent orders </h5>
-
-				<div class="row">
-				<div class="col-md-6">
-					<figure class="itemside  mb-3">
-						<div class="aside"><img src="images/items/1.jpg" class="border img-sm"></div>
-						<figcaption class="info">
-							<time class="text-muted"><i class="fa fa-calendar-alt"></i> 12.09.2019</time>
-							<p>Great item name goes here </p>
-							<span class="text-warning">Pending</span>
-						</figcaption>
-					</figure>
-				</div> <!-- col.// -->
-				<div class="col-md-6">
-					<figure class="itemside  mb-3">
-						<div class="aside"><img src="images/items/2.jpg" class="border img-sm"></div>
-						<figcaption class="info">
-							<time class="text-muted"><i class="fa fa-calendar-alt"></i> 12.09.2019</time>
-							<p>Machine for kitchen to blend </p>
-							<span class="text-success">Departured</span>
-						</figcaption>
-					</figure>
-				</div> <!-- col.// -->
-				<div class="col-md-6">
-					<figure class="itemside mb-3">
-						<div class="aside"><img src="images/items/3.jpg" class="border img-sm"></div>
-						<figcaption class="info">
-							<time class="text-muted"><i class="fa fa-calendar-alt"></i> 12.09.2019</time>
-							<p>Ladies bag original leather </p>
-							<span class="text-success">Shipped  </span>
-						</figcaption>
-					</figure>
-				</div> <!-- col.// -->
-			</div> <!-- row.// -->
-
-			<a href="#" class="btn btn-outline-primary"> See all orders  </a>
-			</div> <!-- card-body .// -->
-		</article> <!-- card.// -->
+		<div class="slider-items-owl owl-carousel owl-theme" style="margin-left:2em;">
+                    {% for course, tutor in coursearray.items() %}
+                    <div class="item-slide">
+                        <figure class="card card-product-grid" style="width: 18rem;">
+                            <img class="card-img-top" src="static/images/coursethumbnails/{{courses.course_thumbnail}}"height="140" width="240">
+                            <div class="widget-header">
+                                    <a href="#" class="ml-3 icontext" data-toggle="dropdown" data-offset="20,10">
+                                        <div class="icon"><img class="icon icon-xs rounded-circle" src=/static/images/profilepictures/{{ tutor.get_user_profile_pic() }}></div>
+                                        <div class="text">
+                                            <small class="text-muted">{{ tutor.get_username() }}</small> <br>
+                                        </div>
+                                    </a>
+                            </div>
+                            <figcaption class="info-wrap">
+                                <h4 class="title"><a href="{{url_for('recentcourse', course_id = courses.course_id)}}">{{ course.course_title }}</a></h4>
+                                <p class="text-muted">{{ course.short_description }}</p>
+                                <br>
+                                <h5>${{ course.hourlyrate }}/Hour</h5>
+                            </figcaption>
+                        </figure> <!-- card // -->
+                    </div>
+                    {% endfor %}
+                </div>
 
 	</main> <!-- col.// -->
 </div>

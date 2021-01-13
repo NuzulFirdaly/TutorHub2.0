@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session,jsonify
+from flask import *
 from Forms import *
 from Models import *
 import shelve
@@ -33,6 +33,13 @@ def Login():
                     session['user_id'] = user.get_user_id()
                     session['name'] = user.get_user_fullname()
                     session['profile_pic'] = user.get_user_profile_pic()
+                    session['email'] = user.get_user_email()
+                    session['username'] = user.get_username()
+                    session['firstname'] = user.get_user_firstname()
+                    session['lastname'] = user.get_user_lastname()
+                    session['description'] = user.get_user_description()
+                    session['language'] = user.get_user_language()
+                    session['proficiency'] = user.get_user_language_proficiency()
                     session['loggedin'] = True
                     db.close()
                     #making session['verifying'] by checking if user is inside pendingtutor.db
@@ -269,27 +276,46 @@ def profilemain():
     else:
         db = shelve.open('databases/user.db', 'r')
         userObj = db[session['user_id']]
-        session['email'] = userObj.get_user_email()
-        session['username'] = userObj.get_username()
-        session['firstname'] = userObj.get_user_firstname()
-        session['lastname'] = userObj.get_user_lastname()
-        session['profile_pic'] = userObj.get_user_profile_pic()
         db.close()
         return render_template("profile/profile_main.html")
 
 @app.route('/profile/profile_edit', methods=['GET', 'POST'])
 def profileedit():
-    db = shelve.open('databases/user.db', 'w')
+    db = shelve.open('databases/user.db', 'r')
     userObj = db[session['user_id']]
+    db.close()
     if session.get('loggedin') != True:
         return redirect(url_for("home"))
     else:
         form = ProfileEditForm(request.form)
+        form.description.data = session['description']
+        form.language.data = session['language']
+        form.proficiency.data = session['proficiency']
         if request.method == 'POST' and form.validate():
             print("posting")
             username = request.form['username']
-            userObj.set_username(username)
+            userObj.set_user_username(username)
             session['username'] = username
+
+            firstname = request.form['firstname']
+            userObj.set_user_firstname(firstname)
+            session['firstname'] = firstname
+
+            lastname = request.form['lastname']
+            userObj.set_user_lastname(lastname)
+            session['lastname'] = lastname
+
+            description = request.form['description']
+            userObj.set_user_description(description)
+            session['description'] = description
+
+            language = request.form['language']
+            userObj.set_user_language(language)
+            session['language'] = language
+
+            proficiency = request.form['proficiency']
+            userObj.set_user_language_proficiency(proficiency)
+            session['proficiency'] = proficiency
 
             if request.files['image'].filename != "":
                 image = request.files["image"]  # our name attribute inside our input form field.  this will return a file object in this case should be image/png
@@ -305,8 +331,52 @@ def profileedit():
                     db = shelve.open('databases/user.db', 'r')
                     userObj = db[session['user_id']]
                     userObj.set_user_profile_pic(profile_pic)
-        db.close()
-        return render_template('profile/profile_edit.html', form=form)
+                    db.close()
+
+            db = shelve.open('databases/user.db', 'w')
+            db[session['user_id']] = userObj
+            db.close()
+            flash('Changes Saved')
+            return(redirect(url_for('profileedit')))
+
+    return render_template('profile/profile_edit.html', form=form)
+
+@app.route('/profile/recent<course_id>', methods=['GET', 'POST'])
+def recentcourses(course_id):
+    db = shelve.open('databases/user.db','w')
+    userObj = db[session['user_id']]
+    recent = userObj.get_user_recent()
+    if course_id not in recent:
+        if len(recent) <= 9:
+            recent.append(course_id)
+        else:
+            recent.pop(0)
+            recent.append(course_id)
+    else:
+        if course_id != recent[-1]:
+            recent.remove(course_id)
+            recent.append(course_id)
+
+    userObj.set_user_recent(recent)
+    db[session['user_id']] = userObj
+    db.close()
+
+    coursedb = shelve.open('databases/courses.db', 'r')
+    userdb = shelve.open('databases/user.db', 'r')
+    recent.reverse()
+    recentcourse = {}
+
+    for id in recent:
+        recentcourse[coursedb[id]] = userdb[coursedb[id].tutor]
+
+    coursedb.close()
+    userdb.close()
+
+    return render_template('profile/profile_main.html', coursearray=recentcourse)
+
+
+
+
 
 categories = {'GRAPHICS & DESIGN':['LOGO DESIGN','BRAND STYLE GUIDES','GAME ART','RESUME DESIGN'],
               'DIGITAL MARKETING':['SOCIAL MEDIA ADVERTISING','SEO','PODCAST MARKETING','SURVEY','WEB TRAFFIC'],
