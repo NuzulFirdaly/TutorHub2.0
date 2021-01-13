@@ -11,7 +11,8 @@ class CreateUserForm(Form):
     username = StringField('Username', [validators.Length(min=8
                                                           ), validators.DataRequired()])
     password = PasswordField('Password', [validators.Length(min=8
-                                                            ), validators.DataRequired()])
+                                                            ), validators.DataRequired(),
+                                          EqualTo('confirm', message='Passwords must match')])
     confirm = PasswordField('Confirm Password', [validators.DataRequired()])
 
 class LoginForm(Form):
@@ -45,11 +46,11 @@ class ProfessionalInfoForm(Form):
     nric = StringField(validators =[DataRequired(), Length(min=9,max=9), nric_check])
 
 class ProfileEditForm(Form):
-    username = StringField([validators.Length(min=8), validators.DataRequired()])
-    firstname = StringField([validators.Length(max=150), validators.DataRequired()])
-    lastname = StringField([validators.Length(min=1, max=150), validators.DataRequired()])
-    description = TextAreaField([validators.Length(min=30, max=600)])
-    language = SelectField(validators=[DataRequired()],choices = [(lang,lang) for lang in language])
+    username = StringField(validators=[Length(min=1), DataRequired()])
+    firstname = StringField(validators=[Length(max=150), DataRequired()])
+    lastname = StringField(validators=[Length(max=150), DataRequired()])
+    description = TextAreaField()
+    language = SelectField(validators=[],choices = [(lang,lang) for lang in language])
     proficiency = SelectField('Proficiency',
                               choices=[('Basic', 'Basic'), ('Conversational', 'Conversational'), ('Fluent', 'Fluent'),
                                        ('Native', 'Native/Bilingual')], render_kw={'placeholder': "proficiency"})
@@ -68,13 +69,12 @@ class CreateCourseForm(Form):
     course_title = StringField(validators=[DataRequired(), Length(max=80)])
     category = SelectField(validators=[DataRequired()],choices = [(categories,categories) for categories in categorykeys])
     subcategory = SelectField(validators=[DataRequired()], choices = [(subcategory,subcategory) for subcategory in subcategoryArr])
-    short_description = StringField(validators=[DataRequired(),Length(max=80)])
     description = TextAreaField(validators=[DataRequired()])
 
 
 class UpdateSessionForm(Form):
     session_title = StringField(validators=[DataRequired(), Length(max=30)])
-    session_description = TextAreaField(validators=[])
+    session_description = TextAreaField(validators=[length(max=150)])
     time_approx = IntegerField(validators=[DataRequired()])
 
 class AddPricingForm(Form):
