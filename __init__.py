@@ -12,8 +12,6 @@ app.config['SECRET_KEY'] = 'tutormeplease' #this is to encrypt data passing alon
 @app.route("/", methods=['GET'])
 def home():
     if session.get('istutor') == True:
-        #all courses added
-        #course categegories
         return  render_template('tutor_interface/tutorhome.html')
     else:
         return render_template('home.html')
