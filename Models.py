@@ -16,6 +16,8 @@ class User():
         self.__user_description = ""
         self.__user_language = 'English'
         self.__user_language_proficiency = 'Basic'
+        self.__user_recent = []
+        self.__user_attended = []
 
     # User_Model Accessor
     def get_user_email(self):
@@ -146,12 +148,11 @@ class Tutor(PendingTutor):
         self.courses = []
 
 class Courses():
-    def __init__(self,course_title,category,subcategory,description,tutor,short_description):
+    def __init__(self,course_title,category,subcategory,description,tutor):
         self.course_id = uuid.uuid4().hex
         self.course_title = course_title
         self.category = category
         self.subcategory = subcategory
-        self.short_description = short_description
         self.description =description
         #tutor id/ userid
         self.tutor = tutor

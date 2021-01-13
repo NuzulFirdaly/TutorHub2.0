@@ -48,10 +48,10 @@
 		            <label class="custom-control custom-checkbox"> <input type="checkbox" class="custom-control-input" checked=""> <div class="custom-control-label"> I agree with the <a href="#">terms and conditions</a>  </div> </label>
 		        </div> <!-- form-group end.// -->
 				{% if similarerror %}
-					<p  style="color:red;" class="error"><strong>Error:</strong> {{ similarerror }}
-				{% elif sameerror %}
-					<p  style="color:red;" class="error"><strong>Error:</strong> {{ sameerror }}
-				{% endif %}
+                    <p  style="color:red;" class="error"><strong>Error:</strong> {{ similarerror }}
+                {% elif sameerror %}
+                    <p  style="color:red;" class="error"><strong>Error:</strong> {{ sameerror }}
+                {% endif %}
 			</form>
 		</article><!-- card-body.// -->
     </div> <!-- card .// -->

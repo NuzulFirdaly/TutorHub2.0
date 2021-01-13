@@ -37,7 +37,22 @@ $(document).ready(function() {
 });
 // jquery end
 </script>
-<style>label{text-align:right; font-weight:bold;} h3,h4{font-family:sans-serif; font-weight:normal;}</style>
+<style>
+label
+{text-align:right;
+font-weight:bold;}
+
+h3,h4
+{font-family:sans-serif;
+font-weight:normal;}
+
+@media only screen and (max-width: 780px)
+{
+label{
+text-align:left;
+}
+}
+</style>
 </head>
 
 {% block header %}

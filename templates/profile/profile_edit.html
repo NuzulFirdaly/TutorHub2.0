@@ -6,11 +6,18 @@
 {% from "tutor_onboarding/__formhelperwithoutlabel.html" import render_field  %}
 
 <!-- ========================= SECTION CONTENT ========================= -->
-<section class="container-fluid" style="min-height:84vh; width:90%;">
+<section class="container-fluid padding-y" style="min-height:84vh; width:90%;">
 <!-- ============================ COMPONENT LOGIN   ================================= -->
 	<div class="card mx-auto">
       <div class="card-body">
-      <h2 class="card-title mb-4">Edit My Profile</h2>
+          <div class="row">
+              <div class="col">
+                  <h2 class="card-title mb-4">Edit My Profile</h2>
+              </div>
+              <div class="col">
+                  <a href="profile_main"><button class="btn btn-primary float-right">View Profile</button></a>
+              </div>
+          </div>
       <hr>
         <h4 class="text-muted">Introduction</h4>
         <h6 class="text-muted">How do you want others to know you?</h6>
@@ -52,7 +59,7 @@
           <div class="form-group form-row">
             <label class="col-md-2 col-form-label">About Me</label>
               <div class="col-md-7">
-                  {{ render_field(form.description, class="form-control", default=session['description']) }}
+                  {{ render_field(form.description, class="form-control")}}
               </div>
           </div>
           <div class="form-group form-row">
@@ -65,6 +72,18 @@
               </div>
           </div>
           <button class="btn btn-primary float-right" type="submit">Save Changes</button>
+          {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-info alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        {{message}}
+                    </div>
+
+                {% endfor %}
+
+            {% endif %}
+          {% endwith %}
 
       </form>
       </div>
