@@ -93,6 +93,9 @@ class User():
             self.get_user_lastname(), self.get_user_fullname(),
             self.get_user_language(), self.get_user_description())
 
+    def __eq__(self, other):
+        return self.__user_id == other.get_user_id()
+
 def get_user(userid):
     try:
         db = shelve.open('databases/user.db', 'r')
@@ -151,6 +154,10 @@ class Tutor(PendingTutor):
         self.reviews = {}
         self.subjects = []
         self.courses = []
+    def __str__(self):
+        return 'user_id:{} \n occupation:{} from:{} to:{} \n college:{} from {} \n major: {} year:{} \n cert file:{} \n dob:{} nric:{} \n certified? {}'.format(
+            self.user_id, self.occupation, self.fromyear, self.toyear, self.college_name, self.college_country,
+            self.major, self.year, self.certificate, self.dob, self.nric, self.__certified)
 
 class Courses():
     def __init__(self,course_title,category,subcategory,description,tutor,short_description):
@@ -164,7 +171,7 @@ class Courses():
         self.tutor = tutor
         self.course_thumbnail = "default.jpg"
         self.sessions = [Session()]
-        self.hourlyrate = 0
+        self.hourlyrate = 1
         self.maximumdays = 0
         self.maximumhoursperssion = 0
         self.minimumdays = 0

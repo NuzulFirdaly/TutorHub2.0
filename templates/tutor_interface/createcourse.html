@@ -2,7 +2,7 @@
 {% block title %} Create Courses {% endblock %}
 {% from "tutor_onboarding/__formhelperwithoutlabel.html" import render_field  %}
 {% block content %}
-<div class="container">
+<div class="container padding-y">
    <h1>Create Course</h1>
    <hr>
 
@@ -39,6 +39,12 @@
     </div>
     <div>
     </div>
+  </div>
+     <div class="form-group form-row">
+    <label class="col-md-3 col-form-label">Short Description</label>
+     <div class="col-9">
+         {{render_field(form.short_description, class="form-control")}}
+     </div>
   </div>
   <div class="form-group form-row">
     <label class="col-md-3 col-form-label">Description</label>

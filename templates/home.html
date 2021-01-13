@@ -2,7 +2,43 @@
 {% block title %}TutorHub - Home{% endblock %}
 
 {% block content %}
+<script type="text/javascript">
+/// some script
 
+// jquery ready start
+$(document).ready(function() {
+	// jQuery code
+
+
+    /////////////////  items slider. /plugins/owlslider/
+    if ($('.slider-items-owl').length > 0) { // check if element exists
+        $('.slider-items-owl').owlCarousel({
+        //change the loop daddy
+            loop:false,
+            margin:10,
+            nav:true,
+            autoWidth:true,
+            navText: ["<i class='fa fa-chevron-left'></i>", "<i class='fa fa-chevron-right'></i>"],
+            responsive:{
+                0:{
+                    items:1
+                },
+                640:{
+                    items:3
+                },
+                1024:{
+                    items: 4
+                }
+            }
+        })
+    } // end if
+
+
+
+
+});
+// jquery end
+</script>
 <!-- ========================= SECTION INTRO ========================= -->
 <section class="section-intro padding-y-sm">
 <div class="container">
@@ -66,95 +102,44 @@
 <div class="container">
 
 <header class="section-heading">
-	<h3 class="section-title">Popular products</h3>
+	<h3 class="section-title">Popular Courses</h3>
 </header><!-- sect-heading -->
 
 
 <div class="row">
-	<div class="col-md-3">
-		<div href="#" class="card card-product-grid">
-			<a href="#" class="img-wrap"> <img src="images/items/1.jpg"> </a>
-			<figcaption class="info-wrap">
-				<a href="#" class="title">Just another product name</a>
-
-				<div class="rating-wrap">
-					<ul class="rating-stars">
-						<li style="width:80%" class="stars-active">
-							<i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>
-						</li>
-						<li>
-							<i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>
-						</li>
-					</ul>
-					<span class="label-rating text-muted"> 34 reviws</span>
-				</div>
-				<div class="price mt-1">$179.00</div> <!-- price-wrap.// -->
-			</figcaption>
-		</div>
-	</div> <!-- col.// -->
-	<div class="col-md-3">
-		<div href="#" class="card card-product-grid">
-			<a href="#" class="img-wrap"> <img src="images/items/2.jpg"> </a>
-			<figcaption class="info-wrap">
-				<a href="#" class="title">Some item name here</a>
-
-				<div class="rating-wrap">
-					<ul class="rating-stars">
-						<li style="width:80%" class="stars-active">
-							<i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>
-						</li>
-						<li>
-							<i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>
-						</li>
-					</ul>
-					<span class="label-rating text-muted"> 34 reviws</span>
-				</div>
-				<div class="price mt-1">$280.00</div> <!-- price-wrap.// -->
-			</figcaption>
-		</div>
-	</div> <!-- col.// -->
-	<div class="col-md-3">
-		<div href="#" class="card card-product-grid">
-			<a href="#" class="img-wrap"> <img src="images/items/3.jpg"> </a>
-			<figcaption class="info-wrap">
-				<a href="#" class="title">Great product name here</a>
-
-				<div class="rating-wrap">
-					<ul class="rating-stars">
-						<li style="width:80%" class="stars-active">
-							<i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>
-						</li>
-						<li>
-							<i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>
-						</li>
-					</ul>
-					<span class="label-rating text-muted"> 34 reviws</span>
-				</div>
-				<div class="price mt-1">$56.00</div> <!-- price-wrap.// -->
-			</figcaption>
-		</div>
-	</div> <!-- col.// -->
-	<div class="col-md-3">
-		<div href="#" class="card card-product-grid">
-			<a href="#" class="img-wrap"> <img src="images/items/4.jpg"> </a>
-			<figcaption class="info-wrap">
-				<a href="#" class="title">Just another product name</a>
-
-				<div class="rating-wrap">
-					<ul class="rating-stars">
-						<li style="width:80%" class="stars-active">
-							<i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>
-						</li>
-						<li>
-							<i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>
-						</li>
-					</ul>
-					<span class="label-rating text-muted"> 34 reviws</span>
-				</div>
-				<div class="price mt-1">$179.00</div> <!-- price-wrap.// -->
-			</figcaption>
-		</div>
-	</div> <!-- col.// -->
+	<div class="slider-items-owl owl-carousel owl-theme">
+	{% set count = namespace(value=0) %}
+		{% for courses in course_array %}
+			{% if count.value<6 %}
+					<div class="item-slide">
+                        <figure class="card card-product-grid" style="height:450px; width:390px;">
+                            <div class="img-wrap" >
+                                <img src="static/images/coursethumbnails/{{courses.course_thumbnail}}"height="140" width="240">
+                            </div>
+                            <div class="widget-header">
+                                    <a href="#" class="ml-3 icontext" data-toggle="dropdown" data-offset="20,10">
+										{% for tutors in userobjectarray %}
+											{% if tutors.get_user_id() == courses.tutor %}
+												<div class="icon"><img class="icon icon-xs rounded-circle" src=/static/images/profilepictures/{{tutors.get_user_profile_pic()}}></div>
+												<div class="text">
+													<small class="text-muted">{{tutors.get_username()}}</small> <br>
+												</div>
+											{% endif %}
+										{% endfor %}
+                                    </a>
+                            </div>
+                            <figcaption class="info-wrap">
+                                <h4 class="title" style="height:58px"><a href="{{url_for('viewcourse', course_id = courses.course_id)}}">{{courses.course_title}}</a></h4>
+                                <p class="text-muted"style="width:208px; height:58px">{{courses.short_description}}</p>
+                                <br>
+                                <h5>${{courses.hourlyrate}}/Hour</h5>
+                            </figcaption>
+                        </figure> <!-- card // -->
+                    </div>
+				{% set count.value = count.value + 1 %}
+			{% endif %}
+	{% endfor %}
+	</div>
 </div> <!-- row.// -->
 
 </div> <!-- container .//  -->

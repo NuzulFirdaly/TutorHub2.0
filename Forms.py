@@ -11,8 +11,7 @@ class CreateUserForm(Form):
     username = StringField('Username', [validators.Length(min=8
                                                           ), validators.DataRequired()])
     password = PasswordField('Password', [validators.Length(min=8
-                                                            ), validators.DataRequired(),
-                                          EqualTo('confirm', message='Passwords must match')])
+                                                            ), validators.DataRequired()])
     confirm = PasswordField('Confirm Password', [validators.DataRequired()])
 
 class LoginForm(Form):
@@ -46,14 +45,11 @@ class ProfessionalInfoForm(Form):
     nric = StringField(validators =[DataRequired(), Length(min=9,max=9), nric_check])
 
 class ProfileEditForm(Form):
-    username = StringField(validators=[Length(min=1), DataRequired()])
-    firstname = StringField(validators=[Length(max=150), DataRequired()])
-    lastname = StringField(validators=[Length(max=150), DataRequired()])
-    description = TextAreaField()
-    language = SelectField(validators=[],choices = [(lang,lang) for lang in language])
-    proficiency = SelectField('Proficiency',
-                              choices=[('Basic', 'Basic'), ('Conversational', 'Conversational'), ('Fluent', 'Fluent'),
-                                       ('Native', 'Native/Bilingual')], render_kw={'placeholder': "proficiency"})
+    username = StringField('Username', [validators.Length(min=8), validators.DataRequired()])
+    first_name = StringField("First Name", [validators.Length(max=150), validators.DataRequired()])
+    last_name = StringField([validators.Length(min=1, max=150), validators.DataRequired()])
+    description = TextAreaField([validators.Length(min=30, max=600)])
+    language = SelectField(validators=[DataRequired()],choices = [(lang,lang) for lang in language])
 
 categorykeys = ['GRAPHICS & DESIGN','DIGITAL MARKETING','WRITING & TRANSLATION','PROGRAMMING & TECH']
 categories = {'GRAPHICS & DESIGN':['LOGO DESIGN','BRAND STYLE GUIDES','GAME ART','RESUME DESIGN'],
@@ -69,12 +65,13 @@ class CreateCourseForm(Form):
     course_title = StringField(validators=[DataRequired(), Length(max=80)])
     category = SelectField(validators=[DataRequired()],choices = [(categories,categories) for categories in categorykeys])
     subcategory = SelectField(validators=[DataRequired()], choices = [(subcategory,subcategory) for subcategory in subcategoryArr])
+    short_description = StringField(validators=[DataRequired(),Length(max=80)])
     description = TextAreaField(validators=[DataRequired()])
 
 
 class UpdateSessionForm(Form):
     session_title = StringField(validators=[DataRequired(), Length(max=30)])
-    session_description = TextAreaField(validators=[length(max=150)])
+    session_description = TextAreaField(validators=[])
     time_approx = IntegerField(validators=[DataRequired()])
 
 class AddPricingForm(Form):
@@ -82,3 +79,6 @@ class AddPricingForm(Form):
     maximumhourspersession = IntegerField(validators=[DataRequired()])
     minimumdays = IntegerField(validators=[DataRequired()])
     maximumdays = IntegerField(validators=[DataRequired()])
+
+for subcategory in subcategoryArr:
+    print(subcategory)

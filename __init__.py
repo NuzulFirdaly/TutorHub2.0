@@ -12,9 +12,41 @@ app.config['SECRET_KEY'] = 'tutormeplease' #this is to encrypt data passing alon
 @app.route("/", methods=['GET'])
 def home():
     if session.get('istutor') == True:
-        return  render_template('tutor_interface/tutorhome.html')
+        course_array = []
+        coursedb = shelve.open('databases/courses.db')
+        for courses in coursedb:
+            course_array.append(coursedb[courses])
+        coursedb.close()
+        # to retrieve the tutors profile pic and username
+        userdb = shelve.open('databases/user.db')
+        userobjectarray = []
+        for courseobjects in course_array:
+            userobject = userdb[courseobjects.tutor]
+            if userobject not in userobjectarray:
+                userobjectarray.append(userobject)
+            else:
+                continue
+        userdb.close()
+        return  render_template('tutor_interface/tutorhome.html', course_array=course_array, userobjectarray=userobjectarray)
     else:
-        return render_template('home.html')
+        course_array = []
+        coursedb = shelve.open('databases/courses.db')
+        for courses in coursedb:
+            course_array.append(coursedb[courses])
+        coursedb.close()
+        # to retrieve the tutors profile pic and username
+        userdb = shelve.open('databases/user.db')
+        userobjectarray = []
+        for courseobjects in course_array:
+            userobject = userdb[courseobjects.tutor]
+            if userobject not in userobjectarray:
+                userobjectarray.append(userobject)
+            else:
+                continue
+        userdb.close()
+
+
+        return render_template('home.html', course_array=course_array, userobjectarray=userobjectarray)
 @app.route('/login', methods=['GET', 'POST'])
 def Login():
     if session.get('loggedin') == True:
@@ -568,7 +600,6 @@ def mycourses():
         for course_id in tutorobject.courses:
             coursesarray.append(coursedb[course_id])
         coursedb.close()
-
         return render_template('tutor_interface/mycourses.html', userobject=userobject,coursesarray=coursesarray)
     else:
         pass
@@ -584,6 +615,7 @@ def updatecourse(course_id):
 @app.route('/editcourse/<course_id>',methods=['GET','POST'])
 def editcourse(course_id):
     form = CreateCourseForm(request.form)
+    form.subcategory.choices = [(subcategory,subcategory) for subcategory in subcategoryArr]
     coursedb = shelve.open('databases/courses.db')
     courseobject = coursedb[course_id]
     coursedb.close()
@@ -596,6 +628,7 @@ def editcourse(course_id):
         course_title = request.form['course_title']
         category = request.form['category']
         subcategory = request.form['subcategory']
+        print("trying to post this subcategory data")
         short_description = request.form['short_description']
         description = request.form['description']
         courseobject.course_title = course_title
@@ -726,6 +759,15 @@ def deletecourse(course_id):
     coursedb.close()
     # removing the session the users wants to delete
     return redirect(url_for("mycourses"))
+@app.route('/viewcourse/<course_id>', methods=['GET','POST'])
+def viewcourse(course_id):
+    if session.get('istutor') == True:
+        pass
+    else:
+        coursedb = shelve.open('databases/courses.db')
+        courseobject = coursedb[course_id]
+        coursedb.close()
+        return render_template('viewcourse.html',courseobject=courseobject)
 @app.route("/InstitutionAdmin/AllInstitutions")
 def AllInstitutions():
     return render_template('InstitutionAdmin/AllInstitutions.html')

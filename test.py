@@ -16,7 +16,7 @@ def auto_certify_all():
             #certifying all users in our pending tutor.db
             certified_user = make_certified(db[users])
             userobject = userdb[db[users].user_id]
-            print(f"=========== Certifying =================\n {userobject.get_username()}\n {certified_user}")
+            print(f"=========== Pending DB Certifying =================\n {userobject.get_username()}\n {certified_user}")
             #posting back to db
             db[certified_user.user_id] = certified_user
         db.close()
@@ -40,6 +40,7 @@ def move_tutors():
                 certified_tutor_object = Tutor(db[users])
                 certified_tutor_object.update_certified()
                 tutordb[certified_tutor_object.user_id] = certified_tutor_object
+                print("This is the just assigned tutor \n",certified_tutor_object.user_id)
                 #hmm for some reason since i use inheritance, and the pending tutor object always initialize __certified as false,
                 # when we make our Tutor object, it will also initialize .__certified as false even if in pending tutor the attribute was changed to true.
                 #Aiya, i'll just do a update_certified() on the tutor object again. sry m'lords
@@ -82,7 +83,7 @@ def generate_stuff():
     #    def __init__(self, user_id, occupation,fromyear,toyear,college_country,college_name,major, year ,dob,nric):
 
     pendingdb = shelve.open('databases/pendingtutor.db')
-    p1 = PendingTutor(user2.get_user_id(),'Student',2020,2023,'Singapore','Nanyang Polytechnic','Diploma in Information technology','2023','2003-12-02','T03009F')
+    p1 = PendingTutor(user2.get_user_id(),'Student',2020,2023,'Singapore','Nanyang Polytechnic','Diploma in Information technology','2023','2003-12-02','T0137009F')
     pendingdb[p1.user_id] = p1
     pendingdb.close()
 
@@ -90,6 +91,51 @@ def generate_stuff():
     auto_certify_all()
     #moving tutor
     move_tutors()
+    coursesdb = shelve.open("databases/courses.db")
+    #  (self,course_title,category,subcategory,description,tutor,short_description):
+    # self.hourlyrate = 0
+    # self.maximumdays = 0
+    # self.maximumhoursperssion = 0
+    # self.minimumdays = 0
+
+    # categories = {'GRAPHICS & DESIGN': ['LOGO DESIGN', 'BRAND STYLE GUIDES', 'GAME ART', 'RESUME DESIGN'],
+    #               'DIGITAL MARKETING': ['SOCIAL MEDIA ADVERTISING', 'SEO', 'PODCAST MARKETING', 'SURVEY',
+    #                                     'WEB TRAFFIC'],
+    #               'WRITING & TRANSLATION': ['ARTICLES & BLOG POSTS'],
+    #               'PROGRAMMING & TECH': ['WEB PROGRAMMING', 'E-COMMERCE DEVELOPMENT', 'MOBILE APPLS',
+    #                                      'DESKTOP APPLICATIONS', 'DATABASES', 'USER TESTING']
+    #               }
+    c1 = Courses('Flask App Development','PROGRAMMING & TECH', 'WEB PPROGRAMMING', 'Blah Blah Blah Blah', p1.user_id, "Developing an application using Flask")
+    c2 = Courses('NodeJS App Development','PROGRAMMING & TECH', 'WEB PPROGRAMMING', 'Blah Blah Blah Blah', p1.user_id, "Developing an application using NodeJS")
+    c3 = Courses('SQL 101','PROGRAMMING & TECH', 'DATABASES', 'Blah Blah Blah Blah', p1.user_id, "Learning the basics of SQL")
+    c4 = Courses('User Research Methods', 'PROGRAMMING & TECH', 'USER TESTING', 'Blah Blah Blah Blah', p1.user_id,"Understanding User Researching Methods")
+
+    coursesdb[c1.course_id] = c1
+    coursesdb[c2.course_id] = c2
+    coursesdb[c3.course_id] = c3
+    coursesdb[c4.course_id] = c4
+    coursesdb.close()
+
+    #pending the courseid to the tutor courselist
+
+    #theres a key error because when i move tutor from pending to the tutordb, they used a new user_id(since the inheritance reruns the intialization and creates a new user_id
+    # to solve this issue, i believe
+    #Why is the for loop for tutors not printing the objet's string method???
+    tutordb = shelve.open('databases/tutor.db')
+    print('These are the tutors IDs ')
+    for tutors in tutordb:
+        print(tutors)
+    tutorobject = tutordb[p1.user_id]
+    tutorobject.courses.append(c1.course_id)
+    tutorobject.courses.append(c2.course_id)
+    tutorobject.courses.append(c3.course_id)
+    tutorobject.courses.append(c4.course_id)
+    tutordb[p1.user_id] = tutorobject
+    tutordb.close()
+
+
+
+
 def delete_pending():
     db = shelve.open('databases/pendingtutor.db')
     db.clear()
@@ -116,5 +162,5 @@ def delete_specific_course_from_tutor(user_id,course_id):
     tutordb[user_id] = tutorobject
     tutordb.close()
 
-# delete_everything()
-# generate_stuff()
+delete_everything()
+generate_stuff()
