@@ -308,8 +308,20 @@ def profilemain():
     else:
         db = shelve.open('databases/user.db', 'r')
         userObj = db[session['user_id']]
+        recent = userObj.get_user_recent()
         db.close()
-        return render_template("profile/profile_main.html")
+
+        coursedb = shelve.open('databases/courses.db', 'r')
+        userdb = shelve.open('databases/user.db', 'r')
+        recent.reverse()
+        recentcourse = {}
+
+        for id in recent:
+            recentcourse[coursedb[id]] = userdb[coursedb[id].tutor]
+
+        coursedb.close()
+        userdb.close()
+        return render_template("profile/profile_main.html", coursearray=recentcourse)
 
 @app.route('/profile/profile_edit', methods=['GET', 'POST'])
 def profileedit():
@@ -372,43 +384,6 @@ def profileedit():
             return(redirect(url_for('profileedit')))
 
     return render_template('profile/profile_edit.html', form=form)
-
-@app.route('/profile/recent/<course_id>', methods=['GET', 'POST'])
-def recentcourses(course_id):
-    db = shelve.open('databases/user.db','w')
-    userObj = db[session['user_id']]
-    recent = userObj.get_user_recent()
-    if course_id not in recent:
-        if len(recent) <= 9:
-            recent.append(course_id)
-        else:
-            recent.pop(0)
-            recent.append(course_id)
-    else:
-        if course_id != recent[-1]:
-            recent.remove(course_id)
-            recent.append(course_id)
-
-    userObj.set_user_recent(recent)
-    db[session['user_id']] = userObj
-    db.close()
-
-    coursedb = shelve.open('databases/courses.db', 'r')
-    userdb = shelve.open('databases/user.db', 'r')
-    recent.reverse()
-    recentcourse = {}
-
-    for id in recent:
-        recentcourse[coursedb[id]] = userdb[coursedb[id].tutor]
-
-    coursedb.close()
-    userdb.close()
-
-    return redirect(url_for(profilemain, coursearray=recentcourse))
-
-
-
-
 
 categories = {'GRAPHICS & DESIGN':['LOGO DESIGN','BRAND STYLE GUIDES','GAME ART','RESUME DESIGN'],
               'DIGITAL MARKETING':['SOCIAL MEDIA ADVERTISING','SEO','PODCAST MARKETING','SURVEY','WEB TRAFFIC'],
@@ -767,7 +742,26 @@ def viewcourse(course_id):
         coursedb = shelve.open('databases/courses.db')
         courseobject = coursedb[course_id]
         coursedb.close()
-        return render_template('viewcourse.html',courseobject=courseobject)
+
+        db = shelve.open('databases/user.db', 'w')
+        userObj = db[session['user_id']]
+        recent = userObj.get_user_recent()
+        if course_id not in recent:
+            if len(recent) < 9:
+                recent.append(course_id)
+            else:
+                recent.pop(0)
+                recent.append(course_id)
+        else:
+            if course_id != recent[-1]:
+                recent.remove(course_id)
+                recent.append(course_id)
+
+        userObj.set_user_recent(recent)
+        db[session['user_id']] = userObj
+        db.close()
+
+        return render_template('viewcourse.html', courseobject=courseobject)
 @app.route("/InstitutionAdmin/AllInstitutions")
 def AllInstitutions():
     return render_template('InstitutionAdmin/AllInstitutions.html')

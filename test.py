@@ -162,5 +162,5 @@ def delete_specific_course_from_tutor(user_id,course_id):
     tutordb[user_id] = tutorobject
     tutordb.close()
 
-delete_everything()
-generate_stuff()
+# delete_everything()
+# generate_stuff()
