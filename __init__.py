@@ -738,7 +738,12 @@ def deletecourse(course_id):
 def viewcourse(course_id):
     if session.get('istutor') == True:
         pass
-    else:
+    elif session.get('loggedin') != True:
+        coursedb = shelve.open('databases/courses.db')
+        courseobject = coursedb[course_id]
+        coursedb.close()
+        return render_template('viewcourse.html', courseobject=courseobject)
+    elif session.get('loggedin') == True:
         coursedb = shelve.open('databases/courses.db')
         courseobject = coursedb[course_id]
         coursedb.close()
