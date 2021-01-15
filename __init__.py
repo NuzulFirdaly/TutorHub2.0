@@ -737,24 +737,7 @@ def deletecourse(course_id):
 @app.route('/viewcourse/<course_id>', methods=['GET','POST'])
 def viewcourse(course_id):
     if session.get('istutor') == True:
-        coursedb = shelve.open('databases/courses.db')
-        courseobject = coursedb[course_id]
-        coursedb.close()
-        # retrieving tutor's userobject from course.tutor
-        userdb = shelve.open('databases/user.db')
-        userobject = userdb[courseobject.tutor]
-        userdb.close()
-        return render_template('viewcourse.html', courseobject=courseobject,userobject=userobject)
-    elif session.get('loggedin') != True:
-        coursedb = shelve.open('databases/courses.db')
-        courseobject = coursedb[course_id]
-        coursedb.close()
-        #retrieving tutor's userobject from course.tutor
-        userdb = shelve.open('databases/user.db')
-        userobject = userdb[courseobject.tutor]
-        userdb.close()
-        return render_template('viewcourse.html', courseobject=courseobject,userobject=userobject)
-
+        pass
     else:
         coursedb = shelve.open('databases/courses.db')
         courseobject = coursedb[course_id]
@@ -934,3 +917,5 @@ def editinstitution(id):
 print('please work')
 if __name__ =='__main__':
     app.run(debug=True)
+
+#JK
