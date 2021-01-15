@@ -170,5 +170,24 @@ def delete_specific_course_from_tutor(user_id,course_id):
     tutordb[user_id] = tutorobject
     tutordb.close()
 
-auto_certify_all()
-move_tutors()
+def chris_not_mine():
+    db = shelve.open('databases/PendingInstitution.db')
+    for key in db:
+        user = db.pop(key)
+        print(user)
+        print(key)
+
+    admin = Institution(user)
+    db.close()
+    db = shelve.open('databases/Institution.db')
+    db['Nanyang_Polytechnic'] = admin
+    # print(db['Nanyang_Polytechnic'])
+    admin = db['Nanyang_Polytechnic']
+    admin.set_banner(['2.jpg'])
+    admin.set_sm(['2.jpg'])
+    db['Nanyang_Polytechnic'] = admin
+    print(db['Nanyang_Polytechnic'].get_banner())
+    print(db['Nanyang_Polytechnic'].get_sm())
+    db.close()
+
+chris_not_mine()
