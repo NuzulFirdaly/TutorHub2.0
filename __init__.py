@@ -737,7 +737,24 @@ def deletecourse(course_id):
 @app.route('/viewcourse/<course_id>', methods=['GET','POST'])
 def viewcourse(course_id):
     if session.get('istutor') == True:
-        pass
+        coursedb = shelve.open('databases/courses.db')
+        courseobject = coursedb[course_id]
+        coursedb.close()
+        # retrieving tutor's userobject from course.tutor
+        userdb = shelve.open('databases/user.db')
+        userobject = userdb[courseobject.tutor]
+        userdb.close()
+        return render_template('viewcourse.html', courseobject=courseobject,userobject=userobject)
+    elif session.get('loggedin') != True:
+        coursedb = shelve.open('databases/courses.db')
+        courseobject = coursedb[course_id]
+        coursedb.close()
+        #retrieving tutor's userobject from course.tutor
+        userdb = shelve.open('databases/user.db')
+        userobject = userdb[courseobject.tutor]
+        userdb.close()
+        return render_template('viewcourse.html', courseobject=courseobject,userobject=userobject)
+
     else:
         coursedb = shelve.open('databases/courses.db')
         courseobject = coursedb[course_id]
@@ -760,8 +777,11 @@ def viewcourse(course_id):
         userObj.set_user_recent(recent)
         db[session['user_id']] = userObj
         db.close()
-
-        return render_template('viewcourse.html', courseobject=courseobject)
+        # retrieving tutor's userobject from course.tutor
+        userdb = shelve.open('databases/user.db')
+        userobject = userdb[courseobject.tutor]
+        userdb.close()
+        return render_template('viewcourse.html', courseobject=courseobject,userobject=userobject)
 @app.route("/InstitutionAdmin/AllInstitutions")
 def AllInstitutions():
     return render_template('InstitutionAdmin/AllInstitutions.html')
