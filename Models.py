@@ -194,3 +194,85 @@ class Session():
     def __str__(self):
         return '++++++++++++++++++++++++++++\n' \
                ' Session No: {} \n Title:{} \n Description: {} \n time: {}'.format(self.session_no,self.session_title,self.session_description,self.time_approx)
+#reminder for myself: documents thingy submit
+class PendingInstitution():
+    def __init__(self, institution_name, institution_address, postal_code, institution_email, website, office_no, admin_firstname, admin_lastname, admin_contact, admin_email, license):
+        self.institution_name = institution_name
+        self.institution_address = institution_address
+        self.postal_code = postal_code
+        self.institution_email = institution_email
+        self.website = website
+        self.office_no = office_no
+        self.__admin_firstname = admin_firstname
+        self.__admin_lastname = admin_lastname
+        self.__admin_contact = admin_contact
+        self.__admin_email = admin_email
+        self.__license = license
+        self.__approved = False
+
+    def set_institution_name(self, institution_name):
+        self.institution_name = institution_name
+    def set_institution_address(self, institution_address):
+        self.institution_address = institution_address
+    def set_institution_email(self, institution_email):
+        self.institution_email = institution_email
+    def set_website(self, website):
+        self.website = website
+    def set_office_no(self, office_no):
+        self.office_no = office_no
+    def set_admin_firstname(self, admin_firstname):
+        self.__admin_firstname = admin_firstname
+    def set_admin_lastname(self, admin_lastname):
+        self.__admin_lastname = admin_lastname
+    def set_admin_email(self, admin_email):
+        self.__admin_email = admin_email
+    def set_license(self, license):
+        self.license = license
+    def set_admin_contact(self, admin_contact):
+        self.__admin_contact = admin_contact
+    def set_postal_code(self, postal_code):
+        self.postal_code = postal_code
+
+    def get_postal_code(self):
+        return self.postal_code
+    def get_institution_name(self):
+        return self.institution_name
+    def get_institution_address(self):
+        return self.institution_address
+    def get_instituion_email(self):
+        return self.institution_email
+    def get_website(self):
+        return self.website
+    def get_office_no(self):
+        return self.office_no
+    def get_admin_firstname(self):
+        return self.__admin_firstname
+    def get_admin_lastname(self):
+        return self.__admin_lastname
+    def get_admin_email(self):
+        return self.__admin_email
+    def get_license(self):
+        return self.__license
+    def get_admin_contact(self):
+        return self.__admin_contact
+
+    def get_approved(self):
+        return self.__approved
+    def update_approved(self):
+        self.__approved = True
+
+class Institution(PendingInstitution):
+    def __init__(self, PendingInstitutionObj):
+        super().__init__(PendingInstitutionObj.institution_name, PendingInstitutionObj.institution_address, PendingInstitutionObj.postal_code, PendingInstitutionObj.institution_email, PendingInstitutionObj.website, PendingInstitutionObj.office_no, PendingInstitutionObj.get_admin_firstname(), PendingInstitutionObj.get_admin_lastname(), PendingInstitutionObj.get_admin_contact(), PendingInstitutionObj.get_admin_email(), PendingInstitutionObj.get_license())
+        self.__banner = ['1.jpg']
+        self.__sm = ['2.jpg']
+
+    def get_banner(self):
+        return self.__banner
+    def set_banner(self, banner):
+        self.__banner = banner
+
+    def get_sm(self):
+        return self.__sm
+    def set_sm(self, sm):
+        self.__sm = sm

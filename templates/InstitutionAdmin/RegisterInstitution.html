@@ -3,61 +3,104 @@
 
 {% block content %}
 
-{% from "components/__formhelper.html" import render_field  %}
+{% from "tutor_onboarding/__formhelperwithoutlabel.html" import render_field  %}
 <!-- ========================= SECTION CONTENT ========================= -->
-<section class="section-content padding-y">
+<section class="container-fluid" style="min-height: 84vh; width: 90%">
+  <br>
+  <!-- ==================== form content ============ -->
+  <center><h2>Institution Registration Form</h2></center>
+  <br>
+  <div class="col-md-12 text-left">
+    <p>
+      Please fill up the following details <br>
+      <strong>Do take Note:</strong> <br>
+      1. Institution Registration shall only be done with the permission of Institution Management, head of Department or the Owner.
+      <br>
+      2. Submit certificates of proof for Institution for legal purposes. Zip into one folder for all documents if any. Please name your file/zip file as <br>
+      <center>"(InstitutionName)_Registration_(DD/MM/YYYY)"
+      <br>
+      example: "Fun_Teaching_Registration_16_01_2003"</center>
+      <br><br>
+      Upon confirmation, Institution page will be automatically created along with the Administrator's Account.
+      Username and Password will be sent via email.
+    </p>
+  </div>
 
-<!-- ============================ COMPONENT REGISTER   ================================= -->
-	<div class="card mx-auto" style="max-width:520px; margin-top:40px;">
-      <article class="card-body">
-		<header class="mb-4"><h4 class="card-title">Sign up</h4></header>
-		<form method="POST" action="">
-				<div class="form-row">
-					<div class="col form-group">
-						{{ render_field(form.first_name, class="form-control") }}
-					</div> <!-- form-group end.// -->
-					<div class="col form-group">
-						{{ render_field(form.last_name, class="form-control") }}
-					</div> <!-- form-group end.// -->
-				</div> <!-- form-row end.// -->
-				<div class="form-group">
-						{{ render_field(form.username, class="form-control") }}
-						{% if usernameerror %}
-							<p  style="color:red;" class="error"><strong>Error:</strong> {{ usernameerror }}
-						{% endif %}
-				</div> <!-- form-group end.// -->
-				<div class="form-group">
-						{{ render_field(form.email, class="form-control") }}
-						{% if emailerror %}
-							<p  style="color:red;" class="error"><strong>Error:</strong> {{ emailerror }}
-						{% endif %}
-					<small class="form-text text-muted">We'll never share your email with anyone else.</small>
-				</div> <!-- form-group end.// -->
-				<div class="form-row">
-					<div class="form-group col-md-6">
-					    {{ render_field(form.password, class="form-control") }}
-					</div> <!-- form-group end.// -->
-					<div class="form-group col-md-6">
-					    {{ render_field(form.confirm, class="form-control") }}
-					</div> <!-- form-group end.// -->
-				</div>
-			    <div class="form-group">
-			        <button type="submit" value="Submit" class="btn btn-primary btn-block"> Register  </button>
-			    </div> <!-- form-group// -->
-			    <div class="form-group">
-		            <label class="custom-control custom-checkbox"> <input type="checkbox" class="custom-control-input" checked=""> <div class="custom-control-label"> I agree with the <a href="#">terms and contitions</a>  </div> </label>
-		        </div> <!-- form-group end.// -->
-				{% if similarerror %}
-					<p  style="color:red;" class="error"><strong>Error:</strong> {{ similarerror }}
-				{% endif %}
-			</form>
-		</article><!-- card-body.// -->
-    </div> <!-- card .// -->
-    <p class="text-center mt-4">Have an account? <a href="/login">Log In</a></p>
-    <br><br>
-<!-- ============================ COMPONENT REGISTER  END.// ================================= -->
+  <br>
+  <div class="card mx-auto">
+    <div class="card-body">
+      <h5 class="card-title mb-4">Institution Details</h5>
+      <form class="block-register" action="" method="POST" enctype="multipart/form-data">
+        <div class="form-group form-row">
+          <label class="col-md-2 col-form-label text-left">Name of Institution</label>
+          <div class="col-md-4">
+            {{ render_field(form.institution_name, class="form-control", placeholder="Name") }}
+          </div>
+          <label class="col-md-2 col-form-label text-left">Address of Institution</label>
+          <div class="col-md-4">
+              {{ render_field(form.institution_address, class="form-control", placeholder="Address") }}
+          </div>
+        </div>
 
+        <div class="form-group form-row">
+          <label class="col-md-2 col-form-label text-left">Postal Code</label>
+          <div class="col-md-4">
+              {{ render_field(form.postal_code, class="form-control", placeholder="PostalCode") }}
+          </div>
+          <label class="col-md-2 col-form-label text-left">Institution's Email Address</label>
+          <div class="col-md-4">
+              {{ render_field(form.institution_email, class="form-control", placeholder="Email") }}
+          </div>
+        </div>
+        <div class="form-group form-row">
+          <label class="col-md-2 col-form-label text-left">Website URL</label>
+          <div class="col-md-4">
+              {{ render_field(form.website, class="form-control", placeholder="www.website.com") }}
+          </div>
+          <label class="col-md-2 col-form-label text-left">Office No.</label>
+          <div class="col-md-4">
+              {{ render_field(form.office_no, class="form-control", placeholder="Office number") }}
+          </div>
+        </div>
+        <div class="form-group form-row">
+          <label class="col-md-2 col-form-label text-left">Submit relevant documentation here</label>
+          <input type="file" name="documents" id="documents">
+              {% if extensionerror %}
+                  <p  style="color:red;" class="error"><strong>Error:</strong> {{ extensionerror }}
+              {% endif %}
+        </div>
+        <br><br>
+        <h5 class="card-title mb-4">Administrator details</h5>
+        <div class="form-group form-row">
+          <label class="col-md-2 col-form-label text-left">First name</label>
+          <div class="col-md-4">
+              {{ render_field(form.admin_firstname, class="form-control", placeholder="first name") }}
+          </div>
+          <label class="col-md-2 col-form-label text-left">Last name</label>
+          <div class="col-md-4">
+              {{ render_field(form.admin_lastname, class="form-control", placeholder="last name") }}
+          </div>
+        </div>
+        <div class="form-group form-row">
+          <label class="col-md-2">Contact No.</label>
+          <div class="col-md-4">
+              {{ render_field(form.admin_contact, class="form-control", placeholder="contact number") }}
+          </div>
+          <label class="col-md-2">Email Address</label>
+          <div class="col-md-4">
+              {{ render_field(form.admin_email, class="form-control", placeholder="Email Address") }}
+          </div>
+        </div>
+        <button class="btn btn-primary float-right" type="submit">Submit</button>
+          {% if error %}
+            <p  style="color:red;" class="error"><strong>Error:</strong> {{ error }}
+          {% endif %}
+      </form>
+    </div>
+  </div>
 
 </section>
+
 <!-- ========================= SECTION CONTENT END// ========================= -->
+
 {% endblock %}

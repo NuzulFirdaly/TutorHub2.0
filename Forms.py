@@ -82,3 +82,22 @@ class AddPricingForm(Form):
 
 for subcategory in subcategoryArr:
     print(subcategory)
+
+
+class RegisterInstitutionForm(Form):
+    institution_name = StringField(validators=[length(min=8, max=150),DataRequired()])
+    institution_address = StringField(validators=[length(min=8, max=350),DataRequired()])
+    postal_code = StringField(validators=[length(min=6, max=6),DataRequired()])
+    institution_email = EmailField(validators=[length(min=8, max=200), DataRequired(), email()])
+    website = URLField(validators=[length(min=1, max=150),DataRequired(),url()])
+    office_no = TelField(validators=[length(min=1, max=30), DataRequired()])
+    admin_firstname = StringField(validators=[length(min=1, max=150),DataRequired()])
+    admin_lastname = StringField(validators=[length(min=1, max=150),DataRequired()])
+    admin_contact = TelField(validators=[length(min=1, max=30), validators.DataRequired()])
+    admin_email = EmailField(validators=[length(min=8, max=200),DataRequired(),email()])
+
+    #smstmst = EmailField(validators=[DataRequired()]) testing ignore this line
+
+
+class socialmediaform(Form):
+    smwebsite = URLField(validators=[length(min=1,max=150), DataRequired(),url()])

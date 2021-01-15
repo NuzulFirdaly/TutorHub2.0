@@ -777,26 +777,159 @@ def viewcourse(course_id):
         userObj.set_user_recent(recent)
         db[session['user_id']] = userObj
         db.close()
-        # retrieving tutor's userobject from course.tutor
-        userdb = shelve.open('databases/user.db')
-        userobject = userdb[courseobject.tutor]
-        userdb.close()
-        return render_template('viewcourse.html', courseobject=courseobject,userobject=userobject)
-@app.route("/InstitutionAdmin/AllInstitutions")
+
+        return render_template('viewcourse.html', courseobject=courseobject)
+#Institution User here
+@app.route("/InstitutionUser/AllInstitutions")
 def AllInstitutions():
-    return render_template('InstitutionAdmin/AllInstitutions.html')
+    return render_template('InstitutionUser/AllInstitutions.html')
 
-@app.route("/InstitutionAdmin/InstitutionPage")
+@app.route("/InstitutionUser/InstitutionPage")
 def InstitutionPage():
-    return render_template('InstitutionAdmin/InstitutionPage.html')
+    return render_template('InstitutionUser/InstitutionPage.html')
 
-@app.route("/InstitutionAdmin/AllInstitutionCourses")
+@app.route("/InstitutionUser/AllInstitutionCourses")
 def AllInstitutionCourses():
     return render_template('InstitutionAdmin/AllInstitutionCourses.html')
 
-@app.route("/InstitutionAdmin/RegisterInstitution")
+#Instituion Admin Here
+@app.route("/InstitutionAdmin/FinishedRegistration")
+def FinishedRegistration():
+    return render_template('InstitutionAdmin/FinishedRegistration.html')
+
+app.config["LICENSE_UPLOAD"] = "static/images/InstitutionLicense" #initializiing path for future references
+
+@app.route("/InstitutionAdmin/RegisterInstitution", methods=["GET", "POST"])
 def RegisterInstitution():
-    return render_template('InstitutionAdmin/RegisterInstitution.html')
+    form = RegisterInstitutionForm(request.form)
+    if request.method == 'POST' and form.validate():
+        #print("CAN U PLS WORK")
+        institution_name = request.form['institution_name']
+        institution_address = request.form['institution_address']
+        postal_code = request.form['postal_code']
+        institution_email = request.form['institution_email']
+        website = request.form['website']
+        office_no = request.form['office_no']
+        admin_firstname = request.form['admin_firstname']
+        admin_lastname = request.form['admin_lastname']
+        admin_contact = request.form['admin_contact']
+        admin_email = request.form['admin_email']
+
+
+        if request.files['documents'].filename != "":
+            image = request.files["documents"]  # our name attribute inside our input form field.  this will return a file object in this case should be image/png
+            if not allowed_image(image.filename):
+                extensionerror = "That image extension is not allowed"
+                print(extensionerror)
+                return render_template('/InstitutionAdmin/RegisterInstitution.html', form=form, extensionerror=extensionerror)
+            else:
+                filename = secure_filename(image.filename)
+                image.save(os.path.join(app.config["LICENSE_UPLOAD"], filename))
+                License = filename
+                InstitutionObj = PendingInstitution(institution_name, institution_address, postal_code, institution_email, website, office_no, admin_firstname, admin_lastname, admin_contact, admin_email, License)
+                db = shelve.open('databases/PendingInstitution.db', 'w')
+                name = institution_name
+
+                if len(db) == 0:
+                    db[name.replace(' ','_')] = InstitutionObj
+                else:
+                    for insName in db:
+                        if insName.lower() == name.lower():
+                            error = 'This institution has been registered already'
+                            return render_template('InstitutionAdmin/RegisterInstitution.html', form=form, error=error)
+                        else:
+                            db[name.replace(' ','_')] = InstitutionObj
+
+                db.close()
+                # print(InstitutionObj)
+                # redirect
+                return redirect(url_for('FinishedRegistration'))
+
+
+    return render_template('InstitutionAdmin/RegisterInstitution.html', form=form)
+
+
+app.config["SOCIALMEDIA_UPLOAD"] = "static/images/Institutionpictures" #initializiing path for future references
+
+@app.route("/InstitutionAdmin/InstitutionPage_admin", methods=["GET", "POST"])
+def AllInstitutions_admin():
+    db = shelve.open('databases/Institution.db')
+    name = 'Nanyang_Polytechnic'
+    user = db[name]
+    bannerlist = user.get_banner()
+    smlist = user.get_sm()
+    return render_template('InstitutionAdmin/InstitutionPage_admin.html', bannerarray=bannerlist, smarray=smlist)
+
+app.config["BANNER_UPLOAD"] = "static/images/Institutionpictures/banner"
+app.config["SOCIALMEDIA_UPLOAD"] = "static/images/Institutionpictures/socialmedia"
+
+@app.route("/InstitutionAdmin/InstitutionPage_admin/<id>", methods=["GET", "POST"])
+def editinstitution(id):
+    if request.method == 'POST':
+        if id == 'addbanner':
+            # here
+            if request.files['Uploadaddbanner'].filename != "":
+                image = request.files[
+                    "Uploadaddbanner"]  # our name attribute inside our input form field.  this will return a file object in this case should be image/png
+                if not allowed_image(image.filename):
+                    extensionerror = "That image extension is not allowed"
+                    print(extensionerror)
+                    return redirect(url_for('AllInstitutions_admin',extensionerror=extensionerror))
+                else:
+                    filename = secure_filename(image.filename)
+                    image.save(os.path.join(app.config["BANNER_UPLOAD"], filename))
+                    banner = filename
+
+                    db = shelve.open('databases/Institution.db', 'w')
+                    name = 'Nanyang_Polytechnic'
+                    user = db[name]
+                    bannerlist = user.get_banner()
+                    if banner not in bannerlist:
+                        bannerlist.append(banner)
+                        user.set_banner(bannerlist)
+                        db[name] = user
+            return redirect(url_for('AllInstitutions_admin', bannerarray=bannerlist))
+
+        if id == 'deletebanner':
+            db = shelve.open('databases/Institution.db', 'w')
+            name = 'Nanyang_Polytechnic'
+            user = db[name]
+            bannerlist = user.get_banner()
+            if request.form['bannerdelete']:
+                print(request.form['bannerdelete'])
+                print(bannerlist)
+                bannerlist.remove(request.form['bannerdelete'])
+                user.set_banner(bannerlist)
+                db[name] = user
+
+            return redirect(url_for('AllInstitutions_admin', bannerarray=bannerlist))
+
+        if id == 'addsm':
+            # here
+            if request.files['uploadaddsm'].filename != "":
+                image = request.files["uploadaddsm"]  # our name attribute inside our input form field.  this will return a file object in this case should be image/png
+                if not allowed_image(image.filename):
+                    extensionerror = "That image extension is not allowed"
+                    print(extensionerror)
+                    return redirect(url_for('AllInstitutions_admin', extensionerror=extensionerror))
+                else:
+                    filename = secure_filename(image.filename)
+                    image.save(os.path.join(app.config["SOCIALMEDIA_UPLOAD"], filename))
+                    sm = filename
+
+                    db = shelve.open('databases/Institution.db', 'w')
+                    name = 'Nanyang_Polytechnic'
+                    user = db[name]
+                    smlist = user.get_sm()
+                    if sm not in smlist:
+                        smlist.append(sm)
+                        user.set_sm(smlist)
+                        db[name] = user
+            return redirect(url_for('AllInstitutions_admin', bannerarray=smlist))
+
+        if request.form['updatesocialmedia']:
+            pass
+    return redirect(url_for('AllInstitutions_admin'))
 
 print('please work')
 if __name__ =='__main__':
