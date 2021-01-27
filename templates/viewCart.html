@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block content%}
+<div>
+
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Item Name</th>
+        <th>Price</th>
+        <th>Quantity</th>
+        <th>Total Price</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for item in session['cart'] %}
+      <tr>
+        <td>{{ item }}</td>
+        <td>{{ session['cart'][item][0] }}</td>
+        <td>{{ session['cart'][item][1] }}</td>
+        <td>{{ session['cart'][item][2] }}</td>
+        <td>
+          <form action="{{url_for('deleteitem', id=item)}}" method="POST">
+            <!input type="submit" value="Delete" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete {{item}}?');">
+            <!-- Button to Open the Modal -->
+            <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#myModal_{{item}}">
+            Delete
+            </button>
+
+            <!-- The Modal -->
+            <div class="modal" id="myModal_{{item}}">
+              <div class="modal-dialog">
+                <div class="modal-content">
+
+                  <!-- Modal Header -->
+                  <div class="modal-header">
+                    <h4 class="modal-title">Delete Confirmation</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                  </div>
+
+                  <!-- Modal body -->
+                  <div class="modal-body">
+                    Are you sure you want to delete {{item}}?
+                  </div>
+
+                  <!-- Modal footer -->
+                  <div class="modal-footer">
+                    <input type="submit" value="Delete" class="btn btn-danger">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </form>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

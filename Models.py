@@ -152,6 +152,7 @@ class Tutor(PendingTutor):
         super().__init__(pending_tutor_object.user_id, pending_tutor_object.occupation, pending_tutor_object.fromyear, pending_tutor_object.toyear, pending_tutor_object.college_country, pending_tutor_object.college_name, pending_tutor_object.major, pending_tutor_object.year ,pending_tutor_object.dob, pending_tutor_object.nric)
         self.__certified = True
         self.reviews = {}
+        self.overallrating = 0
         self.subjects = []
         self.courses = []
     def __str__(self):
@@ -175,6 +176,8 @@ class Courses():
         self.maximumdays = 0
         self.maximumhoursperssion = 0
         self.minimumdays = 0
+        self.reviews = {}
+        self.overallrating = 0
     def __str__(self):
         return 'Course ID:{} \n Course Title:{} \n Category:{} Subcategory: {} \n ' \
                'Description:{} \n Tutor ID: {} ' \
@@ -265,14 +268,48 @@ class Institution(PendingInstitution):
     def __init__(self, PendingInstitutionObj):
         super().__init__(PendingInstitutionObj.institution_name, PendingInstitutionObj.institution_address, PendingInstitutionObj.postal_code, PendingInstitutionObj.institution_email, PendingInstitutionObj.website, PendingInstitutionObj.office_no, PendingInstitutionObj.get_admin_firstname(), PendingInstitutionObj.get_admin_lastname(), PendingInstitutionObj.get_admin_contact(), PendingInstitutionObj.get_admin_email(), PendingInstitutionObj.get_license())
         self.__banner = ['1.jpg']
-        self.__sm = ['2.jpg']
+        self.__smurl = {'2.jpg':'https://www.nyp.edu.sg/'}
+        self.__institutiontutor = {'2.jpg':'Mr Wilson'}
+        self.__seminar = {'2.jpg':['EAE workshop','Hi just some random text lololol','https://www.nyp.edu.sg/']}
+
 
     def get_banner(self):
         return self.__banner
     def set_banner(self, banner):
         self.__banner = banner
 
-    def get_sm(self):
-        return self.__sm
-    def set_sm(self, sm):
-        self.__sm = sm
+    def get_smurl(self):
+        return self.__smurl
+    def set_smurl(self, smurl):
+        self.__smurl = smurl
+
+    def get_institutiontutor(self):
+        return self.__institutiontutor
+    def set_institutiontutor(self, institutiontutor):
+        self.__institutiontutor = institutiontutor
+
+    def get_seminar(self):
+        return self.__seminar
+    def set_seminar(self, seminar):
+        self.__seminar = seminar
+
+class Essentials():
+    def __init__(self, name, price, picture):
+        self.__name = name
+        self.__price = price
+        self.__picture = picture
+
+    def get_name(self):
+        return self.__name
+    def set_name(self, name):
+        self.__name = name
+
+    def get_price(self):
+        return self.__price
+    def set_price(self, price):
+        self.__price = price
+
+    def get_picture(self):
+        return self.__picture
+    def set_picture(self, picture):
+        self.__picture = picture

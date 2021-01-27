@@ -73,6 +73,7 @@ def Login():
                     session['language'] = user.get_user_language()
                     session['proficiency'] = user.get_user_language_proficiency()
                     session['loggedin'] = True
+                    session['cart'] = {}
                     db.close()
                     #making session['verifying'] by checking if user is inside pendingtutor.db
                     db = shelve.open('databases/pendingtutor.db')
@@ -89,6 +90,10 @@ def Login():
                     if session['user_id'] in pendingdb:
                         session['verifying'] = True
                     pendingdb.close()
+                    # checking is user is an admin, if so they will redirect them to the admin interface
+                    Institutiondb = shelve.open('databases/Institution.db')
+                    if session['user_id'] in Institutiondb:
+                        return (url_for('InstitutionPage_admin'))
                     try:
                         if request.form['remember']:
                             session['remember'] = True
@@ -300,6 +305,126 @@ def tutor_onboarding_professional_info():
 @app.route('/tutor_onboarding/finish')
 def finish():
    return render_template('tutor_onboarding/finish.html')
+
+@app.route('/reviews/<item>/<id>', methods=['GET', 'POST'])
+def review(item, id):
+    from datetime import date
+    if session.get('loggedin') != True:
+        return redirect(url_for('home'))
+    else:
+        form = Review(request.form)
+        if form.validate():
+            rating = int(request.form['rating'])
+            comment = request.form['comment']
+            name = session['username']
+            userid = session['user_id']
+            today = date.today()
+            date = today.strftime("%b-%d-%Y")
+            if item == 'tutor':
+                tutordb = shelve.open('databases/tutor.db')
+                tutor = tutordb[id]
+                if not tutor.reviews.get(userid):
+                    tutor.overallrating += rating
+                else:
+                    tutor.overallrating -= tutor.reviews[userid][0]
+                    tutor.overallrating += rating
+                tutorreview = tutor.reviews
+                tutorreview[userid] = [rating, comment, name, date]
+                tutor.reviews = tutorreview
+                tutordb[id] = tutor
+                return redirect(url_for('viewprofile', tutorid=id))
+            elif item == 'course':
+                coursedb = shelve.open('databases/courses.db')
+                course = coursedb[id]
+                fullrating = course.overallrating
+                if not course.reviews.get(userid):
+                    fullrating += rating
+                else:
+                    fullrating -= course.reviews[userid][0]
+                    fullrating += rating
+                coursereview = course.reviews
+                coursereview[userid] = [rating, comment, name, date]
+                course.overallrating = fullrating
+                print(course.overallrating)
+                course.reviews = coursereview
+                coursedb[id] = course
+                return redirect(url_for('viewcourse', course_id=id))
+        else:
+            error = "Rating has to be between 1 and 5. Comment cannot be empty"
+            print(error)
+            return redirect(url_for('viewcourse', course_id=id))
+
+@app.route('/delete/reviews/<item>/<id>', methods=['POST', 'GET'])
+def deletereview(item, id):
+    if request.method == "POST":
+        userid = session['user_id']
+        if item == 'tutor':
+            tutordb = shelve.open('databases/tutor.db')
+            tutor = tutordb[id]
+            tutorreview = tutor.reviews
+            tutorreview.pop(userid)
+            tutordb[id] = tutor
+            return redirect(url_for('viewprofile', tutorid=id))
+        elif item == 'course':
+            coursedb = shelve.open('databases/courses.db')
+            course = coursedb[id]
+            coursereview = course.reviews
+            course.overallrating -= coursereview[userid][0]
+            print(course.overallrating)
+            coursereview.pop(userid)
+            print(coursereview)
+            course.reviews = coursereview
+            coursedb[id] = course
+            return redirect(url_for('viewcourse', course_id=id))
+    else:
+        return redirect(url_for('viewcourse', course_id=id))
+
+@app.route('/report/reviews/<item>/<id>/<uservictim>/<userreport>/<comment>', methods=['POST', 'GET'])
+def reportreview(item, id, uservictim, userreport, comment):
+    db = shelve.open('databases/report.db')
+    print(db.get(uservictim))
+    if db.get(uservictim):
+        report = db[uservictim]
+        report.append([item, id, userreport, comment])
+        db[uservictim] = report
+        print(report)
+    else:
+        db[uservictim] = []
+        report = db[uservictim]
+        report.append([item, id, userreport, comment])
+        db[uservictim] = report
+    return redirect(url_for('viewcourse', course_id=id))
+
+@app.route("/itemlisting", methods = ["POST","GET"])
+def orderitems():
+    if request.method == "POST":
+        if session.get('loggedin') != True:
+            return redirect(url_for('login'))
+        else:
+            item = request.form['add_cart'].split(',')
+            name = item[0]
+            cost = "{:.2f}".format(float(item[1]))
+            db = shelve.open('databases/itemlist.db', 'r')
+            picture = db[name].get_picture()
+            db.close()
+            if session['cart'].get(name):
+                session['cart'][name][1] += 1
+                session['cart'][name][2] = "{:.2f}".format(float(session['cart'][name][1]) * float(session['cart'][name][0]))
+            else:
+                session['cart'][name] = [cost, 1, cost, picture]
+            flash('has been added', name)
+    return render_template('itemListing.html', form=form)
+
+@app.route("/itemlisting/viewCart/<id>", methods = ["POST"])
+def deleteitem(id):
+    cart = session['cart']
+    cart.pop(id)
+    session['cart'] = cart
+    return redirect(url_for('viewCart'))
+
+@app.route("/itemlisting/viewCart", methods = ["POST","GET"])
+def viewCart():
+    return render_template('viewCart.html')
 
 @app.route('/profile/profile_main', methods=['GET', 'POST'])
 def profilemain():
@@ -734,6 +859,7 @@ def deletecourse(course_id):
     coursedb.close()
     # removing the session the users wants to delete
     return redirect(url_for("mycourses"))
+
 @app.route('/viewcourse/<course_id>', methods=['GET','POST'])
 def viewcourse(course_id):
     if session.get('istutor') == True:
@@ -744,22 +870,44 @@ def viewcourse(course_id):
         userdb = shelve.open('databases/user.db')
         userobject = userdb[courseobject.tutor]
         userdb.close()
-        return render_template('viewcourse.html', courseobject=courseobject,userobject=userobject)
+        # Rating System
+        if len(courseobject.reviews) != 0:
+            rating = round(courseobject.overallrating / len(courseobject.reviews), 1)
+        else:
+            rating = 0
+        form = Review(request.form)
+        if session['user_id'] in courseobject.reviews:
+            form.rating.data = str(courseobject.reviews[session['user_id']][0])
+            form.comment.data = courseobject.reviews[session['user_id']][1]
+            print(courseobject.reviews)
+        return render_template('viewcourse.html', courseobject=courseobject, form=form, rating=rating ,userobject=userobject)
     elif session.get('loggedin') != True:
         coursedb = shelve.open('databases/courses.db')
         courseobject = coursedb[course_id]
         coursedb.close()
-        #retrieving tutor's userobject from course.tutor
+        # retrieving tutor's userobject from course.tutor
         userdb = shelve.open('databases/user.db')
         userobject = userdb[courseobject.tutor]
         userdb.close()
-        return render_template('viewcourse.html', courseobject=courseobject,userobject=userobject)
 
+        # Rating System
+        if len(courseobject.reviews) != 0:
+            rating = round(courseobject.overallrating / len(courseobject.reviews), 1)
+        else:
+            rating = 0
+        form = Review(request.form)
+        if session['user_id'] in courseobject.reviews:
+            form.rating.data = str(courseobject.reviews[session['user_id']][0])
+            form.comment.data = courseobject.reviews[session['user_id']][1]
+            print(courseobject.reviews)
+        return render_template('viewcourse.html', courseobject=courseobject, form=form, rating=rating,  userobject=userobject)
     else:
         coursedb = shelve.open('databases/courses.db')
         courseobject = coursedb[course_id]
         coursedb.close()
-
+        userdb = shelve.open('databases/user.db')
+        userobject = userdb[courseobject.tutor]
+        userdb.close()
         db = shelve.open('databases/user.db', 'w')
         userObj = db[session['user_id']]
         recent = userObj.get_user_recent()
@@ -778,7 +926,28 @@ def viewcourse(course_id):
         db[session['user_id']] = userObj
         db.close()
 
-        return render_template('viewcourse.html', courseobject=courseobject)
+        #Rating System
+        if len(courseobject.reviews) != 0:
+            rating = round(courseobject.overallrating/len(courseobject.reviews),1)
+        else:
+            rating = 0
+        form = Review(request.form)
+        if session['user_id'] in courseobject.reviews:
+            form.rating.data = str(courseobject.reviews[session['user_id']][0])
+            form.comment.data = courseobject.reviews[session['user_id']][1]
+            print(courseobject.reviews)
+
+        return render_template('viewcourse.html', courseobject=courseobject, form=form, rating=rating ,userobject=userobject)
+eventsbro = [{'todo':'NODEJS Tutorial','date':'2021-01-25'},{'todo' : 'bruhhh', 'date':'2021-01-26' }]
+@app.route('/myschedule/<tutor_id>',methods=['GET','POST'])
+def myschedule(tutor_id):
+    events = eventsbro
+    return render_template('tutor_interface/myschedule.html',events=events)
+
+@app.route('/todo',methods=['GET','POST'])
+def todo():
+    return render_template('tutor_interface/todo_template/todo.html')
+
 #Institution User here
 @app.route("/InstitutionUser/AllInstitutions")
 def AllInstitutions():
@@ -857,20 +1026,27 @@ def AllInstitutions_admin():
     name = 'Nanyang_Polytechnic'
     user = db[name]
     bannerlist = user.get_banner()
-    smlist = user.get_sm()
-    return render_template('InstitutionAdmin/InstitutionPage_admin.html', bannerarray=bannerlist, smarray=smlist)
+    smdict = user.get_smurl()
+    print(smdict)
+    institutiontutordict = user.get_institutiontutor()
+    seminardict = user.get_seminar()
+    smform = socialmediaform(request.form)
+    insform = institutiontutorform(request.form)
+    semform = seminarsform(request.form)
+    return render_template('InstitutionAdmin/InstitutionPage_admin.html', bannerarray=bannerlist, smarray=smdict, institutetarray=institutiontutordict, seminararray=seminardict,smform=smform, insform=insform, semform=semform)
 
 app.config["BANNER_UPLOAD"] = "static/images/Institutionpictures/banner"
 app.config["SOCIALMEDIA_UPLOAD"] = "static/images/Institutionpictures/socialmedia"
+app.config["INSTITUTIONTUTOR_UPLOAD"] = "static/images/Institutionpictures/tutor"
+app.config["SEMINAR_UPLOAD"] = "static/images/Institutionpictures/seminar"
 
 @app.route("/InstitutionAdmin/InstitutionPage_admin/<id>", methods=["GET", "POST"])
 def editinstitution(id):
     if request.method == 'POST':
+        #================ CRUD FOR BANNER ===================================================
         if id == 'addbanner':
-            # here
             if request.files['Uploadaddbanner'].filename != "":
-                image = request.files[
-                    "Uploadaddbanner"]  # our name attribute inside our input form field.  this will return a file object in this case should be image/png
+                image = request.files["Uploadaddbanner"]  # our name attribute inside our input form field.  this will return a file object in this case should be image/png
                 if not allowed_image(image.filename):
                     extensionerror = "That image extension is not allowed"
                     print(extensionerror)
@@ -903,33 +1079,257 @@ def editinstitution(id):
                 db[name] = user
 
             return redirect(url_for('AllInstitutions_admin', bannerarray=bannerlist))
+        #===================== END OF CRUD FOR BANNER ==============================================
 
+        #===================== CRUD FOR SOCIAL MEDIA ===============================================
         if id == 'addsm':
             # here
-            if request.files['uploadaddsm'].filename != "":
-                image = request.files["uploadaddsm"]  # our name attribute inside our input form field.  this will return a file object in this case should be image/png
-                if not allowed_image(image.filename):
-                    extensionerror = "That image extension is not allowed"
-                    print(extensionerror)
-                    return redirect(url_for('AllInstitutions_admin', extensionerror=extensionerror))
-                else:
-                    filename = secure_filename(image.filename)
-                    image.save(os.path.join(app.config["SOCIALMEDIA_UPLOAD"], filename))
-                    sm = filename
+            form = socialmediaform(request.form)
+            if request.method == 'POST' and form.validate():
+                smwebsite = request.form['smwebsite']
+                print(smwebsite)
+                if request.files['uploadaddsm'].filename != "":
+                    image = request.files["uploadaddsm"]  # our name attribute inside our input form field.  this will return a file object in this case should be image/png
+                    if not allowed_image(image.filename):
+                        extensionerror = "That image extension is not allowed"
+                        print(extensionerror)
+                        return redirect(url_for('AllInstitutions_admin', form=form, extensionerror=extensionerror))
+                    else:
+                        filename = secure_filename(image.filename)
+                        image.save(os.path.join(app.config["SOCIALMEDIA_UPLOAD"], filename))
+                        sm = filename
 
-                    db = shelve.open('databases/Institution.db', 'w')
-                    name = 'Nanyang_Polytechnic'
-                    user = db[name]
-                    smlist = user.get_sm()
-                    if sm not in smlist:
-                        smlist.append(sm)
-                        user.set_sm(smlist)
+                        db = shelve.open('databases/Institution.db', 'w')
+                        name = 'Nanyang_Polytechnic'
+                        user = db[name]
+                        smdict = user.get_smurl()
+                        smdict[sm] = smwebsite
+                        user.set_smurl(smdict)
+                        print(smdict)
                         db[name] = user
-            return redirect(url_for('AllInstitutions_admin', bannerarray=smlist))
 
-        if request.form['updatesocialmedia']:
+                        return redirect(url_for('AllInstitutions_admin', smarray=smdict, form=form))
+
+        if id == "updatesm":
+            # here
+            db = shelve.open('databases/Institution.db', 'w')
+            name = 'Nanyang_Polytechnic'
+            user = db[name]
+            smdict = user.get_smurl()
+            form = socialmediaform(request.form)
+            if request.method == 'POST' and form.validate():
+                smwebsite = request.form['smwebsite']
+                if request.files['uploadaddsm'].filename != "": #if user uploads an image -> will update smdict[smimage] = smwebsite
+                    image = request.files["uploadaddsm"]  # our name attribute inside our input form field.  this will return a file object in this case should be image/png
+                    if not allowed_image(image.filename):
+                        extensionerror = "That image extension is not allowed"
+                        print(extensionerror)
+                        return redirect(url_for('AllInstitutions_admin', form=form, extensionerror=extensionerror))
+                    else:
+                        filename = secure_filename(image.filename)
+                        image.save(os.path.join(app.config["SOCIALMEDIA_UPLOAD"], filename))
+                        smimage = filename
+
+                        smdict[smimage] = smwebsite
+                        if request.form['smpics']:
+                            smpic = request.form['smpics']
+                            smdict.pop(smpic)
+
+                        socialmedia = smdict
+                        socialmedia[smimage] = smwebsite
+                        user.set_smurl(socialmedia)
+                        db[name] = user
+                else: #if user does not upload a file but still input edit website link
+                    #the problem is that the key is the image filename, but to update the link, will need the image filename...
+                    if request.form['smpics']:
+                        print("this is request form")
+                        print(request.form['smpics'])
+                        smpic = request.form['smpics']
+                        print(smwebsite)
+                        smdict[smpic] = smwebsite
+                        user.set_smurl(smdict)
+                        db[name] = user
+
+                return redirect(url_for('AllInstitutions_admin', smarray=smdict, form=form))
+        if id == "deletesm":
+            db = shelve.open('databases/Institution.db', 'w')
+            name = 'Nanyang_Polytechnic'
+            user = db[name]
+            smdict = user.get_smurl()
+            if request.form['smdelete']:
+                print(request.form['smdelete'])
+                print(smdict)
+                smdict.pop(request.form['smdelete'])
+                user.set_smurl(smdict)
+                db[name] = user
+
+            return redirect(url_for('AllInstitutions_admin', smarray=smdict))
+        #========================== END OF CRUD FOR SOCIAL MEDIA =========================================
+
+        #========================== CRUD FOR TUTOR =======================================================
+        if id == "addtutor":
+            # here
+            form = institutiontutorform(request.form)
+            if request.method == 'POST' and form.validate():
+                institutiontutor = request.form['institutiontutor']
+                print(institutiontutor)
+                if request.files['uploadaddtutor'].filename != "":
+                    image = request.files["uploadaddtutor"]  # our name attribute inside our input form field.  this will return a file object in this case should be image/png
+                    if not allowed_image(image.filename):
+                        extensionerror = "That image extension is not allowed"
+                        print(extensionerror)
+                        return redirect(url_for('AllInstitutions_admin', form=form, extensionerror=extensionerror))
+                    else:
+                        filename = secure_filename(image.filename)
+                        image.save(os.path.join(app.config["INSTITUTIONTUTOR_UPLOAD"], filename))
+                        institutet = filename
+
+                        db = shelve.open('databases/Institution.db', 'w')
+                        name = 'Nanyang_Polytechnic'
+                        user = db[name]
+                        institutiontutordict = user.get_institutiontutor()
+                        institutiontutordict[institutet] = institutiontutor
+                        user.set_institutiontutor(institutiontutordict)
+                        print(institutiontutordict)
+                        db[name] = user
+
+                return redirect(url_for('AllInstitutions_admin', institutetarray=institutiontutordict, form=form))
+
+        if id == "updatetutor":
+            # here
+            db = shelve.open('databases/Institution.db', 'w')
+            name = 'Nanyang_Polytechnic'
+            user = db[name]
+            institutiontutordict = user.get_institutiontutor()
+            form = institutiontutorform(request.form)
+            if request.method == 'POST' and form.validate():
+                institutiontutor = request.form['institutiontutor']
+                print(institutiontutor)
+                if request.files['uploadupdateinstitutet'].filename != "":
+                    image = request.files["uploadupdateinstitutet"]  # our name attribute inside our input form field.  this will return a file object in this case should be image/png
+                    if not allowed_image(image.filename):
+                        extensionerror = "That image extension is not allowed"
+                        print(extensionerror)
+                        return redirect(url_for('AllInstitutions_admin', form=form, extensionerror=extensionerror))
+                    else:
+                        filename = secure_filename(image.filename)
+                        image.save(os.path.join(app.config["INSTITUTIONTUTOR_UPLOAD"], filename))
+                        tutorinstit = filename
+
+                        institutiontutordict[tutorinstit] = institutiontutor
+                        if request.form['institutiontutorpics']:
+                            institutiontutorpic = request.form['institutiontutorpics']
+                            institutiontutordict.pop(institutiontutorpic)
+
+                        instittutor = institutiontutordict
+                        instittutor[tutorinstit] = institutiontutor
+                        user.set_institutiontutor(instittutor)
+                        db[name] = user
+
+            return redirect(url_for('AllInstitutions_admin', institutetarray=institutiontutordict, form=form))
+
+        if id == "deletetutor":
+            db = shelve.open('databases/Institution.db', 'w')
+            name = 'Nanyang_Polytechnic'
+            user = db[name]
+            institutiontutordict = user.get_institutiontutor()
+            if request.form['institutiontutordelete']:
+                print(request.form['institutiontutordelete'])
+                print(institutiontutordict)
+                institutiontutordict.pop(request.form['institutiontutordelete'])
+                user.set_institutiontutor(institutiontutordict)
+                db[name] = user
+
+            return redirect(url_for('AllInstitutions_admin', institutetarray=institutiontutordict))
             pass
+        #================================== END OF CRUD FOR TUTOR ==========================================
+
+        #================================== CRUD FOR TOPCOURSES ============================================
+        if id == "addtopcourses":
+            pass
+
+        if id == "updatetopcourses":
+            pass
+
+        if id == "deletetopcourses":
+            pass
+        #================================== END OF CRUD FOR TOPCOURSES =====================================
+
+        #================================== CRUD FOR SEMINARS ==============================================
+        if id == "addseminars":
+            print('hello')
+            form = seminarsform(request.form)
+            if request.method == 'POST' and form.validate():
+                print('?')
+                seminartitle = request.form['seminartitle']
+                print('!')
+                seminardescription = request.form['seminardescription']
+                seminarwebsite = request.form['seminarwebsite']
+                print(seminartitle)
+                print(seminardescription)
+                print(seminarwebsite)
+                if request.files['uploadaddseminars'].filename != "":
+                    print('yay')
+                    image = request.files["uploadaddseminars"]  # our name attribute inside our input form field.  this will return a file object in this case should be image/png
+                    if not allowed_image(image.filename):
+                        extensionerror = "That image extension is not allowed"
+                        print(extensionerror)
+                        return redirect(url_for('AllInstitutions_admin', form=form, extensionerror=extensionerror))
+                    else:
+                        print('nay')
+                        filename = secure_filename(image.filename)
+                        image.save(os.path.join(app.config["SEMINAR_UPLOAD"], filename))
+                        semin = filename
+
+                        print('why r u not working')
+                        db = shelve.open('databases/Institution.db', 'w')
+                        name = 'Nanyang_Polytechnic'
+                        user = db[name]
+                        seminardict = user.get_seminar()
+                        seminardict[semin] = [seminartitle, seminardescription, seminarwebsite]
+                        user.set_seminar(seminardict)
+                        print(seminardict)
+                        db[name] = user
+
+                return redirect(url_for('AllInstitutions_admin', seminararray=seminardict, form=form))
+
+        if id == "updateseminars":
+            pass
+
+        if id == "deleteseminars":
+            db = shelve.open('databases/Institution.db', 'w')
+            name = 'Nanyang_Polytechnic'
+            user = db[name]
+            print(user.get_smurl())
+            seminardict = user.get_seminar()
+            if request.form['seminardelete']:
+                print(request.form['seminardelete'])
+                print(seminardict)
+                seminardict.pop(request.form['seminardelete'])
+                user.set_seminar(seminardict)
+                db[name] = user
+
+            return redirect(url_for('AllInstitutions_admin', seminararray=seminardict))
+        #================================== END OF CRUD FOR SEMINARS =======================================
+
     return redirect(url_for('AllInstitutions_admin'))
+
+@app.route("/InstitutionAdmin/viewInstitutionPage", methods=["GET","POST"])
+def viewInstitutionPage():
+    db = shelve.open('databases/Institution.db')
+    name = 'Nanyang_Polytechnic'
+    print(db[name])
+    user = db[name]
+    bannerlist = user.get_banner()
+    smdict = user.get_smurl()
+    institutiontutordict = user.get_institutiontutor()
+    seminardict = user.get_seminar()
+    print(bannerlist)
+    print(smdict)
+    print(institutiontutordict)
+    print(seminardict)
+    return render_template('InstitutionAdmin/viewInstitutionPage.html', bannerarray=bannerlist, smarray=smdict, institutetarray=institutiontutordict, seminararray=seminardict)
+
 
 print('please work')
 if __name__ =='__main__':

@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "InstitutionAdmin/base.html" %}
 {% block title %}TutorHub- Home{% endblock %}
 
 {% block content %}
@@ -165,6 +165,7 @@
 								<div class="form-group form-row">
 									<div class="col-md-6">
 										<label>URL to social media:</label><br>
+										{{ render_field(smform.smwebsite, class="form-control", placeholder="urlToWebsite.com") }}
 									</div>
 								</div>
 							</div>
@@ -177,79 +178,146 @@
 				</div>
 			</form>
 			<!-- update socialmedia -->
-			<div>
-				<!-- Button trigger modal -->
-				<button type="button" class="btn btn-sm btn-primary float-right ml-2" data-toggle="modal" data-target="#updatesocialmedia">
-					Update social media
-				</button>
+			<form action="{{url_for('editinstitution', id='updatesm')}}" method="POST" enctype="multipart/form-data">
+				<div>
+					<!-- Button trigger modal -->
+					<button type="button" class="btn btn-sm btn-primary float-right ml-2" data-toggle="modal" data-target="#updatesocialmedia">
+						Update social media details
+					</button>
 
-				<!-- Modal -->
-				<div class="modal fade " id="updatesocialmedia" tabindex="-1" role="dialog" aria-labelledby="updatesocialmedialabel" aria-hidden="true">
-					<div class="modal-dialog " role="document">
-						<div class="modal-content">
-							<div class="modal-header">
-								<h5 class="modal-title" id="updatesocialmedialabel">Update socialmedia</h5>
-								<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-									<span aria-hidden="true">&times;</span>
-								</button>
-							</div>
-							<div class="modal-body">
-								...
-							</div>
-							<div class="modal-footer">
-								<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-								<button type="button" class="btn btn-primary">Save changes</button>
+					<!-- Modal -->
+					<div class="modal fade" id="updatesocialmedia" tabindex="-1" role="dialog" aria-labelledby="updatesocialmedialabel" aria-hidden="false">
+						<div class="modal-dialog " role="document">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="updatesocialmedialabel">Update Social Media</h5>
+									<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+										<span aria-hidden="true">&times;</span>
+									</button>
+								</div>
+								<div class="modal-body">
+									<label>Choose the social media you wish to update</label>
+									<br>
+									{% set count = namespace(value=0) %}
+									{% for smpic in smarray %}
+										{% set count.value = count.value + 1 %}
+										<label class="col-md-7">Image {{ count.value }}</label>
+										<br>
+										<div class="form-group form-row">
+											<br>
+											<img class="img-md rounded-circle mx-auto" src="../static/images/Institutionpictures/socialmedia/{{smpic}}">
+										</div>
+										<div class="form-group form-row">
+											<p> <a href="#" data-toggle="modal" class="btn btn-primary mx-auto button" data-target="#upload-avatar{{count.value}}"><span class="col-md-1">update</span></a>
+										</div>
+										<br><br>
+									{% endfor %}
+								</div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+									<button type="button" class="btn btn-primary">Save changes</button>
+								</div>
 							</div>
 						</div>
 					</div>
+					{% set count = namespace(value=0) %}
+					{% for smpic in smarray %}
+						{% set count.value = count.value + 1 %}
+						<!-- second model-->
+						<div class="modal fade" id="upload-avatar{{count.value}}" tabindex="-1" role="dialog" aria-labelledby="upload-avatar-title" aria-hidden="true">
+							<div class="modal-dialog">
+								<div class="modal-content">
+									<div class="modal-header">
+										<h4 class="modal-title" id="upload-avatar-title">Update Image {{count.value}}</h4>
+										<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+									</div>
+									<div class="modal-body">
+										<div class="form-group form-row">
+											<div class="col-md-8">
+												<label for="smpictureimage">Edit any of the following</label><br>
+												<div>
+													<img id="smpictureimage" src="../static/images/Institutionpictures/socialmedia/{{smpic}}" alt="your image" class="float-right img-sm rounded-circle"/>
+												</div>
+												<input type='file' onchange="readURL(this);" class="float-left" name="uploadaddsm" value="uploadaddsm"/>
+												{% if extensionerror %}
+													<p  style="color:red;" class="error"><strong>Error:</strong> {{ extensionerror }}
+												{% endif %}
+											</div>
+										</div>
+										<div class="form-group form-row">
+											<div class="col-md-6">
+												<label>URL to social media:</label><br>
+												{{ render_field(smform.smwebsite, class="form-control", value=smarray[smpic]) }}
+											</div>
+										</div>
+									</div>
+									<div class="modal-footer">
+										<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+										<button type="submit" class="btn btn-primary" name="smpics" value="{{smpic}}">Upload</button>
+									</div>
+								</div><!-- /.modal-content -->
+							</div><!-- /.modal-dialog -->
+						</div>
+						<div id="push"></div>
+					{% endfor %}
 				</div>
-			</div>
+			</form>
 			<!-- delete socialmedia -->
-			<div>
-				<!-- Button trigger modal -->
-				<button type="button" class="btn btn-sm btn-primary float-right ml-2" data-toggle="modal" data-target="#deletesocialmedia">
-					Delete social media
-				</button>
+			<form action="{{url_for('editinstitution', id='deletesm')}}" method="POST" enctype="multipart/form-data">
+				<div>
+					<!-- Button trigger modal -->
+					<button type="button" class="btn btn-sm btn-primary float-right ml-2" data-toggle="modal" data-target="#deletesocialmedia" name="deletesm" value="deletesm">
+						Delete social media
+					</button>
 
-				<!-- Modal -->
-				<div class="modal fade" id="deletesocialmedia" tabindex="-1" role="dialog" aria-labelledby="deletesocialmedialabel" aria-hidden="true">
-					<div class="modal-dialog" role="document">
-						<div class="modal-content">
-							<div class="modal-header">
-								<h5 class="modal-title" id="deletesocialmedialabel">Delete socialmedia</h5>
-								<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-									<span aria-hidden="true">&times;</span>
-								</button>
-							</div>
-							<div class="modal-body">
-								...
-							</div>
-							<div class="modal-footer">
-								<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-								<button type="button" class="btn btn-primary">Save changes</button>
+					<!-- Modal -->
+					<div class="modal fade" id="deletesocialmedia" tabindex="-1" role="dialog" aria-labelledby="deletesocialmedialabel" aria-hidden="true">
+						<div class="modal-dialog" role="document">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="deletesocialmedialabel">Delete socialmedia</h5>
+									<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+										<span aria-hidden="true">&times;</span>
+									</button>
+								</div>
+								<div class="modal-body">
+									<label>Choose the social media you wish to delete.</label><br>
+									{% for smpic in smarray %}
+										{% set count.value = count.value + 1 %}
+										<label class="col-md-7">Image{{ count.value }}</label>
+										<div class="form-group form-row">
+											<img class="img-md rounded-circle mx-auto" src="../static/images/Institutionpictures/socialmedia/{{smpic}}">
+										</div>
+										<div class="form-group form-row">
+											<button class="btn btn-primary mx-auto" type="submit" name="smdelete" value="{{smpic}}"><span class="col-md-1">Delete</span></button>
+										</div>
+										<br><br>
+									{% endfor %}
+								</div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+									<button type="button" class="btn btn-primary">Save changes</button>
+								</div>
 							</div>
 						</div>
 					</div>
 				</div>
-			</div>
+			</form>
 			<!-- end of modal -->
 			<br><br>
 			<center>
 				{% if smarray %}
 				<div class="d-flex justify-content-center">
-					<ul class="list-inline media-body">
-						{% set count = namespace(value=0) %}
+					<ul>
+<!--					<ul class="list-inline media-body">-->
+<!--						<div class="list-inline-item">-->
+<!--									<a href="https://www.nyp.edu.sg/"><img class="d-block img-sm rounded-circle" src="../static/images/Institutionpictures/socialmedia/2.jpg"></a>-->
+<!--								</div>-->
 						{% for smpic in smarray %}
-							{% if count.value == 0 %}
-								{% set count.value = count.value + 1 %}
-								<div class="list-inline-item">
-									<img class="d-block img-sm rounded-circle" src="../static/images/Institutionpictures/socialmedia/{{smpic}}">
-								</div>
-							{% else %}
-								<div class="list-inline-item">
-									<img class="d-block img-sm rounded-circle" src="../static/images/Institutionpictures/socialmedia/{{smpic}}">
-								</div>
-							{% endif %}
+					    {% set count.value = count.value + 1 %}
+								<li class="list-inline-item">
+									<a href="{{smarray[smpic]}}"><img class="d-block img-sm rounded-circle" src="../static/images/Institutionpictures/socialmedia/{{smpic}}"></a>
+								</li>
 						{% endfor %}
 					</ul>
 				</div>
@@ -262,91 +330,181 @@
 	<!-- ========================= SECTION  ========================= -->
 	<section class="container-fluid" style="min-height: 20vh; width: 90%">
 		<!-- add tutor -->
-		<div>
-			<!-- Button trigger modal -->
-			<button type="button" class="btn btn-sm btn-primary float-right ml-2" data-toggle="modal" data-target="#addtutor">
-			  Add
-			</button>
+		<form action="{{url_for('editinstitution', id='addtutor')}}" method="POST" enctype="multipart/form-data">
+			<div>
+				<!-- Button trigger modal -->
+				<button type="button" class="btn btn-sm btn-primary float-right ml-2" data-toggle="modal" data-target="#tutadd" name="addtutor" value="addtutor">
+				  Add Tutor
+				</button>
 
-			<!-- Modal -->
-			<div class="modal fade" id="addtutor" tabindex="-1" role="dialog" aria-labelledby="addtutorlabel" aria-hidden="true">
-				<div class="modal-dialog" role="document">
-					<div class="modal-content">
-						<div class="modal-header">
-							<h5 class="modal-title" id="addtutorlabel">Add Tutor</h5>
-							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-								<span aria-hidden="true">&times;</span>
-							</button>
-						</div>
-						<div class="modal-body">
-							...
-						</div>
-						<div class="modal-footer">
-							<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-							<button type="button" class="btn btn-primary">Save Tutor</button>
+				<!-- Modal -->
+				<div class="modal fade" id="tutadd" tabindex="-1" role="dialog" aria-labelledby="addtutorlabel" aria-hidden="true">
+					<div class="modal-dialog" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title" id="addtutorlabel">Add Tutor</h5>
+								<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+								</button>
+							</div>
+							<div class="modal-body">
+								<div class="form-group form-row">
+									<div class="col-md-8">
+										<label for="tutorimage">Tutor Image</label><br>
+											<div>
+												<img id="tutorimage" src="#" alt="your image" class="float-right img-sm rounded-circle"/>
+											</div>
+											<input type='file' onchange="readURL(this);" class="float-left" name="uploadaddtutor" value="uploadaddtutor"/>
+											{% if extensionerror %}
+												<p  style="color:red;" class="error"><strong>Error:</strong> {{ extensionerror }}
+											{% endif %}
+									</div>
+								</div>
+								<div class="form-group form-row">
+									<div class="col-md-6">
+										<label>Name of Tutor:</label><br>
+										{{ render_field(insform.institutiontutor, class="form-control", placeholder="Tutor's Name") }}
+									</div>
+								</div>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+								<button type="submit" class="btn btn-primary">Save Tutor</button>
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-		</div>
-
+		</form>
 		<!-- update tutor -->
-		<div>
-			<!-- Button trigger modal -->
-			<button type="button" class="btn btn-sm btn-primary float-right ml-2" data-toggle="modal" data-target="#updatetutor">
-			  Update
-			</button>
+		<form action="{{url_for('editinstitution', id='updatetutor')}}" method="POST" enctype="multipart/form-data">
+			<div>
+				<!-- Button trigger modal -->
+				<button type="button" class="btn btn-sm btn-primary float-right ml-2" data-toggle="modal" data-target="#updatetutor" name="updatetutor" value="addtutor">
+				  Update Tutor Details
+				</button>
 
-			<!-- Modal -->
-			<div class="modal fade" id="updatetutor" tabindex="-1" role="dialog" aria-labelledby="updatetutorlabel" aria-hidden="true">
-				<div class="modal-dialog" role="document">
-					<div class="modal-content">
-						<div class="modal-header">
-							<h5 class="modal-title" id="updatetutorlabel">Update Tutor</h5>
-							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-								<span aria-hidden="true">&times;</span>
-							</button>
-						</div>
-						<div class="modal-body">
-							...
-						</div>
-						<div class="modal-footer">
-							<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-							<button type="button" class="btn btn-primary">Save changes</button>
+				<!-- Modal -->
+				<div class="modal fade" id="updatetutor" tabindex="-1" role="dialog" aria-labelledby="updatetutorlabel" aria-hidden="true">
+					<div class="modal-dialog" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title" id="updatetutorlabel">Update Tutor</h5>
+								<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+								</button>
+							</div>
+							<div class="modal-body">
+								<label>Choose a tutor you wish to update</label>
+								<br>
+								{% set count = namespace(value=0) %}
+								{% for institutiontutorpic in institutetarray %}
+									{% set count.value = count.value + 1 %}
+									<label class="col-md-7">Image {{ count.value }}</label>
+									<br>
+									<div class="form-group form-row">
+										<br>
+										<img class="img-md rounded-circle mx-auto" src="../static/images/Institutionpictures/tutor/{{institutiontutorpic}}">
+									</div>
+									<div class="form-group form-row">
+										<p> <a href="#" data-toggle="modal" class="btn btn-primary mx-auto button" data-target="#upload-tutor{{count.value}}"><span class="col-md-1">update</span></a>
+									</div>
+									<br><br>
+								{% endfor %}
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+								<button type="button" class="btn btn-primary">Save changes</button>
+							</div>
 						</div>
 					</div>
 				</div>
+				{% set count = namespace(value=0) %}
+				{% for institutiontutorpic in institutetarray %}
+					{% set count.value = count.value + 1 %}
+					<!-- second model-->
+					<div class="modal fade" id="upload-tutor{{count.value}}" tabindex="-1" role="dialog" aria-labelledby="upload-tutor-title" aria-hidden="true">
+						<div class="modal-dialog">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h4 class="modal-title" id="upload-tutor-title">Update Tutor {{count.value}}</h4>
+									<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+								</div>
+								<div class="modal-body">
+									<div class="form-group form-row">
+										<div class="col-md-8">
+											<label for="institutiontutorimagepic">Edit any of the following</label><br>
+											<div>
+												<img id="institutiontutorimagepic" src="../static/images/Institutionpictures/tutor/{{institutiontutorpic}}" alt="your image" class="float-right img-sm rounded-circle"/>
+											</div>
+											<input type='file' onchange="readURL(this);" class="float-left" name="uploadupdateinstitutet" value="uploadaddinstitutet"/>
+											{% if extensionerror %}
+												<p  style="color:red;" class="error"><strong>Error:</strong> {{ extensionerror }}
+											{% endif %}
+										</div>
+									</div>
+									<div class="form-group form-row">
+										<div class="col-md-6">
+											<label>Name of tutor</label><br>
+											{{ render_field(insform.institutiontutor, class="form-control", value=institutetarray[institutiontutorpic]) }}
+										</div>
+									</div>
+								</div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+									<button type="submit" class="btn btn-primary" name="institutiontutorpics" value="{{institutiontutorpic}}">Upload</button>
+								</div>
+							</div><!-- /.modal-content -->
+						</div><!-- /.modal-dialog -->
+					</div>
+					<div id="push2"></div>
+				{% endfor %}
 			</div>
-		</div>
-
+		</form>
 		<!-- delete tutor -->
-		<div>
-			<!-- Button trigger modal -->
-			<button type="button" class="btn btn-sm btn-primary float-right ml-2" data-toggle="modal" data-target="#deletetutor">
-			  Update
-			</button>
+		<form action="{{url_for('editinstitution', id='deletetutor')}}" method="POST" enctype="multipart/form-data">
+			<div>
+				<!-- Button trigger modal -->
+				<button type="button" class="btn btn-sm btn-primary float-right ml-2" data-toggle="modal" data-target="#deletetut" name="deletetutor" value="deletetutor">
+				  Delete Tutor
+				</button>
 
-			<!-- Modal -->
-			<div class="modal fade" id="deletetutor" tabindex="-1" role="dialog" aria-labelledby="deletetutorlabel" aria-hidden="true">
-				<div class="modal-dialog" role="document">
-					<div class="modal-content">
-						<div class="modal-header">
-							<h5 class="modal-title" id="deletetutorlabel">Delete Tutor</h5>
-							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-								<span aria-hidden="true">&times;</span>
-							</button>
-						</div>
-						<div class="modal-body">
-							...
-						</div>
-						<div class="modal-footer">
-							<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-							<button type="button" class="btn btn-primary">Save changes</button>
+				<!-- Modal -->
+				<div class="modal fade" id="deletetut" tabindex="-1" role="dialog" aria-labelledby="deletetutorlabel" aria-hidden="true">
+					<div class="modal-dialog" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title" id="deletetutorlabel">Delete Tutor</h5>
+								<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+								</button>
+							</div>
+							<div class="modal-body">
+									{% for institutiontutorpic in institutetarray %}
+										{% set count.value = count.value + 1 %}
+										<label class="col-md-7">Image{{ count.value }}</label>
+										<div class="form-group form-row">
+											<img class="img-md rounded-circle mx-auto" src="../static/images/Institutionpictures/tutor/{{institutiontutorpic}}">
+										</div>
+										<div class="col-md-10 d-flex justify-content-center ml-5">
+											<label>{{institutetarray[institutiontutorpic]}}</label>
+										</div>
+										<br>
+										<div class="form-group form-row">
+											<button class="btn btn-primary mx-auto" type="submit" name="institutiontutordelete" value="{{institutiontutorpic}}"><span class="col-md-1">Delete</span></button>
+										</div>
+										<br><br>
+									{% endfor %}
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+								<button type="button" class="btn btn-primary">Save changes</button>
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-		</div>
+		</form>
 		<!-- end of modal -->
 		<br>
 		<h4 class="card-title mb-4" style="width: 100%; text-align: center; border-bottom: 1px solid #000; line-height: 0.1em; margin: 10px 0 20px;"><span style="background:#fff; padding: 0 50px;">Featured Tutors</span></h4>
@@ -354,22 +512,20 @@
 		<!-- tutors here -->
 		<center>
 			<div class="row  d-flex justify-content-center">
-				<div class="col-sm-4 mt-4">
-					<img src="../static/images/banners/banner8.jpg" class="img-md  rounded-circle">
-					<p class="mt-2">Ms Charissa Chua</p>
+				{% if institutetarray %}
+				<div class="d-flex justify-content-center">
+					<ul>
+						{% for institutetpic in institutetarray %}
+					    {% set count.value = count.value + 1 %}
+								<li class="list-inline-item">
+									<img class="img-md rounded-circle mx-auto" src="../static/images/Institutionpictures/tutor/{{institutetpic}}">
+									<br>
+									<label>{{institutetarray[institutetpic]}}</label>
+								</li>
+						{% endfor %}
+					</ul>
 				</div>
-				<div class="col-sm-4 mt-4">
-					<img src="../static/images/banners/banner8.jpg" class="img-md  rounded-circle">
-					<p class="mt-2">Mr Jing Kai</p>
-				</div>
-				<div class="col-sm-4 mt-4">
-					<img src="../static/images/banners/banner8.jpg" class="img-md  rounded-circle">
-					<p class="mt-2">Mr Nuzul</p>
-				</div>
-				<div class="col-sm-4 mt-4">
-					<img src="../static/images/banners/banner8.jpg" class="img-md  rounded-circle">
-					<p class="mt-2">Mr Christopher</p>
-				</div>
+				{% endif %}
 			</div>
 		</center>
 		<!-- end of tutors -->
@@ -378,92 +534,96 @@
 	<br><br>
 
 	<section class="container-fluid" style="min-height: 20vh; width: 90%">
-		<!-- add topcourses -->
-		<div>
-			<!-- Button trigger modal -->
-			<button type="button" class="btn btn-sm btn-primary float-right ml-2" data-toggle="modal" data-target="#addtopcourses">
-				Add
-			</button>
+		<!-- add topcourse -->
+		<form action="{{url_for('editinstitution', id='addtopcourses')}}" method="POST" enctype="multipart/form-data">
+			<div>
+				<!-- Button trigger modal -->
+				<button type="button" class="btn btn-sm btn-primary float-right ml-2" data-toggle="modal" data-target="#addtopcourses">
+					Add Top Courses
+				</button>
 
-			<!-- Modal -->
-			<div class="modal fade" id="addtopcourses" tabindex="-1" role="dialog" aria-labelledby="addtopcourseslabel" aria-hidden="true">
-				<div class="modal-dialog" role="document">
-					<div class="modal-content">
-						<div class="modal-header">
-							<h5 class="modal-title" id="addtopcourseslabel">Add topcourses</h5>
-							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-								<span aria-hidden="true">&times;</span>
-							</button>
-						</div>
-						<div class="modal-body">
-							...
-						</div>
-						<div class="modal-footer">
-							<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-							<button type="button" class="btn btn-primary">Save topcourses</button>
+				<!-- Modal -->
+				<div class="modal fade" id="addtopcourses" tabindex="-1" role="dialog" aria-labelledby="addtopcourseslabel" aria-hidden="true">
+					<div class="modal-dialog" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title" id="addtopcourseslabel">Add topcourses</h5>
+								<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+								</button>
+							</div>
+							<div class="modal-body">
+								...
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+								<button type="button" class="btn btn-primary">Save topcourses</button>
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-		</div>
+		</form>
+		<!-- update topcourse -->
+		<form action="{{url_for('editinstitution', id='updatetopcourses')}}" method="POST" enctype="multipart/form-data">
+			<div>
+				<!-- Button trigger modal -->
+				<button type="button" class="btn btn-sm btn-primary float-right ml-2" data-toggle="modal" data-target="#updatetc" name="updatetopcourse" value="updatetopcourses">
+				  Update Top courses
+				</button>
 
-		<!-- update topcourses -->
-		<div>
-			<!-- Button trigger modal -->
-			<button type="button" class="btn btn-sm btn-primary float-right ml-2" data-toggle="modal" data-target="#updatetopcourses">
-			  Update
-			</button>
+				<!-- Modal -->
+				<div class="modal fade" id="updatetc" tabindex="-1" role="dialog" aria-labelledby="updatetopcourseslabel" aria-hidden="true">
+					<div class="modal-dialog" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title" id="updatetopcourseslabel">Update topcourses</h5>
+								<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+								</button>
+							</div>
+							<div class="modal-body">
+								...
+							</div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+									<button type="button" class="btn btn-primary">Save changes</button>
+								</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</form>
+		<!-- delete topcourse -->
+		<form action="{{url_for('editinstitution', id='deletetopcourses')}}" method="POST" enctype="multipart/form-data">
+			<div>
+				<!-- Button trigger modal -->
+				<button type="button" class="btn btn-sm btn-primary float-right ml-2" data-toggle="modal" data-target="#deletetc" name="deletetopcourses" value="deletetopcourses">
+				  Delete Top Courses
+				</button>
 
-			<!-- Modal -->
-			<div class="modal fade" id="updatetopcourses" tabindex="-1" role="dialog" aria-labelledby="updatetopcourseslabel" aria-hidden="true">
-				<div class="modal-dialog" role="document">
-					<div class="modal-content">
-						<div class="modal-header">
-							<h5 class="modal-title" id="updatetopcourseslabel">Update topcourses</h5>
-							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-								<span aria-hidden="true">&times;</span>
-							</button>
-						</div>
-						<div class="modal-body">
-							...
-						</div>
+				<!-- Modal -->
+				<div class="modal fade" id="deletetc" tabindex="-1" role="dialog" aria-labelledby="deletetopcourseslabel" aria-hidden="true">
+					<div class="modal-dialog" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title" id="deletetopcourseslabel">Delete topcourses</h5>
+								<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+								</button>
+							</div>
+							<div class="modal-body">
+								...
+							</div>
 							<div class="modal-footer">
 								<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
 								<button type="button" class="btn btn-primary">Save changes</button>
 							</div>
-					</div>
-				</div>
-			</div>
-		</div>
-
-		<!-- delete topcourses -->
-		<div>
-			<!-- Button trigger modal -->
-			<button type="button" class="btn btn-sm btn-primary float-right ml-2" data-toggle="modal" data-target="#deletetopcourses">
-			  Update
-			</button>
-
-			<!-- Modal -->
-			<div class="modal fade" id="deletetopcourses" tabindex="-1" role="dialog" aria-labelledby="deletetopcourseslabel" aria-hidden="true">
-				<div class="modal-dialog" role="document">
-					<div class="modal-content">
-						<div class="modal-header">
-							<h5 class="modal-title" id="deletetopcourseslabel">Delete topcourses</h5>
-							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-								<span aria-hidden="true">&times;</span>
-							</button>
-						</div>
-						<div class="modal-body">
-							...
-						</div>
-						<div class="modal-footer">
-							<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-							<button type="button" class="btn btn-primary">Save changes</button>
 						</div>
 					</div>
 				</div>
 			</div>
-		</div>
+		</form>
 		<!-- end of modal -->
 
 		<br>
@@ -517,141 +677,160 @@
 	</section>
 
 	<section class="container-fluid" style="min-height: 20vh; width: 90%">
-		<!-- add seminars -->
-		<div>
-			<!-- Button trigger modal -->
-			<button type="button" class="btn btn-sm btn-primary float-right ml-2" data-toggle="modal" data-target="#addseminars">
-			  Add
-			</button>
+		<!-- add seminar -->
+		<form action="{{url_for('editinstitution', id='addseminars')}}" method="POST" enctype="multipart/form-data">
+			<div>
+				<!-- Button trigger modal -->
+				<button type="button" class="btn btn-sm btn-primary float-right ml-2" data-toggle="modal" data-target="#addsemin" name="addseminars" value="addseminars">
+				  Add seminars
+				</button>
 
-			<!-- Modal -->
-			<div class="modal fade" id="addseminars" tabindex="-1" role="dialog" aria-labelledby="addseminarslabel" aria-hidden="true">
-				<div class="modal-dialog" role="document">
-					<div class="modal-content">
-						<div class="modal-header">
-							<h5 class="modal-title" id="addseminarslabel">Add seminars</h5>
-							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-								<span aria-hidden="true">&times;</span>
-							</button>
-						</div>
-						<div class="modal-body">
-							...
-						</div>
-						<div class="modal-footer">
-							<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-							<button type="button" class="btn btn-primary">Save seminars</button>
+				<!-- Modal -->
+				<div class="modal fade" id="addsemin" tabindex="-1" role="dialog" aria-labelledby="addseminarslabel" aria-hidden="true">
+					<div class="modal-dialog" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title" id="addseminarslabel">Add seminars</h5>
+								<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+								</button>
+							</div>
+							<div class="modal-body">
+								<div class="form-group form-row">
+									<div class="col-md-8">
+										<label for="seminarimage">Seminar's Image</label><br>
+											<div>
+												<img id="seminarimage" src="#" alt="your image" class="float-right img-lg"/>
+											</div>
+											<input type='file' onchange="readURL(this);" class="float-left" name="uploadaddseminars" value="uploadaddseminars"/>
+											{% if extensionerror %}
+												<p  style="color:red;" class="error"><strong>Error:</strong> {{ extensionerror }}
+											{% endif %}
+									</div>
+								</div>
+								<div class="form-group form-row">
+									<div class="col-md-6">
+										<label>Title of Seminar:</label><br>
+										{{ render_field(semform.seminartitle, class="form-control", placeholder="seminar's title") }}
+									</div>
+								</div>
+								<div class="form-group form-row">
+									<div class="col-md-6">
+										<label>Seminar's Description:</label><br>
+										{{ render_field(semform.seminardescription, class="form-control", placeholder="What is this seminar all about?") }}
+									</div>
+								</div>
+								<div class="form-group form-row">
+									<div class="col-md-6">
+										<label>Seminar's url:</label><br>
+										{{ render_field(semform.seminarwebsite, class="form-control", placeholder="https://www.seminarlinkhere.com") }}
+									</div>
+								</div>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+								<button type="submit" class="btn btn-primary">Save seminars</button>
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-		</div>
+		</form>
+		<!-- update seminar -->
+		<form action="{{url_for('editinstitution', id='updateseminar')}}" method="POST" enctype="multipart/form-data">
+			<div>
+				<!-- Button trigger modal -->
+				<button type="button" class="btn btn-sm btn-primary float-right ml-2" data-toggle="modal" data-target="#updatesemin" name="updateseminar" value="updateseminar">
+				  Update Seminar
+				</button>
 
-		<!-- update seminars -->
-		<div>
-			<!-- Button trigger modal -->
-			<button type="button" class="btn btn-sm btn-primary float-right ml-2" data-toggle="modal" data-target="#updateseminars">
-			  Update
-			</button>
-
-			<!-- Modal -->
-			<div class="modal fade" id="updateseminars" tabindex="-1" role="dialog" aria-labelledby="updateseminarslabel" aria-hidden="true">
-				<div class="modal-dialog" role="document">
-					<div class="modal-content">
-						<div class="modal-header">
-							<h5 class="modal-title" id="updateseminarslabel">Update seminars</h5>
-							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-								<span aria-hidden="true">&times;</span>
-							</button>
-						</div>
-						<div class="modal-body">
-							...
-						</div>
-						<div class="modal-footer">
-							<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-							<button type="button" class="btn btn-primary">Save changes</button>
+				<!-- Modal -->
+				<div class="modal fade" id="updatesemin" tabindex="-1" role="dialog" aria-labelledby="updateseminarslabel" aria-hidden="true">
+					<div class="modal-dialog" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title" id="updateseminarslabel">Update seminars</h5>
+								<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+								</button>
+							</div>
+							<div class="modal-body">
+								...
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+								<button type="button" class="btn btn-primary">Save changes</button>
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-		</div>
+		</form>
+		<!-- delete seminar -->
+		<form action="{{url_for('editinstitution', id='deleteseminars')}}" method="POST" enctype="multipart/form-data">
+			<div>
+				<!-- Button trigger modal -->
+				<button type="button" class="btn btn-sm btn-primary float-right ml-2" data-toggle="modal" data-target="#deletesemin" name="deleteseminar" value="deleteseminar">
+				  Delete Seminar
+				</button>
 
-		<!-- delete seminars -->
-		<div>
-			<!-- Button trigger modal -->
-			<button type="button" class="btn btn-sm btn-primary float-right ml-2" data-toggle="modal" data-target="#deleteseminars">
-			  Update
-			</button>
-
-			<!-- Modal -->
-			<div class="modal fade" id="deleteseminars" tabindex="-1" role="dialog" aria-labelledby="deleteseminarslabel" aria-hidden="true">
-				<div class="modal-dialog" role="document">
-					<div class="modal-content">
-						<div class="modal-header">
-							<h5 class="modal-title" id="deleteseminarslabel">Delete seminars</h5>
-							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-								<span aria-hidden="true">&times;</span>
-							</button>
-						</div>
-						<div class="modal-body">
-							...
-						</div>
-						<div class="modal-footer">
-							<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-							<button type="button" class="btn btn-primary">Save changes</button>
+				<!-- Modal -->
+				<div class="modal fade" id="deletesemin" tabindex="-1" role="dialog" aria-labelledby="deleteseminarslabel" aria-hidden="true">
+					<div class="modal-dialog" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title" id="deleteseminarslabel">Delete seminars</h5>
+								<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+								</button>
+							</div>
+							<div class="modal-body">
+								<label>Choose the social media you wish to delete.</label><br>
+									{% for seminarpic in seminararray %}
+										{% set count.value = count.value + 1 %}
+										<label class="col-md-7">Image{{ count.value }}</label>
+										<div class="form-group form-row">
+											<img class="img-md rounded-circle mx-auto" src="../static/images/Institutionpictures/seminar/{{seminarpic}}">
+										</div>
+										<div class="form-group form-row">
+											<button class="btn btn-primary mx-auto" type="submit" name="seminardelete" value="{{seminarpic}}"><span class="col-md-1">Delete</span></button>
+										</div>
+										<br><br>
+									{% endfor %}
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+								<button type="button" class="btn btn-primary">Save changes</button>
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-		</div>
+		</form>
 		<!-- end of modal -->
 
 		<br>
 		<h5 class="card-title mb-4" style="width: 100%; text-align: center; border-bottom: 1px solid #000; line-height: 0.1em; margin: 10px 0 20px;"><span style="background:#fff; padding: 0 50px;">Seminars / Events</span></h5>
 		<br><br>
-		<!-- Top courses-->
-		<div class="row d-flex justify-content-center">
-			<div class="col-sm-4 mt-3">
-				<div class="card">
-					<div class="card-body">
-						<img class="card-img-top" src="../static/images/banners/banner9.jpg" alt="Card image cap">
-						<h5 class="card-title">Special Title Treatment</h5>
-						<p class="card-text">With smt smt smt smt</p>
-						<a href="#" class="btn btn-primary">GO somewhere</a>
+		<!-- seminar / Events-->
+		{% if seminararray %}
+			{% for seminarpic in seminararray %}
+				{% set count.value = count.value + 1 %}
+				<div class="row d-flex justify-content-center">
+					<div class="col-sm-4 mt-3">
+						<div class="card">
+							<div class="card-body">
+								<img class="card-img-top" src="../static/images/Institutionpictures/seminar/{{seminarpic}}">
+								<h5 class="card-title">{{seminararray[seminarpic][0]}}</h5>
+								<p class="card-text">{{seminararray[seminarpic][1]}}</p>
+								<a href="{{seminararray[seminarpic][2]}}" class="btn btn-primary">Learn more!</a>
+							</div>
+						</div>
 					</div>
 				</div>
-			</div>
-			<div class="col-sm-4 mt-3">
-				<div class="card">
-					<div class="card-body">
-						<img class="card-img-top" src="../static/images/banners/banner9.jpg" alt="Card image cap">
-						<h5 class="card-title">Special Title Treatment</h5>
-						<p class="card-text">With smt smt smt smt</p>
-						<a href="#" class="btn btn-primary">GO somewhere</a>
-					</div>
-				</div>
-			</div>
-			<div class="col-sm-4 mt-3">
-				<div class="card">
-					<div class="card-body">
-						<img class="card-img-top" src="../static/images/banners/banner9.jpg" alt="Card image cap">
-						<h5 class="card-title">Special Title Treatment</h5>
-						<p class="card-text">With smt smt smt smt</p>
-						<a href="#" class="btn btn-primary">GO somewhere</a>
-					</div>
-				</div>
-			</div>
-			<div class="col-sm-4 mt-3">
-				<div class="card">
-					<div class="card-body">
-						<img class="card-img-top" src="../static/images/banners/banner9.jpg" alt="Card image cap">
-						<h5 class="card-title">Special Title Treatment</h5>
-						<p class="card-text">With smt smt smt smt</p>
-						<a href="#" class="btn btn-primary">GO somewhere</a>
-					</div>
-				</div>
-			</div>
-		</div>
-		<!-- end of top courses-->
+				{% endfor %}
+		{% endif %}
+		<!-- end of seminar/ events-->
 		<br><br>
 	</section>
 </section>
@@ -757,7 +936,33 @@
                     .attr('src', e.target.result)
                     .width(150)
                     .height(150);
+
+                $('#smupdate')
+                    .attr('src', e.target.result)
+                    .width(150)
+                    .height(150);
+
+                $('#tutorimage')
+                    .attr('src', e.target.result)
+                    .width(150)
+                    .height(150);
+
+				$('#seminarimage')
+                    .attr('src', e.target.result)
+                    .width(150)
+                    .height(150);
+
+                $('#smpictureimage')
+                    .attr('src', e.target.result)
+                    .width(150)
+                    .height(150);
+
+                $('#institutiontutorimagepic')
+                    .attr('src', e.target.result)
+                    .width(150)
+                    .height(150);
             };
+
 
             reader.readAsDataURL(input.files[0]);
         }

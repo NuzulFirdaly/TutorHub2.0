@@ -98,6 +98,18 @@ class RegisterInstitutionForm(Form):
 
     #smstmst = EmailField(validators=[DataRequired()]) testing ignore this line
 
-
 class socialmediaform(Form):
     smwebsite = URLField(validators=[length(min=1,max=150), DataRequired(),url()])
+
+#idk why this class not working but it work on the above class lol i give up
+class institutiontutorform(Form):
+    institutiontutor = StringField(validators=[length(min=4, max=200), DataRequired()])
+
+class seminarsform(Form):
+    seminartitle = StringField()
+    seminardescription = TextAreaField()
+    seminarwebsite = URLField()
+
+class Review(Form):
+    rating = SelectField(validators=[DataRequired()], choices=[('1', '1'), ('2', '2'), ('3', '3'), ('4', '4'), ('5', '5')])
+    comment = TextAreaField(validators=[InputRequired()])

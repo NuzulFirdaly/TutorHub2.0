@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}TutorHub - login{% endblock %}
+
+{% block content %}
+
+
+<form class="container padding-y" method="POST">
+    <h1>Stationery</h1>
+    <div class="row">
+        <figure class="card card-product-grid" style="width: 14rem; padding: 30px;">
+            <img class="card-img-top" src="../static/images/itemlisting/blackpen.jpg" height="140" width="140">
+            <figcaption class="info-wrap">
+                <h5 class="title" style="height:58px;">Black Pen</h5>
+                <br>
+                <small style="color:red; font-size:14px;">$2.10
+                    <button type="submit" name="add_cart" value='Black_Pen,2.10'>Add to Cart</button></small>
+            </figcaption>
+        </figure> <!-- card // -->
+        <div class="col-md-1"></div>
+        <figure class="card card-product-grid" style="width: 14rem; padding: 30px;">
+            <img class="card-img-top" src="../static/images/itemlisting/Exercisebook.jpg" height="140" width="140">
+            <figcaption class="info-wrap">
+                <h5 class="title" style="height:58px;">Exercise Book</h5>
+                <br>
+                <small style="color:red; font-size:14px;">$1.30
+                    <button type="submit" name="add_cart" value='Exercise_Book,1.30'>Add to Cart</button></small>
+            </figcaption>
+        </figure> <!-- card // -->
+    </div>
+{% endblock %}

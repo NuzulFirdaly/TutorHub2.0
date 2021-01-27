@@ -1,0 +1,61 @@
+{% extends 'tutor_interface/base.html' %}
+{% block title %} Update Session {% endblock %}
+{% from "tutor_onboarding/__formhelperwithoutlabel.html" import render_field  %}
+
+{% block custom_CDN %}
+<!-- Feast Your eyes on the monster we are about to create
+    There is no turning back now folks. With that, Here are our cdn for our date picker for scheduler
+Stupid CDN stuff
+-->
+<!-- FullCalendar -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.5.1/main.min.css">
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.5.1/main.min.js"></script>
+<!-- Moment.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ==" crossorigin="anonymous"></script>
+<!-- Date Range Picker -->
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+{% endblock %}
+
+{% block content %}
+
+<div class="container padding-y">
+      <div id='calendar'></div>
+</div>
+
+<script>
+      let calendarEL = document.getElementById('calendar');
+      let calendar = new FullCalendar.Calendar(calendarEL, {
+      showNonCurrentDates : false,
+      events : [
+       {% for event in events%}
+            {
+            title : '{{event.todo}}',
+            start : '{{event.date}}'
+            },
+            {% endfor %}
+      ],
+      selectable: true,
+      selectOverlap: function(event) {
+          return ! event.block;
+      },
+      select: function(start, end, allDay) {
+          var check = $.fullCalendar.formatDate(start,'yyyy-MM-dd');
+          var today = $.fullCalendar.formatDate(new Date(),'yyyy-MM-dd');
+          if(check < today)
+          {
+              // Previous Day. show message if you want otherwise do nothing.
+              // So it will be unselectable
+          }
+          else
+          {
+              // Its a right date
+              // Do something
+          }
+        },
+      });
+
+      calendar.render();
+</script>
+{% endblock %}
+

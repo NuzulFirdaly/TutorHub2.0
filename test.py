@@ -135,6 +135,16 @@ def generate_stuff():
     tutordb[p1.user_id] = tutorobject
     tutordb.close()
 
+    #Generate shop items
+    name = 'Black_Pen'
+    item = Essentials('Black_Pen', '2.10', 'blackpen.jpg')
+    db = shelve.open('databases/itemlist.db')
+    db[name] = item
+
+    name = 'Exercise_Book'
+    item = Essentials('Exercise_Book', '1.80', 'Exercisebook.jpg')
+    db[name] = item
+
 
 
 
@@ -142,6 +152,7 @@ def delete_pending():
     db = shelve.open('databases/pendingtutor.db')
     db.clear()
     db.close()
+
 
 def delete_everything():
     coursedb = shelve.open('databases/courses.db')
@@ -162,6 +173,12 @@ def delete_everything():
     userdb = shelve.open('databases/user.db')
     userdb.clear()
     userdb.close()
+    reportdb = shelve.open('databases/report.db')
+    reportdb.clear()
+    reportdb.close()
+    itemlistdb = shelve.open('databases/itemlist.db')
+    itemlistdb.clear()
+    itemlistdb.close()
     print('everything is deleted')
 def delete_specific_course_from_tutor(user_id,course_id):
     tutordb = shelve.open('databases/tutor.db')
@@ -170,7 +187,7 @@ def delete_specific_course_from_tutor(user_id,course_id):
     tutordb[user_id] = tutorobject
     tutordb.close()
 
-def chris_not_mine():
+def chris_not_mine(): #erika
     db = shelve.open('databases/PendingInstitution.db')
     for key in db:
         user = db.pop(key)
@@ -184,10 +201,18 @@ def chris_not_mine():
     # print(db['Nanyang_Polytechnic'])
     admin = db['Nanyang_Polytechnic']
     admin.set_banner(['2.jpg'])
-    admin.set_sm(['2.jpg'])
+    # admin.set_sm(['2.jpg'])
+    admin.set_institutiontutor({'2.jpg':'Mr Wilson'})
+    admin.set_seminar({'2,jpg':['EAE workshop','Hi just some random text lololol','https://www.nyp.edu.sg/']})
     db['Nanyang_Polytechnic'] = admin
+
     print(db['Nanyang_Polytechnic'].get_banner())
-    print(db['Nanyang_Polytechnic'].get_sm())
+    print(db['Nanyang_Polytechnic'].get_institutiontutor())
+    print(db['Nanyang_Polytechnic'].get_seminar())
+    # print(db['Nanyang_Polytechnic'].get_sm())
     db.close()
 
+#
+# delete_everything()
+# generate_stuff()
 chris_not_mine()
