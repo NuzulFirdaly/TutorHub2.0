@@ -152,6 +152,7 @@ class Tutor(PendingTutor):
         super().__init__(pending_tutor_object.user_id, pending_tutor_object.occupation, pending_tutor_object.fromyear, pending_tutor_object.toyear, pending_tutor_object.college_country, pending_tutor_object.college_name, pending_tutor_object.major, pending_tutor_object.year ,pending_tutor_object.dob, pending_tutor_object.nric)
         self.__certified = True
         self.reviews = {}
+        self.overallrating = 0
         self.subjects = []
         self.courses = []
     def __str__(self):
@@ -175,6 +176,8 @@ class Courses():
         self.maximumdays = 0
         self.maximumhoursperssion = 0
         self.minimumdays = 0
+        self.reviews = {}
+        self.overallrating = 0
     def __str__(self):
         return 'Course ID:{} \n Course Title:{} \n Category:{} Subcategory: {} \n ' \
                'Description:{} \n Tutor ID: {} ' \

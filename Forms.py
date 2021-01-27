@@ -101,3 +101,7 @@ class RegisterInstitutionForm(Form):
 
 class socialmediaform(Form):
     smwebsite = URLField(validators=[length(min=1,max=150), DataRequired(),url()])
+
+class Review(Form):
+    rating = SelectField(validators=[DataRequired()], choices=[('1', '1'), ('2', '2'), ('3', '3'), ('4', '4'), ('5', '5')])
+    comment = TextAreaField(validators=[InputRequired()])

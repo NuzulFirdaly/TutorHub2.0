@@ -71,14 +71,14 @@ $(document).ready(function() {
                             <div class="widget-header">
                                     <a href="#" class="ml-3 icontext" data-toggle="dropdown" data-offset="20,10">
                                         <div class="icon"><img class="icon icon-xs rounded-circle" src=/static/images/profilepictures/{{session['profile_pic']}}></div>
-                                        <div class="text" >
+                                        <div class="text">
                                             <small class="text-muted">{{session['name']}}</small> <br>
                                         </div>
                                     </a>
                             </div>
                             <figcaption class="info-wrap">
-                                <h4 class="title" style="height:58px"><a href="{{url_for('updatecourse', course_id = courses.course_id)}}">{{courses.course_title}}</a></h4>
-                                <p class="text-muted" style="height:58px">{{courses.short_description}}</p>
+                                <h4 class="title"><a href="{{url_for('updatecourse', course_id = courses.course_id)}}">{{courses.course_title}}</a></h4>
+                                <p class="text-muted">{{courses.short_description}}</p>
                                 <br>
                                 <h5>${{courses.hourlyrate}}/Hour</h5>
                             </figcaption>

@@ -5,6 +5,7 @@ import shelve
 import os
 from werkzeug.utils import secure_filename
 
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'tutormeplease' #this is to encrypt data passing along our server, this includes our session data
 
@@ -300,6 +301,110 @@ def tutor_onboarding_professional_info():
 @app.route('/tutor_onboarding/finish')
 def finish():
    return render_template('tutor_onboarding/finish.html')
+
+# Make Review and Rating System
+# View profile
+# Spam courses
+# Payment
+
+@app.route('/reviews/<item>/<id>', methods=['GET', 'POST'])
+def review(item, id):
+    print('why')
+    from datetime import date
+    if session.get('loggedin') != True:
+        return redirect(url_for('home'))
+    else:
+        form = Review(request.form)
+        if form.validate():
+            rating = int(request.form['rating'])
+            comment = request.form['comment']
+            name = session['username']
+            userid = session['user_id']
+            today = date.today()
+            date = today.strftime("%b-%d-%Y")
+            if item == 'tutor':
+                tutordb = shelve.open('databases/tutor.db')
+                tutor = tutordb[id]
+                if not tutor.reviews.get(userid):
+                    tutor.overallrating += rating
+                else:
+                    tutor.overallrating -= tutor.reviews[userid][0]
+                    tutor.overallrating += rating
+                tutorreview = tutor.reviews
+                tutorreview[userid] = [rating, comment, name, date]
+                tutor.reviews = tutorreview
+                tutordb[id] = tutor
+                return redirect(url_for('viewprofile', tutorid=id))
+            elif item == 'course':
+                coursedb = shelve.open('databases/courses.db')
+                course = coursedb[id]
+                fullrating = course.overallrating
+                if not course.reviews.get(userid):
+                    fullrating += rating
+                else:
+                    fullrating -= course.reviews[userid][0]
+                    fullrating += rating
+                coursereview = course.reviews
+                coursereview[userid] = [rating, comment, name, date]
+                course.overallrating = fullrating
+                print(course.overallrating)
+                course.reviews = coursereview
+                coursedb[id] = course
+                return redirect(url_for('viewcourse', course_id=id))
+        else:
+            error = "Rating has to be between 1 and 5. Comment cannot be empty"
+            print(error)
+            return redirect(url_for('viewcourse', course_id=id))
+
+@app.route('/delete/reviews/<item>/<id>', methods=['POST', 'GET'])
+def deletereview(item, id):
+    print('hi')
+    if request.method == "POST":
+        userid = session['user_id']
+        if item == 'tutor':
+            tutordb = shelve.open('databases/tutor.db')
+            tutor = tutordb[id]
+            tutorreview = tutor.reviews
+            tutorreview.pop(userid)
+            tutordb[id] = tutor
+            return redirect(url_for('viewprofile', tutorid=id))
+        elif item == 'course':
+            coursedb = shelve.open('databases/courses.db')
+            course = coursedb[id]
+            coursereview = course.reviews
+            course.overallrating -= coursereview[userid][0]
+            print(course.overallrating)
+            coursereview.pop(userid)
+            print(coursereview)
+            course.reviews = coursereview
+            coursedb[id] = course
+            return redirect(url_for('viewcourse', course_id=id))
+    else:
+        return redirect(url_for('viewcourse', course_id=id))
+
+@app.route('/report/reviews/<item>/<id>/<uservictim>/<userreport>/<comment>', methods=['POST', 'GET'])
+def reportreview(item, id, uservictim, userreport, comment):
+    db = shelve.open('databases/report.db')
+    print(db.get(uservictim))
+    if db.get(uservictim):
+        report = db[uservictim]
+        report.append([item, id, userreport, comment])
+        db[uservictim] = report
+        print(report)
+    else:
+        db[uservictim] = []
+        report = db[uservictim]
+        report.append([item, id, userreport, comment])
+        db[uservictim] = report
+    return redirect(url_for('viewcourse', course_id=id))
+
+
+
+
+@app.route('/profile/viewprofile', methods=['GET', 'POST'])
+def viewprofile():
+    pass
+
 
 @app.route('/profile/profile_main', methods=['GET', 'POST'])
 def profilemain():
@@ -760,8 +865,17 @@ def viewcourse(course_id):
         userObj.set_user_recent(recent)
         db[session['user_id']] = userObj
         db.close()
+        if len(courseobject.reviews) != 0:
+            rating = round(courseobject.overallrating/len(courseobject.reviews),1)
+        else:
+            rating = 0
+        form = Review(request.form)
+        if session['user_id'] in courseobject.reviews:
+            form.rating.data = str(courseobject.reviews[session['user_id']][0])
+            form.comment.data = courseobject.reviews[session['user_id']][1]
+            print(courseobject.reviews)
 
-        return render_template('viewcourse.html', courseobject=courseobject)
+        return render_template('viewcourse.html', courseobject=courseobject, form=form, rating=rating)
 #Institution User here
 @app.route("/InstitutionUser/AllInstitutions")
 def AllInstitutions():
@@ -908,6 +1022,7 @@ def editinstitution(id):
                         smlist.append(sm)
                         user.set_sm(smlist)
                         db[name] = user
+
             return redirect(url_for('AllInstitutions_admin', bannerarray=smlist))
 
         if request.form['updatesocialmedia']:

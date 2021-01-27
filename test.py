@@ -1,5 +1,6 @@
 from Models import  *
 import shelve
+from datetime import date
 
 #creating a function which automatically makes the users, a certified tutor.
 def make_certified(userobject):
@@ -162,6 +163,9 @@ def delete_everything():
     userdb = shelve.open('databases/user.db')
     userdb.clear()
     userdb.close()
+    reportdb =shelve.open('databases/report.db')
+    reportdb.clear()
+    reportdb.close()
     print('everything is deleted')
 def delete_specific_course_from_tutor(user_id,course_id):
     tutordb = shelve.open('databases/tutor.db')
@@ -169,6 +173,32 @@ def delete_specific_course_from_tutor(user_id,course_id):
     tutorobject.courses.remove(course_id)
     tutordb[user_id] = tutorobject
     tutordb.close()
+def chris_not_mine():
+    db = shelve.open('databases/PendingInstitution.db')
+    for key in db:
+        user = db.pop(key)
+        print(user)
+        print(key)
 
-auto_certify_all()
-move_tutors()
+    admin = Institution(user)
+    db.close()
+    db = shelve.open('databases/Institution.db')
+    db['Nanyang_Polytechnic'] = admin
+    # print(db['Nanyang_Polytechnic'])
+    admin = db['Nanyang_Polytechnic']
+    admin.set_banner(['2.jpg'])
+    admin.set_sm(['2.jpg'])
+    db['Nanyang_Polytechnic'] = admin
+    print(db['Nanyang_Polytechnic'].get_banner())
+    print(db['Nanyang_Polytechnic'].get_sm())
+    db.close()
+
+# delete_everything()
+# generate_stuff()
+# chris_not_mine()
+dict = {}
+dict['hi'] = []
+dog = dict['hi']
+dog.append(['2'])
+# dict['hi'] = dict['hi'].append('2')
+print(dict['hi'])
