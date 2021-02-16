@@ -40,7 +40,20 @@ Pycharm External Modules(need to install this to run flask app):
 * Passlib version 1.7.4
 * Email-validator version 1.1.2
 
+Go to File -> Settings
+
 ![something](Process/FileSetting.jpg)
 
+Click on Python Interpreter
+
+![something](Process/Pythoninterp.jpg)
+
+Click on '+' icon and enter name of package into search bar
+
+![something](Process/ClickSearch.jpg)
+
+Select the package with the correct version then click 'Install Package'
+
+![something](Process/Install.jpg)
 
 
