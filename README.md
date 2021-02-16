@@ -60,7 +60,7 @@ Pycharm External Modules(need to install this to run flask app):
 
 **Generate Example User Interface**
 
-* It is recommeneded to select all of the db files in /database directory and delete it and THEN run these line of codes (to avoid db errors)
+* It is recommended to select all of the db files in /database directory and delete it and THEN run these line of codes (to avoid db errors)
 ![something](Process/Generate.jpg)
 
 
