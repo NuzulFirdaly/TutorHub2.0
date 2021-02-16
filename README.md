@@ -28,13 +28,19 @@ To cater and hopefully solve this outstanding issue, our group has revamped the 
 
 [View the list of all the CRUDs here](https://docs.google.com/document/d/1PNn80U-BiNYCFPRJ1lkeLN0dmFaiL5DQNnr84mmoV90/edit?usp=sharing)
 
-## Installation
+**Simple Demonstration**
 
-Use the package manager [pip](https://pip.pypa.io/en/stable/) to install foobar.
-
-```bash
+Video Link: [Demonstration video of application]()
 
 
-```python
-import foobarpip install foobar
-```
+## Getting Started
+
+Pycharm External Modules(need to install this to run flask app):
+* Werkzeug version 1.0.1
+* Passlib version 1.7.4
+* Email-validator version 1.1.2
+
+![something](Process/FileSetting.jpg)
+
+
+
