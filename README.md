@@ -32,7 +32,7 @@ To cater and hopefully solve this outstanding issue, our group has revamped the 
 
 **Simple Demonstration**
 
-Video Link: [Demonstration video of application]()
+Video Link: [Demonstration video of application](https://www.youtube.com/watch?v=lW-EAPbgBqg&feature=youtu.be&ab_channel=NuzulFirdaly)
 
 
 ## Getting Started
