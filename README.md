@@ -69,3 +69,15 @@ Pycharm External Modules(need to install this to run flask app):
 * Institution Admin & Admin - [Login Steps](https://docs.google.com/document/d/1F576W0iPMKgNMwaEdDM9s79_07KFZtmZx37haQixGa0/edit?usp=sharing)
 
 
+## Tools & Technologies
+
+* Frameworks
+  * Flask
+* Programming Languages
+  * Python 3
+  * HTML
+  * CSS
+  * JavaScript
+
+
+
