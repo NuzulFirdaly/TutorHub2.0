@@ -1,0 +1,89 @@
+{% if session.get('istutor') != True %}
+    {% extends "base.html" %}
+{% else %}
+    {% extends "tutor_interface/base.html" %}
+{% endif %}{% block title %}TutorHub - login{% endblock %}
+
+{% block content %}
+
+{% from "tutor_onboarding/__formhelperwithoutlabel.html" import render_field  %}
+
+<style>
+label
+{text-align:right;
+font-weight:bold;}
+
+h3,h4
+{font-family:sans-serif;
+font-weight:normal;}
+
+@media only screen and (max-width: 780px)
+{
+label{
+text-align:left;
+}
+}
+</style>
+
+<!-- ========================= SECTION CONTENT ========================= -->
+<section class="container-fluid padding-y" style="min-height:84vh; width:90%;">
+<!-- ============================ COMPONENT LOGIN   ================================= -->
+	<div class="card mx-auto">
+      <div class="card-body">
+      <h2 class="card-title mb-4">Payment Information</h2>
+      <hr>
+        <h4 class="text-muted">Available Payment Methods</h4>
+          <br>
+          <div class="row">
+              <img style="margin-left:100px" src="/static/images/misc/mastercard.jpg" height="140" width="180">
+              <img style="margin-left:100px" src="/static/images/misc/nets.jpg" height="140" width="180">
+              <img style="margin-left:100px" src="/static/images/misc/paypal.png" height="140" width="180">
+              <img style="margin-left:100px" src="/static/images/misc/visa.png" height="140" width="180">
+          </div>
+          <br>
+      <form action="" class='block-register' method="POST">
+          <div class="form-group form-row">
+              <label class="col-md-2 col-form-label">Card Option</label>
+              <div class="col-md-7">
+                  {{ render_field(form.card, class="form-control") }}
+              </div>
+		  </div>
+          <hr>
+          <h4 class="text-muted">Card Details</h4>
+          <div class="form-group form-row">
+              <label class="col-md-2 col-form-label">Card Number</label>
+              <div class="col-md-7">
+                  {{ render_field(form.cardnumber, class="form-control", placeholder='e.g 1234567891234567 (16 Digits)') }}
+                  {% if cardnumbererror %}
+                        <p  style="color:red;" class="error"><strong>Error:</strong> {{ cardnumbererror }}
+                    {% endif %}
+              </div>
+		  </div>
+          <div class="form-group form-row">
+            <label class="col-md-2 col-form-label">Expiry Date</label>
+            <div class="col-md-3">
+                {{ render_field(form.expirydate, class="form-control", placeholder='mm/yy') }}
+                {% if expiryerror %}
+                        <p  style="color:red;" class="error"><strong>Error:</strong> {{ expiryerror }}
+                    {% endif %}
+            </div>
+            <label class="col-md-1 col-form-label">CVV</label>
+            <div class="col-md-3">
+                {{ render_field(form.security, class="form-control", placeholder='e.g 123 (3 Digits)')  }}
+                {% if securityerror %}
+                        <p  style="color:red;" class="error"><strong>Error:</strong> {{ securityerror }}
+                    {% endif %}
+            </div>
+          </div>
+        <button class="btn btn-primary float-right" type="submit">Proceed to Payment</button>
+      </form>
+      </div>
+    </div>
+     <br><br>
+<!-- ============================ COMPONENT LOGIN  END.// ================================= -->
+
+
+</section>
+<!-- ========================= SECTION CONTENT END// ========================= -->
+
+{% endblock %}

@@ -6,17 +6,25 @@
     <thead>
       <tr>
         <th>Item Name</th>
-        <th>Price</th>
+        <th>Price($)</th>
         <th>Quantity</th>
-        <th>Total Price</th>
+        <th>Total Price($)</th>
       </tr>
     </thead>
     <tbody>
     {% for item in session['cart'] %}
       <tr>
-        <td>{{ item }}</td>
+        <td>{{ item.replace('_',' ') }}</td>
         <td>{{ session['cart'][item][0] }}</td>
-        <td>{{ session['cart'][item][1] }}</td>
+        <td style="width:200px;" class="row">
+          <form method="POST" action="{{url_for('editcart', action='minus')}}">
+            <button class="btn btn-secondary" type="submit" name="minus_item" value="{{item}}"><span class="fa fa-minus"></span></button>
+          </form>
+          <p class="col-md-2">{{ session['cart'][item][1] }}</p>
+          <form method="POST" action="{{url_for('editcart', action='plus')}}">
+            <button class="btn btn-secondary" type="submit" name="add_item" value ="{{item}}" ><span class="fa fa-plus"></span></button>
+          </form>
+        </td>
         <td>{{ session['cart'][item][2] }}</td>
         <td>
           <form action="{{url_for('deleteitem', id=item)}}" method="POST">
@@ -51,11 +59,14 @@
                 </div>
               </div>
             </div>
-          </form>
+          </form
         </td>
       </tr>
     {% endfor %}
     </tbody>
   </table>
+  {% if session['cart']|length != 0 %}
+    <a href="{{ url_for('placeOrder' , item = 'cart') }}" style="margin-right:20px" class="btn btn-primary float-right">Place Order</a>
+  {% endif %}
 </div>
 {% endblock %}

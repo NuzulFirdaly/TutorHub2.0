@@ -1,0 +1,189 @@
+{% if session.get('istutor') != True %}
+    {% extends "base.html" %}
+{% else %}
+    {% extends "tutor_interface/base.html" %}
+{% endif %}
+
+{% block title %} {{userobject.get_username()}} {% endblock %}
+{% from "tutor_onboarding/__formhelperwithoutlabel.html" import render_field  %}
+{% block content %}
+<style>
+.checked {
+  color: orange;
+}
+</style>
+<script type="text/javascript">
+/// some script
+
+// jquery ready start
+$(document).ready(function() {
+	// jQuery code
+
+
+    /////////////////  items slider. /plugins/owlslider/
+    if ($('.slider-items-owl').length > 0) { // check if element exists
+        $('.slider-items-owl').owlCarousel({
+        //change the loop daddy
+            loop:false,
+            margin:15,
+            nav:true,
+            autoWidth:true,
+            navText: ["<i class='fa fa-chevron-left'></i>", "<i class='fa fa-chevron-right'></i>"],
+            responsive:{
+                0:{
+                    items:1
+                },
+                640:{
+                    items:3
+                },
+                1024:{
+                    items: 3
+                }
+            }
+        })
+    } // end if
+
+
+
+
+});
+// jquery end
+</script>
+<div class="container padding-y ">
+    <!-- tutor profile -->
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-header">
+                    <div class="icon"><img class="icon icon-lg rounded-circle" src=/static/images/profilepictures/{{userobject.get_user_profile_pic()}}></div>
+                    <div class="text"><h3>{{userobject.get_username()}}</h3></div>
+                </div>
+                <div class="card-body">
+                    <div class="text">
+                        <h5>Description</h5>
+                        <p class="text-muted">{{userobject.get_user_description()}}</p>
+                    </div>
+                    <br>
+                    <div class="text">
+                        <h5>Languages</h5>
+                        <p class="text-muted">{{userobject.get_user_language()}}</p>
+                    </div>
+                </div>
+            </div>
+        </div> <!-- end of col-->
+        <div class="col-md-9 ">
+            <h4>{{userobject.get_username()}}'s Courses</h4>
+                <!-- ============== COMPONENT SLIDER ITEMS OWL  ============= -->
+                <div class="slider-items-owl owl-carousel owl-theme" style="margin-left:2em;">
+                    {% for courses in coursesarray %}
+                    <div class="item-slide">
+                        <figure class="card card-product-grid" style="width: 18rem;">
+                            <img class="card-img-top" src="../static/images/coursethumbnails/{{courses.course_thumbnail}}"height="140" width="240">
+                            <div class="widget-header">
+                                    <a href="#" class="ml-3 icontext" data-toggle="dropdown" data-offset="20,10">
+                                        <div class="icon"><img class="icon icon-xs rounded-circle" src=/static/images/profilepictures/{{userobject.get_user_profile_pic()}}></div>
+                                        <div class="text" >
+                                            <small class="text-muted">{{userobject.get_username()}}</small> <br>
+                                        </div>
+                                    </a>
+                            </div>
+                            <figcaption class="info-wrap">
+                                <h4 class="title" style="font-size:1.3em; height:58px"><a href="{{url_for('viewcourse', course_id = courses.course_id)}}">{{courses.course_title}}</a></h4>
+                                <p class="text-muted" style="font-size:0.9em; height:58px">{{courses.short_description}}</p>
+                                <br>
+                                <h5>${{courses.hourlyrate}}/Hour</h5>
+                            </figcaption>
+                        </figure> <!-- card // -->
+                    </div>
+                    {% endfor %}
+                </div>
+                <!-- ============== COMPONENT SLIDER ITEMS OWL .end // ============= -->
+                <hr>
+                <div class="row">
+                    <h3>{{tutorobject.reviews|length}} Reviews</h3>
+                    {% set count = namespace(value=1) %}
+                    {% for i in range(5) %}
+						{% if count.value <= rating|round %}
+                            {% set count.value = count.value + 1 %}
+                            <span class="fa fa-star checked" style="padding-top: 10px;"></span>
+                        {% else %}
+                            <span class="fa fa-star" style="padding-top: 10px;"></span>
+						{% endif %}
+                    {% endfor %}
+                    {% if rating|round == 5 %}
+                        <h3><span class="checked">{{ rating }}</span></h3>
+                    {% else %}
+                    <h3>{{ rating }}</h3>
+                    {% endif %}
+                </div>
+                {% if session.get('loggedin') and session['username'] != userobject.get_username() %}
+                    {% if session['user_id'] not in tutorobject.reviews %}
+                        <form class='block-register' action="{{url_for('review', item = 'tutor', id = userobject.get_user_id())}}" method="POST" enctype="multipart/form-data">
+                            {{ render_field(form.rating, class="form-control", value=1) }}
+                            {{ render_field(form.comment, class="form-control") }}
+                            <button class="btn btn-primary" type="submit">Send</button>
+                        </form>
+                        {% if error %}
+                            <p  style="color:red;" class="error"><strong>Error:</strong> {{ error }}
+                          {% endif %}
+                        <div>
+                        {% for review in tutorobject.reviews %}
+                            <hr>
+                            <p><strong>{{ tutorobject.reviews[review][2] }}</strong><span class="fa fa-star checked">{{ tutorobject.reviews[review][0] }}</span><br></p>
+                            <p>{{ tutorobject.reviews[review][1] }}</p>
+                            <p class="text-muted">{{ tutorobject.reviews[review][3] }}</p>
+                            <form action="{{ url_for('reportreview', item='tutor', id=userobject.get_user_id(), uservictim=review, userreport=session['user_id'],  comment=tutorobject.reviews[review][1]) }}" method="POST" enctype="multipart/form-data">
+                                    <button class="btn btn-danger" type="submit">Report</button>
+                            </form>
+                            <br>
+                        {% endfor %}
+                        </div>
+                    {% else %}
+                        <hr>
+                        <form class='block-register' action="{{url_for('review', item = 'tutor', id=userobject.get_user_id())}}" method="POST" enctype="multipart/form-data">
+                            <p><strong>{{ tutorobject.reviews[session['user_id']][2] }}</strong><span class="fa fa-star checked"></span>{{ render_field(form.rating, class="form-control", value=tutorobject.reviews[session['user_id']][0]) }}</p>
+                            <p>{{ render_field(form.comment, class="form-control") }}</p>
+                            <p class="text-muted">{{ tutorobject.reviews[session['user_id']][3] }}</p>
+                        <div class="row gx-5">
+                            <button class="btn btn-primary" type="submit">Update</button>
+                        </form>
+                        <form action="{{ url_for('deletereview', item='tutor', id=userobject.get_user_id()) }}" method="POST" enctype="multipart/form-data">
+                            <button class="btn btn-danger" type="submit">Delete</button>
+                        </form>
+                        </div>
+
+                        <div>
+                        {% for review in tutorobject.reviews %}
+                            {% if review != session['user_id'] %}
+                                <hr>
+                                <p><strong>{{ tutorobject.reviews[review][2] }}</strong><span class="fa fa-star checked">{{ tutorobject.reviews[review][0] }}</span><br></p>
+                                <p>{{ tutorobject.reviews[review][1] }}</p>
+                                <p class="text-muted">{{ tutorobject.reviews[review][3] }}</p>
+                                <form action="{{ url_for('reportreview', item='tutor', id=userobject.get_user_id(), uservictim=review, userreport=session['user_id'],  comment=courseobject.reviews[review][1]) }}" method="POST" enctype="multipart/form-data">
+                                        <button class="btn btn-danger" type="submit">Report</button>
+                                </form>
+                                <br>
+                            {% endif %}
+                        {% endfor %}
+                        </div>
+                    {% endif %}
+                {% else %}
+                    {% for review in tutorobject.reviews %}
+                            <hr>
+                            <p><strong>{{ tutorobject.reviews[review][2] }}</strong><span class="fa fa-star checked">{{ tutorobject.reviews[review][0] }}</span><br></p>
+                            <p>{{ tutorobject.reviews[review][1] }}</p>
+                            <p class="text-muted">{{ tutorobject.reviews[review][3] }}</p>
+                            <form action="{{ url_for('reportreview', item='tutor', id=userobject.get_user_id(), uservictim=review, userreport=session['user_id'],  comment=tutorobject.reviews[review][1]) }}" method="POST" enctype="multipart/form-data">
+                                    <button class="btn btn-danger" type="submit">Report</button>
+                            </form>
+                            <br>
+                        {% endfor %}
+                {% endif %}
+                    </div>
+                <br><br>
+
+        </div><!-- end of col -->
+    </div>
+    <div class=""></div>
+</div>
+{% endblock %}

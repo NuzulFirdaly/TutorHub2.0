@@ -1,0 +1,62 @@
+{% if session.get('istutor') != True %}
+    {% extends "base.html" %}
+{% else %}
+    {% extends "tutor_interface/base.html" %}
+{% endif %}
+{% block title %} Finished Paying {% endblock %}
+{% from "tutor_onboarding/__formhelperwithoutlabel.html" import render_field  %}
+
+{% block content %}
+
+
+<div class="container padding-y">
+    <div class="card text-center">
+        <div id="card-body" class="card-body">
+            <h3>Finished Paying Congrats, The tutor has received the selected date bookings</h3>
+            <p id="date">Date: </p>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    dateList = [];
+    tutor_id = localStorage.getItem('tutor_id');
+    course_id = localStorage.getItem('course_id');
+    selectedList = eval(localStorage.getItem('selectedList'));
+    toBeSent = [tutor_id,course_id,JSON.stringify(selectedList)];
+    console.log(toBeSent);
+    console.log(selectedList);
+    let dateparagraph = document.getElementById("date");
+    if(selectedList.length < 1){
+        calendarobject = selectedList[0];
+        date = calendarobject.date;
+        dateList.push(date);
+        dateparagraph.textContent += date;
+    }else{
+        for(let i = 0; i < selectedList.length; i++){
+            if( i == 0 ){
+                calendarobject = selectedList[0];
+                date = calendarobject.date;
+                dateList.push(date);
+                dateparagraph.textContent += date;
+            }else{
+            calendarobject = selectedList[0];
+            date = calendarobject.date;
+            dateList.push(date);
+            dateparagraph.textContent +=", "+date;
+            }
+        }
+    }
+    //write code to post to flask and then update the calendardb
+    fetch("/submitSelectedList",{
+                method :"POST",
+                credentials: "include", //include cookies
+                body: JSON.stringify(toBeSent),
+                cache: "no-cache",
+                headers: new Headers({
+                    "content-type": "application/json"
+                })
+
+    });
+
+</script>
+{% endblock %}

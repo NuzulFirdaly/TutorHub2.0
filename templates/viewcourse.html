@@ -1,4 +1,8 @@
-{% extends 'base.html' %}
+{% if session.get('istutor') != True %}
+    {% extends "base.html" %}
+{% else %}
+    {% extends "tutor_interface/base.html" %}
+{% endif %}
 {% block title %} View Course {% endblock %}
 {% from "tutor_onboarding/__formhelperwithoutlabel.html" import render_field  %}
 {% block content %}
@@ -15,7 +19,7 @@
                     <h1>{{courseobject.course_title}}</h1>
                     <br>
                     <div class="widget-header">
-                                <a href="#" class="ml-3 icontext" data-toggle="dropdown" data-offset="20,10">
+                                <a href="{{url_for('viewtutor', tutor_id = courseobject.tutor)}}" target="_blank" class="ml-3 icontext">
                                     <div class="icon"><img class="icon icon-md rounded-circle border" src=/static/images/profilepictures/{{userobject.get_user_profile_pic()}}></div>
                                     <div class="text">
                                         <p style="font-size:2em;">{{userobject.get_username()}}</p> <br>
@@ -66,43 +70,18 @@
                     <h3>{{ rating }}</h3>
                     {% endif %}
                 </div>
-                {% if session['user_id'] not in courseobject.reviews %}
-                    <form class='block-register' action="{{url_for('review', item = 'course', id = courseobject.course_id)}}" method="POST" enctype="multipart/form-data">
-                        {{ render_field(form.rating, class="form-control", value=1) }}
-                        {{ render_field(form.comment, class="form-control") }}
-                        <button type="submit">Send</button>
-                    </form>
-                    {% if error %}
-                        <p  style="color:red;" class="error"><strong>Error:</strong> {{ error }}
-                      {% endif %}
-                    <div>
-                    {% for review in courseobject.reviews %}
-                        <hr>
-                        <p><strong>{{ courseobject.reviews[review][2] }}</strong><span class="fa fa-star checked">{{ courseobject.reviews[review][0] }}</span><br></p>
-                        <p>{{ courseobject.reviews[review][1] }}</p>
-                        <p class="text-muted">{{ courseobject.reviews[review][3] }}</p>
-                        <form action="{{ url_for('reportreview', item='course', id=courseobject.course_id, uservictim=review, userreport=session['user_id'],  comment=courseobject.reviews[review][1]) }}" method="POST" enctype="multipart/form-data">
-                                <button class="btn btn-danger" type="submit">Report</button>
+                {% if session.get('loggedin') and session['username'] != userobject.get_username() %}
+                    {% if session['user_id'] not in courseobject.reviews %}
+                        <form class='block-register' action="{{url_for('review', item = 'course', id = courseobject.course_id)}}" method="POST" enctype="multipart/form-data">
+                            {{ render_field(form.rating, class="form-control", value=1) }}
+                            {{ render_field(form.comment, class="form-control") }}
+                            <button class="btn btn-primary" type="submit">Send</button>
                         </form>
-                        <br>
-                    {% endfor %}
-                    </div>
-                {% else %}
-                    <hr>
-                    <form class='block-register' action="{{url_for('review', item = 'course', id=courseobject.course_id)}}" method="POST" enctype="multipart/form-data">
-                        <p><strong>{{ courseobject.reviews[session['user_id']][2] }}</strong><span class="fa fa-star checked"></span>{{ render_field(form.rating, class="form-control", value=courseobject.reviews[session['user_id']][0]) }}</p>
-                        <p>{{ render_field(form.comment, class="form-control") }}</p>
-                        <p class="text-muted">{{ courseobject.reviews[session['user_id']][3] }}</p>
-                        <button type="submit">Update</button>
-                        <br>
-                    </form>
-                    <form action="{{ url_for('deletereview', item='course', id=courseobject.course_id) }}" method="POST" enctype="multipart/form-data">
-                        <button type="submit">Delete</button>
-                    </form>
-
-                    <div>
-                    {% for review in courseobject.reviews %}
-                        {% if review != session['user_id'] %}
+                        {% if error %}
+                            <p  style="color:red;" class="error"><strong>Error:</strong> {{ error }}
+                          {% endif %}
+                        <div>
+                        {% for review in courseobject.reviews %}
                             <hr>
                             <p><strong>{{ courseobject.reviews[review][2] }}</strong><span class="fa fa-star checked">{{ courseobject.reviews[review][0] }}</span><br></p>
                             <p>{{ courseobject.reviews[review][1] }}</p>
@@ -111,11 +90,62 @@
                                     <button class="btn btn-danger" type="submit">Report</button>
                             </form>
                             <br>
-                        {% endif %}
-                    {% endfor %}
-                    </div>
-                {% endif %}
+                        {% endfor %}
+                        </div>
+                    {% else %}
+                        <hr>
+                        <form class='block-register' action="{{url_for('review', item = 'course', id=courseobject.course_id)}}" method="POST" enctype="multipart/form-data">
+                            <p><strong>{{ courseobject.reviews[session['user_id']][2] }}</strong><span class="fa fa-star checked"></span>{{ render_field(form.rating, class="form-control", value=courseobject.reviews[session['user_id']][0]) }}</p>
+                            <p>{{ render_field(form.comment, class="form-control") }}</p>
+                            <p class="text-muted">{{ courseobject.reviews[session['user_id']][3] }}</p>
+                        <div class="row gx-5">
+                            <button class="btn btn-primary" type="submit">Update</button>
+                        </form>
+                        <form action="{{ url_for('deletereview', item='course', id=courseobject.course_id) }}" method="POST" enctype="multipart/form-data">
+                            <button class="btn btn-danger" type="submit">Delete</button>
+                        </form>
+                        </div>
 
+                        <div>
+                        {% for review in courseobject.reviews %}
+                            {% if review != session['user_id'] %}
+                                <hr>
+                                <p><strong>{{ courseobject.reviews[review][2] }}</strong><span class="fa fa-star checked">{{ courseobject.reviews[review][0] }}</span><br></p>
+                                <p>{{ courseobject.reviews[review][1] }}</p>
+                                <p class="text-muted">{{ courseobject.reviews[review][3] }}</p>
+                                <form action="{{ url_for('reportreview', item='course', id=courseobject.course_id, uservictim=review, userreport=session['user_id'],  comment=courseobject.reviews[review][1]) }}" method="POST" enctype="multipart/form-data">
+                                        <button class="btn btn-danger" type="submit">Report</button>
+                                </form>
+                                <br>
+                            {% endif %}
+                        {% endfor %}
+                        </div>
+                    {% endif %}
+                {% else %}
+                    {% for review in courseobject.reviews %}
+                            <hr>
+                            <p><strong>{{ courseobject.reviews[review][2] }}</strong><span class="fa fa-star checked">{{ courseobject.reviews[review][0] }}</span><br></p>
+                            <p>{{ courseobject.reviews[review][1] }}</p>
+                            <p class="text-muted">{{ courseobject.reviews[review][3] }}</p>
+                            <form action="{{ url_for('reportreview', item='course', id=courseobject.course_id, uservictim=review, userreport=session['user_id'],  comment=courseobject.reviews[review][1]) }}" method="POST" enctype="multipart/form-data">
+                                    <button class="btn btn-danger" type="submit">Report</button>
+                            </form>
+                            <br>
+                        {% endfor %}
+                {% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card" style="width:50%;">
+                            <div class="card-body">
+                                <div>
+                                    <h3 style="position:absolute;" >Hourly</h3>
+                                    <h3 class="float-right" >${{courseobject.hourlyrate}}</h3>
+                                </div>
+                            {% if session.get('loggedin') and session['username'] != userobject.get_username() %}
+                                <a href="{{url_for('viewavailableslots', course_id = courseobject.course_id, tutor_id = courseobject.tutor)}}" style="position:relative; margin-top:4rem;" class=" center-x btn btn-primary">Book</a>
+                            {% endif%}
+                            </div>
+                        </div>
             </div>
         </div>
         </div>

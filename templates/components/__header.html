@@ -5,7 +5,7 @@
 <div class="row align-items-center">
 	<div class="col-lg-2 col-6">
 		<a href="/" class="brand-wrap">
-			<img class="logo" src="static/images/logos/222.png">
+			<img class="logo" src="{{ url_for('static', filename='images/logos/222.png') }}">
 		</a> <!-- brand-wrap.// -->
 	</div>
 	<div class="col-lg-6 col-12 col-sm-12">
@@ -26,9 +26,8 @@
 	<div class="col-lg-4 col-sm-6 col-12">
 		<div class="widgets-wrap float-lg-right">
 			<div class="widget-header  mr-3">
-				<a href="{{ url_for('orderitems') }}">Shop</a>
 				<a href="{{ url_for('viewCart') }}" class="icon icon-sm rounded-circle border"><i class="fa fa-shopping-cart"></i></a>
-				<span class="badge badge-pill badge-danger notify">0</span>
+				<span class="badge badge-pill badge-danger notify">{{ session['cart']|length }}</span>
 			</div>
 			<div class="widget-header dropdown">
 				<a href="#" class="ml-3 icontext" data-toggle="dropdown" data-offset="20,10">
@@ -52,10 +51,6 @@
 	{% else %}
 	<div class="col-lg-4 col-sm-6 col-12">
 		<div class="widgets-wrap float-lg-right">
-			<div class="widget-header  mr-3">
-				<a href="#" class="icon icon-sm rounded-circle border"><i class="fa fa-shopping-cart"></i></a>
-				<span class="badge badge-pill badge-danger notify">0</span>
-			</div>
 			<div class="widget-header icontext">
 				<a href="#" class="icon icon-sm rounded-circle border"><i class="fa fa-user"></i></a>
 				<div class="text">
@@ -109,9 +104,24 @@
 		<li class="nav-item">
 		  <a class="nav-link" href="../InstitutionUser/AllInstitutions">Institutions</a>
 		</li>
+		   <li class="nav-item">
+			  <a class="nav-link" href="{{ url_for('viewitems') }}">Shop</a>
+		  </li>
       </ul>
     </div> <!-- collapse .// -->
   </div> <!-- container .// -->
 </nav>
 
 </header> <!-- section-header.// -->
+{% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-info alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        {{message}}
+                    </div>
+
+                {% endfor %}
+
+            {% endif %}
+          {% endwith %}

@@ -1,0 +1,95 @@
+{% extends "InstitutionAdmin/base.html" %}
+{% block title %}TutorHub- Home{% endblock %}
+
+{% block content %}
+
+{% from "tutor_onboarding/__formhelperwithoutlabel.html" import render_field  %}
+
+<!-- ========================= SECTION CONTENT ========================= -->
+<section class="container-fluid padding-y" style="min-height:84vh; width:90%;">
+<!-- ============================ COMPONENT LOGIN   ================================= -->
+	<div class="card mx-auto">
+      <div class="card-body">
+          <div class="row">
+              <div class="col">
+                  <h2 class="card-title mb-4">Edit My Profile</h2>
+              </div>
+              <div class="col">
+                  <a href="tutorprofile"><button class="btn btn-primary float-right">View Profile</button></a>
+              </div>
+          </div>
+      <hr>
+          <br>
+      <form class='block-register' action="{{url_for('edittutorprofile')}}" method="POST" enctype="multipart/form-data">
+          <div class="form-group form-row">
+              <label class="col-md-2 col-form-label">Username</label>
+              <div class="col-md-7">
+                  {{ render_field(form.admin_username, class="form-control", value=session['username']) }}
+              </div>
+		  </div>
+          <div class="form-group form-row">
+            <label class="col-md-2 col-form-label">First Name</label>
+            <div class="col-md-3">
+                {{ render_field(form.admin_firstname, class="form-control", placeholder="First name", value=session['firstname']) }}
+            </div>
+            <label class="col-md-1 col-form-label">Last Name</label>
+            <div class="col-md-3">
+                {{ render_field(form.admin_lastname, class="form-control", placeholder="Last name", value=session['lastname'])  }}
+            </div>
+          </div>
+          <div class="form-group form-row">
+            <label class="col-md-2 col-form-label">Profile Picture</label>
+              <div class='col-md-3'>
+                  <img  src="/static/images/institutiontutor/{{session['profilepic']}}" class="img-md rounded-circle border">
+                <div style="position:relative;">
+                  <input type="file" name="image" id="image">
+                           {% if extensionerror %}
+                            <p  style="color:red;" class="error"><strong>Error:</strong> {{ extensionerror }}
+                        {% endif %}
+                    </div>
+                  </div>
+
+              </div>
+          <hr>
+          <br>
+          <div class="form-group form-row">
+            <label class="col-md-2 col-form-label">Email</label>
+              <div class="col-md-7">
+                  {{ render_field(form.admin_email, class="form-control", value=session['email'])  }}
+              </div>
+          </div>
+          <div class="form-group form-row">
+            <label class="col-md-2 col-form-label">Password</label>
+              <div class="col-md-4">
+                   {{ render_field(form.password, class="form-control", value=session['password'])  }}
+              </div>
+              <label class="col-md-2 col-form-label">Re-enter password</label>
+              <div class="col-md-3">
+                  {{ render_field(form.password, class="form-control", value=session['password'])  }}
+              </div>
+          </div>
+          <button class="btn btn-primary float-right" type="submit">Save Changes</button>
+          {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-info alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        {{message}}
+                    </div>
+
+                {% endfor %}
+
+            {% endif %}
+          {% endwith %}
+
+      </form>
+      </div>
+    </div>
+     <br><br>
+<!-- ============================ COMPONENT LOGIN  END.// ================================= -->
+
+
+</section>
+<!-- ========================= SECTION CONTENT END// ========================= -->
+
+{% endblock %}

@@ -1,0 +1,75 @@
+{% if session.get('istutor') != True %}
+    {% extends "base.html" %}
+{% else %}
+    {% extends "tutor_interface/base.html" %}
+{% endif %}
+{% block title %} View Slots {% endblock %}
+{% from "tutor_onboarding/__formhelperwithoutlabel.html" import render_field  %}
+{% block custom_CDN %}
+  <link rel="stylesheet" href="{{url_for('static', filename='css/todo.css')}}">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.1.0/main.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.1.0/main.min.js"></script>
+  <!--
+  <link rel="stylesheet" href="./fullcalendar/main.min.css">
+  <script src="./fullcalendar/main.min.js" defer></script>
+  https://youtu.be/Un5DrBn5gxc
+  -->
+  <script src="{{url_for('static', filename='js/todobook.js')}}" defer></script>
+
+{% endblock %}
+{% block content %}
+<div class="container padding-y">
+  <h1>Book Available Slot</h1>
+  <p id="tutor_id"class="text-muted">{{tutor_id}}</p>
+  <p id="course_id"class="text-muted">{{course_id}}</p>
+
+</div>
+
+<div class="todo-grid-parent container padding-y">
+    <div>
+      <br>
+      <br>
+      <div id="todotablediv">
+      <table id="todoTable" class="todo-block">
+          <tr>
+            <td></td>
+            <td>Date</td>
+            <td>Time</td>
+            <td>Category</td>
+            <td></td>
+            <td></td>
+          </tr>
+      </table>
+      </div>
+      <br>
+      <br>
+    <a id ="continue_button" style="display:none;" href="{{url_for('placeOrder', item = 'booking')}}" class="btn btn-lg btn-primary float-right"> Continue </a>
+    </div>
+
+    <div class="todo-calendar  todo-block">
+      <div id='calendar'></div>
+    </div>
+
+  </div> <!-- class="todo-grid-parent" -->
+
+  <div class="todo-overlay" id="todo-overlay">
+    <div class="todo-modal" id="todo-modal">
+      <div class="todo-input todo-block">
+        <span>Category: </span>
+        <input type="text" placeholder="Enter category" list="categoryList"  id="todo-edit-category">
+        <datalist id="categoryList">
+          <option value="Personal"></option>
+          <option value="Work"></option>
+        </datalist>
+        <span>Date:</span>
+        <input type="date" id="todo-edit-date" min="2021-02-14">
+        <span>Time:</span>
+        <input type="time" id="todo-edit-time">
+        <button class="btn rounded-pill btn-primary" id="changeBtn">Save Change</button>
+      </div>
+    </div>
+    <div class="todo-modal-close-btn" id="todo-modal-close-btn">X</div>
+  </div>
+  {% endblock %}

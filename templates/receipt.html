@@ -1,0 +1,58 @@
+{% if session.get('istutor') != True %}
+    {% extends "base.html" %}
+{% else %}
+    {% extends "tutor_interface/base.html" %}
+{% endif %}{% block title %}TutorHub - login{% endblock %}
+
+{% block content %}
+
+{% from "tutor_onboarding/__formhelperwithoutlabel.html" import render_field  %}
+
+<style>
+.card
+{text-align:center;}
+
+h3,h4
+{font-family:sans-serif;
+font-weight:normal;}
+
+</style>
+
+<!-- ========================= SECTION CONTENT ========================= -->
+<section class="container-fluid padding-y" style="min-height:84vh; width:90%;">
+<!-- ============================ COMPONENT LOGIN   ================================= -->
+	<div class="card mx-auto">
+      <div class="card-body">
+      <h2 style="color:blue" class="card-title mb-4">Payment Successful!</h2>
+      <h3>Order Details</h3>
+    <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Item Name</th>
+        <th>Price($)</th>
+        <th>Quantity</th>
+        <th>Total Price($)</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for item in order %}
+      <tr>
+        <td>{{ item.replace('_',' ') }}</td>
+        <td>{{ order[item][0] }}</td>
+        <td>{{ order[item][1] }}</td>
+        <td>{{ order[item][2] }}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+          <h3>Thank you for your patronage!</h3>
+      </div>
+    </div>
+     <br><br>
+<!-- ============================ COMPONENT LOGIN  END.// ================================= -->
+
+
+</section>
+<!-- ========================= SECTION CONTENT END// ========================= -->
+
+{% endblock %}

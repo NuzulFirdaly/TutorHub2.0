@@ -113,3 +113,64 @@ class seminarsform(Form):
 class Review(Form):
     rating = SelectField(validators=[DataRequired()], choices=[('1', '1'), ('2', '2'), ('3', '3'), ('4', '4'), ('5', '5')])
     comment = TextAreaField(validators=[InputRequired()])
+
+class Registerinstitutiontutorform(Form):
+    first_name = StringField(validators=[length(max=150), DataRequired()])
+    last_name = StringField(validators=[length(min=1, max=150), DataRequired()])
+    Description = TextAreaField(validators=[length(min=20, max=600), DataRequired()])
+    language = SelectField(validators=[DataRequired()], choices=[(lang, lang) for lang in language])
+    proficiency = SelectField('Proficiency', choices=[('Basic', 'Basic'),('Conversational', 'Conversational'), ('Fluent', 'Fluent'), ('Native', 'Native/Bilingual')], render_kw={'placeholder': "proficiency"})
+    occupation = StringField(validators=[DataRequired(), length(min=5, max=60)])
+    fromyear = StringField(validators=[DataRequired(), length(min=4, max=4)])
+    toyear = StringField(validators=[DataRequired(), length(min=4, max=4)])
+    college_country = StringField(validators=[DataRequired(), Length(min=4, max=30)])
+    college_name = StringField(validators=[DataRequired(), Length(min=2, max=60)])
+    major = StringField(validators=[DataRequired(), Length(min=5, max=60)])
+    graduateyear = StringField(validators=[DataRequired(), Length(min=4, max=4)])
+    dob = DateField(format='%Y-%m-%d')
+    nric = StringField(validators=[DataRequired(), Length(min=9, max=9), nric_check])
+    username = StringField(validators=[Length(min=8), DataRequired()])
+    password = PasswordField(validators=[Length(min=8),DataRequired()])
+    email = EmailField(validators=[length(min=8, max=200), DataRequired(), email()])
+
+class InstitutionTutorProfileEditForm(Form):
+    admin_username = StringField(validators=[Length(min=8)])
+    admin_firstname = StringField(validators=[length(min=1, max=150)])
+    admin_lastname = StringField(validators=[length(min=1, max=150)])
+    admin_contact = TelField(validators=[length(min=1, max=30)])
+    admin_email = EmailField(validators=[length(min=8, max=200), email()])
+    password = PasswordField(validators=[Length(min=8)])
+
+class ItemListing(Form):
+    name = StringField(validators=[length(min=1, max=50), DataRequired()])
+    price = DecimalField(validators=[DataRequired(), number_range(min=0, max=50)])
+
+class Payment(Form):
+    cardnumber = StringField(validators=[length(min=16, max=16), DataRequired()])
+    expirydate = StringField(validators=[Length(min=5, max=5), DataRequired()])
+    security = StringField(validators=[length(min=3, max=3), DataRequired()])
+    card = SelectField(choices=[('MasterCard', 'MasterCard'), ('Nets', 'Nets'), ('PayPal', 'PayPal'), ('Visa', 'Visa')], render_kw={'placeholder': "Card Choice"})
+
+class CreateAdminForm(Form):
+    first_name = StringField('First Name', [validators.Length(min=1, max=150), validators.DataRequired()])
+    last_name = StringField('Last Name', [validators.Length(min=1, max=150), validators.DataRequired()])
+    email = StringField('Email', [validators.Length(min=1,max=150), validators.DataRequired(), validators.email()])
+    username = StringField('Username', [validators.Length(min=8), validators.DataRequired()])
+    password = PasswordField('Password', [validators.Length(min=8), validators.DataRequired()])
+    confirm = PasswordField('Confirm Password', [validators.DataRequired()])
+    code = StringField('Code', [validators.Length(min=1,max=150), validators.DataRequired()])
+
+class AdminLoginForm(Form):
+    username = StringField('Username', [validators.Length(min=8), validators.DataRequired()])
+    password = PasswordField('Password', [validators.Length(min=8), validators.DataRequired()])
+    remember = BooleanField('Remember me')
+
+class EditAdminForm(Form):
+    first_name = StringField('First Name', [validators.optional(), validators.Length(min=1, max=150)])
+    last_name = StringField('Last Name', [validators.optional(), validators.Length(min=1, max=150)])
+    email = StringField('Email', [validators.optional(), validators.Length(min=1,max=150), validators.email()])
+    username = StringField('Username', [validators.optional(), validators.Length(min=8)])
+    language = StringField('Language', [validators.optional(), validators.Length(min=1,max=150)])
+    region = StringField('Region', [validators.optional(), validators.Length(min=1, max=150)])
+    description = TextAreaField()
+    phonenumber = TelField()

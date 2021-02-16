@@ -1,4 +1,9 @@
-{% extends "profile/__profile_base.html" %}
+{% if session.get('istutor') != True %}
+	{% extends "profile/__profile_base.html" %}
+{% else %}
+    {% extends "tutor_interface/base.html" %}
+{% endif %}
+
 {% block title %}TutorHub - Profile Page{% endblock %}
 
 {% block content %}

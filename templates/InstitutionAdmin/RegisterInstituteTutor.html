@@ -1,0 +1,171 @@
+{% extends "InstitutionAdmin/base.html" %}
+{% block title %}TutorHub- Home{% endblock %}
+
+{% block content %}
+
+{% from "tutor_onboarding/__formhelperwithoutlabel.html" import render_field  %}
+
+<!-- ========================= SECTION INTRO ========================= -->
+<section class="container-fluid" style="min-height: 84vh; width: 90%">
+    <br>
+    <!-- ==================== form content ============ -->
+    <center>
+      <h2>Tutor Institution Registration Form</h2>
+    </center>
+    <br>
+    <div class="col-md-12 text-left">
+      <p>
+
+          <br>
+          Please fill up the following details <br><br>
+          <strong>Do take Note:</strong> <br>
+          1. Institution's Tutor Registration shall be done only if the Tutor is officially license. Registration of Unofficial tutor will result in Insitution being permanently ban from TutorHub.
+          <br>
+          2. Submit certificates of proof for Tutor for legal purposes.
+          <br><br>
+          Upon submitting, please make sure information that are stated are real. False information will result in Tutor's registration revoked.
+      </p>
+    </div>
+
+    <br>
+    <form class="block-register" action="" method="POST" enctype="multipart/form-data">
+      <div class="card mx-auto">
+          <div class="card-body">
+              <h5 class="card-title mb-4">Personal Information</h5>
+              <div class="form-group form-row">
+                  <label class="col-md-3 col-form-label">Full Name <br> <span class="text-muted">This will be private</span></label>
+                  <div class="col-s-1 col-form-label">
+                      <label>First name</label>
+                  </div>
+                  <div class="col">
+                      {{ render_field(form.first_name, class="form-control", placeholder="first name") }}
+                  </div>
+                  <div class="col-s-1 col-form-label">
+                      <label>last name</label>
+                  </div>
+                  <div class="col">
+                      {{ render_field(form.last_name, class="form-control", placeholder="last name") }}
+                  </div>
+              </div>
+              <div class="form-group form-row">
+                  <label class="col-md-3 col-form-label">Profile Picture</label>
+                  <div class="col-md-3">
+                      <img  src="..\static\images\coursethumbnails\avatar3.jpg" class="img-md rounded-circle border">
+                      <div style="position:relative; ">
+                          <input type="file" name="image" id="image">
+                          {% if extensionerror %}
+                            <p  style="color:red;" class="error"><strong>Error:</strong> {{ extensionerror }}
+                          {% endif %}
+                      </div>
+                  </div>
+              </div>
+              <div class="form-group form-row">
+                  <label class="col-md-3 col-form-label">Description</label>
+                  <div class="col-9">
+                      {{ render_field(form.Description, class="form-control", placeholder="Description") }}
+                  </div>
+              </div>
+              <div class="form-group form-row">
+                  <label class="col-md-3 col-form-label">Languages</label>
+                  <div class="col">
+                      {{ render_field(form.language,class="form-control",placeholder="Language", value="English" )}}
+                  </div>
+                  <div>
+                      {{ render_field(form.proficiency,class="form-control", placeholder="Proficiency") }}
+                  </div>
+              </div>
+              <br>
+              <hr>
+              <br>
+              <h5 class="card-title mb-4">Occupation Information</h5>
+              <div class="form-group form-row">
+                  <label class="col-md-3 col-form-label">Your Occupation</label>
+                  <div class="col">
+                      {{ render_field(form.occupation, class="form-control", placeholder="Current occupation") }}
+                  </div>
+                  <div class="col-s-1 col-form-label">
+                      <label>From</label>
+                  </div>
+                  <div class="col">
+                      {{ render_field(form.fromyear, class="form-control", placeholder="Year")  }}
+                  </div>
+                  <div class="col-s-1 col-form-label">
+                      <label>To</label>
+                  </div>
+                  <div class="col">
+                      {{ render_field(form.toyear, class="form-control", placeholder="Year")  }}
+                  </div>
+              </div>
+              <div class="form-group form-row">
+                  <label class="col-md-3 col-form-label">Education</label>
+                  <div class="col">
+                      {{ render_field(form.college_country, class="form-control", placeholder="Country of College/University")  }}
+                  </div>
+                  <div class="col">
+                      {{ render_field(form.college_name, class="form-control", placeholder="College/University Name")  }}
+                  </div>
+              </div>
+              <div class="form-group form-row">
+                  <label class="col-md-3 col-form-label"></label>
+                  <div class="col">
+                      {{ render_field(form.major, class="form-control", placeholder="Major")  }}
+                  </div>
+                  <div class="col-md-1">
+                      {{ render_field(form.graduateyear, class="form-control", placeholder="Year")  }}
+                  </div>
+              </div>
+              <div class="form-group form-row">
+                  <label class="col-md-3 col-form-label">Certification <br> <p class="text-muted" style="max-width:200px;">For verification purposes, this will remain private</p>  </label>
+                  <div class="col">
+                      <input type="file" name="cert" id="cert">
+                      {% if emptyfileerror %}
+                        <p  style="color:red;" class="error"><strong>Error:</strong> {{ emptyfileerror }}
+                      {% endif %}
+                  </div>
+                  <div class="col-s-1 col-form-label">
+                      <label>Date of Birth</label>
+                  </div>
+                  <div class="col">
+                      {{ render_field(form.dob, class="form-control", placeholder="d/m/y")  }}
+                  </div>
+                  <div class="col-s-1 col-form-label">
+                      <label>NRIC</label>
+                  </div>
+                  <div class="col">
+                      {{ render_field(form.nric, class="form-control", placeholder="NRIC")  }}
+                  </div>
+              </div>
+              <br>
+              <hr>
+              <br>
+              <h5 class="card-title mb-4">Tutor Account information</h5>
+              <div class="form-group form-row">
+                  <label class="col-md-3 col-form-label">
+                      Username
+                  </label>
+                  <div class="col">
+                      {{ render_field(form.username, class="form-control", placeholder="username")  }}
+                  </div>
+                  <div class="col-s-1 col-form-label">
+                      <label>Password</label>
+                  </div>
+                  <div class="col">
+                      {{ render_field(form.password, class="form-control", placeholder="password")  }}
+                  </div>
+                  </div>
+              </div>
+              <div class="form-group form-row">
+                  <div class="col-md-3 col-form-label" style="padding-left:30px;">
+                      <label>Email</label>
+                  </div>
+                  <div class="col-md-3">
+                      {{ render_field(form.email, class="form-control", placeholder="@gmail.com")  }}
+                  </div>
+              </div>
+      </div>
+      <br>
+      <button class="btn btn-primary float-right" type="submit">Submit</button>
+    </form>
+    <br>
+</section>
+{% endblock %}

@@ -5,7 +5,7 @@
 <div class="row align-items-center">
 	<div class="col-lg-2 col-6">
 		<a href="/" class="brand-wrap">
-			<img class="logo" src="static/images/logos/222.png">
+			<img class="logo" src="{{ url_for('static', filename='images/logos/222.png') }}">
 		</a> <!-- brand-wrap.// -->
 	</div>
 	<div class="col-lg-6 col-12 col-sm-12">
@@ -49,7 +49,7 @@
 					</div>
 				</a>
 				<div class="dropdown-menu dropdown-menu-right">
-					<a class="dropdown-item" href="#">Profile setting</a>
+					<a class="dropdown-item" href="/profile/profile_main">Profile setting</a>
 					<a class="dropdown-item" href="/mycourses">My Courses</a>
 					<a class="dropdown-item" href="{{url_for('myschedule', tutor_id = session['user_id'])}}">My schedule</a>
 					<hr class="dropdown-divider">
@@ -115,6 +115,12 @@
         <li class="nav-item">
           <a class="nav-link" href="#">Chemistry</a>
         </li>
+		  <li class="nav-item">
+		  <a class="nav-link" href="../InstitutionUser/AllInstitutions">Institutions</a>
+		</li>
+		  <li>
+	      <a class="nav-link" href="{{ url_for('viewitems') }}">Shop</a>
+		</li>
       </ul>
     </div> <!-- collapse .// -->
   </div> <!-- container .// -->

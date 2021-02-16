@@ -27,11 +27,11 @@
 				{% if count.value == 0 %}
 					{% set count.value = count.value + 1 %}
 					<div class="carousel-item active">
-						<img class="d-block" src="../static/images/Institutionpictures/banner/{{bannerpic}}" style=" width:100%; height: 500px !important;">
+						<img class="d-block" src="{{url_for('static', filename='images/Institutionpictures/banner/' + bannerpic)}}" style=" width:100%; height: 500px !important;">
 					</div>
 				{% else %}
 					<div class="carousel-item">
-						<img class="d-block" src="../static/images/Institutionpictures/banner/{{bannerpic}}" style=" width:100%; height: 500px !important;">
+						<img class="d-block" src="{{url_for('static', filename='images/Institutionpictures/banner/' + bannerpic)}}" style=" width:100%; height: 500px !important;">
 					</div>
 				{% endif %}
 			{% endfor %}
@@ -46,7 +46,7 @@
 		</a>
 		</div>
 	{% endif %}
-	<form action="{{url_for('editinstitution', id='addbanner')}}" method="POST" enctype="multipart/form-data">
+	<form action="{{url_for('addbanner', name=session['institution'])}}" method="POST" enctype="multipart/form-data">
 		<!-- edit banners crud-->
 		<div>
 			<!-- Button trigger modal ADD BANNER-->
@@ -85,7 +85,7 @@
 			</div>
 		</div>
 	</form>
-	<form action="{{url_for('editinstitution', id='deletebanner')}}" method="POST" enctype="multipart/form-data">
+	<form action="{{url_for('deletebanner', name=session['institution'])}}" method="POST" enctype="multipart/form-data">
 		<!-- Delete banners -->
 		<div>
 			<!-- Button trigger modal DELETE BANNER-->
@@ -110,7 +110,7 @@
 									<div class="row">
 										<label>Choose the banner you wish to delete.</label><br>
 										<label class="col-md-7">Picture {{ count.value }}</label>
-										<img class="col-md-10" src="../static/images/Institutionpictures/banner/{{bannerpic}}">
+										<img class="col-md-10" src="{{url_for('static', filename='images/Institutionpictures/banner/' + bannerpic)}}">
 										<button type="submit" name="bannerdelete" value="{{bannerpic}}"><span class="col-md-1">&times;</span></button>
 										<br>
 									</div>
@@ -134,7 +134,7 @@
 				<h3>Connect with Us!</h3>
 			</div>
 			<!-- add socialmedia -->
-			<form action="{{url_for('editinstitution', id='addsm')}}" method="POST" enctype="multipart/form-data">
+			<form action="{{url_for('addsm', name=session['institution'])}}" method="POST" enctype="multipart/form-data">
 				<!-- Button trigger modal -->
 				<button type="button" class="btn btn-sm btn-primary float-right ml-2" data-toggle="modal" data-target="#addsocialmedia" name="addsm" value="addsm">
 				  Add Social Media
@@ -178,7 +178,7 @@
 				</div>
 			</form>
 			<!-- update socialmedia -->
-			<form action="{{url_for('editinstitution', id='updatesm')}}" method="POST" enctype="multipart/form-data">
+			<form action="{{url_for('updatesm', name=session['institution'])}}" method="POST" enctype="multipart/form-data">
 				<div>
 					<!-- Button trigger modal -->
 					<button type="button" class="btn btn-sm btn-primary float-right ml-2" data-toggle="modal" data-target="#updatesocialmedia">
@@ -205,7 +205,7 @@
 										<br>
 										<div class="form-group form-row">
 											<br>
-											<img class="img-md rounded-circle mx-auto" src="../static/images/Institutionpictures/socialmedia/{{smpic}}">
+											<img class="img-md rounded-circle mx-auto" src="{{url_for('static', filename='images/Institutionpictures/socialmedia/' + smpic)}}">
 										</div>
 										<div class="form-group form-row">
 											<p> <a href="#" data-toggle="modal" class="btn btn-primary mx-auto button" data-target="#upload-avatar{{count.value}}"><span class="col-md-1">update</span></a>
@@ -236,7 +236,7 @@
 											<div class="col-md-8">
 												<label for="smpictureimage">Edit any of the following</label><br>
 												<div>
-													<img id="smpictureimage" src="../static/images/Institutionpictures/socialmedia/{{smpic}}" alt="your image" class="float-right img-sm rounded-circle"/>
+													<img id="smpictureimage" src="{{url_for('static', filename='images/Institutionpictures/socialmedia/' + smpic)}}" alt="your image" class="float-right img-sm rounded-circle"/>
 												</div>
 												<input type='file' onchange="readURL(this);" class="float-left" name="uploadaddsm" value="uploadaddsm"/>
 												{% if extensionerror %}
@@ -263,7 +263,7 @@
 				</div>
 			</form>
 			<!-- delete socialmedia -->
-			<form action="{{url_for('editinstitution', id='deletesm')}}" method="POST" enctype="multipart/form-data">
+			<form action="{{url_for('deletesm', name=session['institution'])}}" method="POST" enctype="multipart/form-data">
 				<div>
 					<!-- Button trigger modal -->
 					<button type="button" class="btn btn-sm btn-primary float-right ml-2" data-toggle="modal" data-target="#deletesocialmedia" name="deletesm" value="deletesm">
@@ -286,7 +286,7 @@
 										{% set count.value = count.value + 1 %}
 										<label class="col-md-7">Image{{ count.value }}</label>
 										<div class="form-group form-row">
-											<img class="img-md rounded-circle mx-auto" src="../static/images/Institutionpictures/socialmedia/{{smpic}}">
+											<img class="img-md rounded-circle mx-auto" src="{{url_for('static', filename='images/Institutionpictures/socialmedia/' + smpic)}}">
 										</div>
 										<div class="form-group form-row">
 											<button class="btn btn-primary mx-auto" type="submit" name="smdelete" value="{{smpic}}"><span class="col-md-1">Delete</span></button>
@@ -316,7 +316,7 @@
 						{% for smpic in smarray %}
 					    {% set count.value = count.value + 1 %}
 								<li class="list-inline-item">
-									<a href="{{smarray[smpic]}}"><img class="d-block img-sm rounded-circle" src="../static/images/Institutionpictures/socialmedia/{{smpic}}"></a>
+									<a href="{{smarray[smpic]}}"><img class="d-block img-sm rounded-circle" src="{{url_for('static', filename='images/Institutionpictures/socialmedia/' + smpic)}}"></a>
 								</li>
 						{% endfor %}
 					</ul>
@@ -330,7 +330,7 @@
 	<!-- ========================= SECTION  ========================= -->
 	<section class="container-fluid" style="min-height: 20vh; width: 90%">
 		<!-- add tutor -->
-		<form action="{{url_for('editinstitution', id='addtutor')}}" method="POST" enctype="multipart/form-data">
+		<form action="{{url_for('addtutor', name=session['institution'])}}" method="POST" enctype="multipart/form-data">
 			<div>
 				<!-- Button trigger modal -->
 				<button type="button" class="btn btn-sm btn-primary float-right ml-2" data-toggle="modal" data-target="#tutadd" name="addtutor" value="addtutor">
@@ -377,7 +377,7 @@
 			</div>
 		</form>
 		<!-- update tutor -->
-		<form action="{{url_for('editinstitution', id='updatetutor')}}" method="POST" enctype="multipart/form-data">
+		<form action="{{url_for('updatetutor', name=session['institution'])}}" method="POST" enctype="multipart/form-data">
 			<div>
 				<!-- Button trigger modal -->
 				<button type="button" class="btn btn-sm btn-primary float-right ml-2" data-toggle="modal" data-target="#updatetutor" name="updatetutor" value="addtutor">
@@ -404,7 +404,7 @@
 									<br>
 									<div class="form-group form-row">
 										<br>
-										<img class="img-md rounded-circle mx-auto" src="../static/images/Institutionpictures/tutor/{{institutiontutorpic}}">
+										<img class="img-md rounded-circle mx-auto" src="{{url_for('static', filename='images/Institutionpictures/tutor/' + institutiontutorpic)}}">
 									</div>
 									<div class="form-group form-row">
 										<p> <a href="#" data-toggle="modal" class="btn btn-primary mx-auto button" data-target="#upload-tutor{{count.value}}"><span class="col-md-1">update</span></a>
@@ -435,7 +435,7 @@
 										<div class="col-md-8">
 											<label for="institutiontutorimagepic">Edit any of the following</label><br>
 											<div>
-												<img id="institutiontutorimagepic" src="../static/images/Institutionpictures/tutor/{{institutiontutorpic}}" alt="your image" class="float-right img-sm rounded-circle"/>
+												<img id="institutiontutorimagepic" src="{{url_for('static', filename='images/Institutionpictures/tutor/' + institutiontutorpic)}}" alt="your image" class="float-right img-sm rounded-circle"/>
 											</div>
 											<input type='file' onchange="readURL(this);" class="float-left" name="uploadupdateinstitutet" value="uploadaddinstitutet"/>
 											{% if extensionerror %}
@@ -462,7 +462,7 @@
 			</div>
 		</form>
 		<!-- delete tutor -->
-		<form action="{{url_for('editinstitution', id='deletetutor')}}" method="POST" enctype="multipart/form-data">
+		<form action="{{url_for('deletetutor', name=session['institution'])}}" method="POST" enctype="multipart/form-data">
 			<div>
 				<!-- Button trigger modal -->
 				<button type="button" class="btn btn-sm btn-primary float-right ml-2" data-toggle="modal" data-target="#deletetut" name="deletetutor" value="deletetutor">
@@ -484,7 +484,7 @@
 										{% set count.value = count.value + 1 %}
 										<label class="col-md-7">Image{{ count.value }}</label>
 										<div class="form-group form-row">
-											<img class="img-md rounded-circle mx-auto" src="../static/images/Institutionpictures/tutor/{{institutiontutorpic}}">
+											<img class="img-md rounded-circle mx-auto" src="{{url_for('static', filename='images/Institutionpictures/tutor/' + institutiontutorpic)}}">
 										</div>
 										<div class="col-md-10 d-flex justify-content-center ml-5">
 											<label>{{institutetarray[institutiontutorpic]}}</label>
@@ -518,7 +518,7 @@
 						{% for institutetpic in institutetarray %}
 					    {% set count.value = count.value + 1 %}
 								<li class="list-inline-item">
-									<img class="img-md rounded-circle mx-auto" src="../static/images/Institutionpictures/tutor/{{institutetpic}}">
+									<img class="img-md rounded-circle mx-auto" src="{{url_for('static', filename='images/Institutionpictures/tutor/' + institutetpic)}}">
 									<br>
 									<label>{{institutetarray[institutetpic]}}</label>
 								</li>
@@ -535,7 +535,7 @@
 
 	<section class="container-fluid" style="min-height: 20vh; width: 90%">
 		<!-- add topcourse -->
-		<form action="{{url_for('editinstitution', id='addtopcourses')}}" method="POST" enctype="multipart/form-data">
+		<form action="{{url_for('addtopcourses')}}" method="POST" enctype="multipart/form-data">
 			<div>
 				<!-- Button trigger modal -->
 				<button type="button" class="btn btn-sm btn-primary float-right ml-2" data-toggle="modal" data-target="#addtopcourses">
@@ -564,38 +564,8 @@
 				</div>
 			</div>
 		</form>
-		<!-- update topcourse -->
-		<form action="{{url_for('editinstitution', id='updatetopcourses')}}" method="POST" enctype="multipart/form-data">
-			<div>
-				<!-- Button trigger modal -->
-				<button type="button" class="btn btn-sm btn-primary float-right ml-2" data-toggle="modal" data-target="#updatetc" name="updatetopcourse" value="updatetopcourses">
-				  Update Top courses
-				</button>
-
-				<!-- Modal -->
-				<div class="modal fade" id="updatetc" tabindex="-1" role="dialog" aria-labelledby="updatetopcourseslabel" aria-hidden="true">
-					<div class="modal-dialog" role="document">
-						<div class="modal-content">
-							<div class="modal-header">
-								<h5 class="modal-title" id="updatetopcourseslabel">Update topcourses</h5>
-								<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-									<span aria-hidden="true">&times;</span>
-								</button>
-							</div>
-							<div class="modal-body">
-								...
-							</div>
-								<div class="modal-footer">
-									<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-									<button type="button" class="btn btn-primary">Save changes</button>
-								</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</form>
 		<!-- delete topcourse -->
-		<form action="{{url_for('editinstitution', id='deletetopcourses')}}" method="POST" enctype="multipart/form-data">
+		<form action="{{url_for('deletetopcourses')}}" method="POST" enctype="multipart/form-data">
 			<div>
 				<!-- Button trigger modal -->
 				<button type="button" class="btn btn-sm btn-primary float-right ml-2" data-toggle="modal" data-target="#deletetc" name="deletetopcourses" value="deletetopcourses">
@@ -635,39 +605,19 @@
 				<div class="card">
 					<div class="card-body">
 						<img class="card-img-top" src="../static/images/banners/banner9.jpg" alt="Card image cap">
-						<h5 class="card-title">Special Title Treatment</h5>
-						<p class="card-text">With smt smt smt smt</p>
-						<a href="#" class="btn btn-primary">GO somewhere</a>
+						<h5 class="card-title">Digital Business</h5>
+						<p class="card-text">Students will learn the goals and essentials of business operations and the various industries that businesses operate in.</p>
+						<a href="#" class="btn btn-primary">Learn More</a>
 					</div>
 				</div>
 			</div>
 			<div class="col-sm-4 mt-3">
 				<div class="card">
 					<div class="card-body">
-						<img class="card-img-top" src="../static/images/banners/banner9.jpg" alt="Card image cap">
-						<h5 class="card-title">please work my goodness</h5>
-						<p class="card-text">Wwhy are u not freaking working</p>
-						<a href="#" class="btn btn-primary">AAAAAHHH</a>
-					</div>
-				</div>
-			</div>
-			<div class="col-sm-4 mt-3">
-				<div class="card">
-					<div class="card-body">
-						<img class="card-img-top" src="../static/images/banners/banner9.jpg" alt="Card image cap">
-						<h5 class="card-title">please work my goodness</h5>
-						<p class="card-text">Wwhy are u not freaking working</p>
-						<a href="#" class="btn btn-primary">AAAAAHHH</a>
-					</div>
-				</div>
-			</div>
-			<div class="col-sm-4 mt-3">
-				<div class="card">
-					<div class="card-body">
-						<img class="card-img-top" src="../static/images/banners/banner9.jpg" alt="Card image cap">
-						<h5 class="card-title">please work my goodness</h5>
-						<p class="card-text">Wwhy are u not freaking working</p>
-						<a href="#" class="btn btn-primary">AAAAAHHH</a>
+						<img class="card-img-top" src="../static/images/banners/banner8.jpg" alt="Card image cap">
+						<h5 class="card-title">UX Design</h5>
+						<p class="card-text">Students will appreciate the concepts of User Experience (UX) and UX design.</p>
+						<a href="#" class="btn btn-primary">Learn More</a>
 					</div>
 				</div>
 			</div>
@@ -678,7 +628,7 @@
 
 	<section class="container-fluid" style="min-height: 20vh; width: 90%">
 		<!-- add seminar -->
-		<form action="{{url_for('editinstitution', id='addseminars')}}" method="POST" enctype="multipart/form-data">
+		<form action="{{url_for('addseminars', name=session['institution'])}}" method="POST" enctype="multipart/form-data">
 			<div>
 				<!-- Button trigger modal -->
 				<button type="button" class="btn btn-sm btn-primary float-right ml-2" data-toggle="modal" data-target="#addsemin" name="addseminars" value="addseminars">
@@ -737,7 +687,7 @@
 			</div>
 		</form>
 		<!-- update seminar -->
-		<form action="{{url_for('editinstitution', id='updateseminar')}}" method="POST" enctype="multipart/form-data">
+		<form action="{{url_for('updateseminars', name=session['institution'])}}" method="POST" enctype="multipart/form-data">
 			<div>
 				<!-- Button trigger modal -->
 				<button type="button" class="btn btn-sm btn-primary float-right ml-2" data-toggle="modal" data-target="#updatesemin" name="updateseminar" value="updateseminar">
@@ -755,7 +705,22 @@
 								</button>
 							</div>
 							<div class="modal-body">
-								...
+								<label>Choose the Events you wish to update.</label>
+								<br>
+								{% set count = namespace(value=0) %}
+								{% for seminarpic in seminararray %}
+									{% set count.value = count.value +1 %}
+									<label class="col-md-7">Event {{count.value}}</label>
+									<br>
+									<div class="form-group form-row">
+										<br>
+										<img class="img-md rounded-circle mx-auto" src="{{url_for('static', filename='images/Institutionpictures/seminar/' + seminarpic)}}">
+									</div>
+									<div class="form-group form-row">
+										<a href="#" data-toggle="modal" class="btn btn-primary mx-auto button" data-target="#upload-seminar{{count.value}}"><span class="col-md-1">Update</span></a>
+									</div>
+									<br><br>
+								{% endfor %}
 							</div>
 							<div class="modal-footer">
 								<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -764,10 +729,56 @@
 						</div>
 					</div>
 				</div>
+				{% set count = namespace(value=0) %}
+				{% for seminarpic in seminararray %}
+					{% set count.value = count.value + 1 %}
+					<!-- second model -->
+					<div class="modal fade" id="upload-seminar{{count.value}}" tabindex="-1" role="dialog" aria-labelledby="upload-seminar-title" aria-hidden="true">
+						<div class="modal-dialog">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h4 class="modal-title" id="upload-seminar-title">Update Event {{count.value}}</h4>
+									<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+								</div>
+								<div class="modal-body">
+									<div class="form-group form-row">
+										<div class="col-md-8">
+											<label for="seminarimagepic">Edit any of the following details</label><br>
+											<div>
+												<img id="seminarimagepic" src="{{url_for('static', filename='images/Institutionpictures/seminar/' + seminarpic)}}" alt="your image" class="float-right img-sm">
+											</div>
+											<input type="file" onchange="readURL(this);" class="float-left" name="uploadupdateseminar" value="uploadupdateseminar"/>
+											{% if extensionerror %}
+											<p style="color:red;" class="error"><strong>Error:</strong> {{extensionerror}}
+											{% endif %}
+										</div>
+									</div>
+									<div class="form-group form-row">
+										<label>Title of event</label><br>
+										{{ render_field(semform.seminartitle, class="form-control", value=seminararray[seminarpic][0]) }}
+									</div>
+									<div class="form-group form-row">
+										<label>Description of Event</label><br>
+										{{ render_field(semform.seminardescription, class="form-control", value=seminararray[seminarpic][1]) }}
+									</div>
+									<div class="form-group form-row">
+										<label>URL of event</label>
+										{{ render_field(semform.seminarwebsite, class="form-control", value=seminararray[seminarpic][2]) }}
+									</div>
+								</div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+									<button type="submit" class="btn btn-primary" name="seminarpics" value="{{seminarpic}}">Upload</button>
+								</div>
+							</div> <!-- /.modal-content -->
+						</div><!-- /.modal-dialog -->
+					</div>
+					<div id="push3"></div>
+				{% endfor %}
 			</div>
 		</form>
 		<!-- delete seminar -->
-		<form action="{{url_for('editinstitution', id='deleteseminars')}}" method="POST" enctype="multipart/form-data">
+		<form action="{{url_for('deleteseminars', name=session['institution'])}}" method="POST" enctype="multipart/form-data">
 			<div>
 				<!-- Button trigger modal -->
 				<button type="button" class="btn btn-sm btn-primary float-right ml-2" data-toggle="modal" data-target="#deletesemin" name="deleteseminar" value="deleteseminar">
@@ -790,7 +801,7 @@
 										{% set count.value = count.value + 1 %}
 										<label class="col-md-7">Image{{ count.value }}</label>
 										<div class="form-group form-row">
-											<img class="img-md rounded-circle mx-auto" src="../static/images/Institutionpictures/seminar/{{seminarpic}}">
+											<img class="img-md rounded-circle mx-auto" src="{{url_for('static', filename='images/Institutionpictures/seminar/' + seminarpic)}}">
 										</div>
 										<div class="form-group form-row">
 											<button class="btn btn-primary mx-auto" type="submit" name="seminardelete" value="{{seminarpic}}"><span class="col-md-1">Delete</span></button>
@@ -820,7 +831,7 @@
 					<div class="col-sm-4 mt-3">
 						<div class="card">
 							<div class="card-body">
-								<img class="card-img-top" src="../static/images/Institutionpictures/seminar/{{seminarpic}}">
+								<img class="card-img-top" src="{{url_for('static', filename='images/Institutionpictures/seminar/' + seminarpic)}}">
 								<h5 class="card-title">{{seminararray[seminarpic][0]}}</h5>
 								<p class="card-text">{{seminararray[seminarpic][1]}}</p>
 								<a href="{{seminararray[seminarpic][2]}}" class="btn btn-primary">Learn more!</a>
@@ -845,7 +856,7 @@
 			<div class="card-img-overlay white">
             	<h1 class="card-title mt-5">View All Courses under Nanyang Polytechnic!</h1>
 				<h6 class="card-title">look through all of the courses that is under this institution.</h6>
-			  	<a href="AllInstitutionCourses" class="btn btn-warning">Explore now</a>
+			  	<a href="AllInstitutionCourses_admin" class="btn btn-warning">Explore now</a>
           	</div>
         </div>
         <!-- ============================ COMPONENT BANNER 7  END .// =========================== -->
@@ -958,6 +969,36 @@
                     .height(150);
 
                 $('#institutiontutorimagepic')
+                    .attr('src', e.target.result)
+                    .width(150)
+                    .height(150);
+
+                $('#smupdate')
+                    .attr('src', e.target.result)
+                    .width(150)
+                    .height(150);
+
+                $('#tutorimage')
+                    .attr('src', e.target.result)
+                    .width(150)
+                    .height(150);
+
+				$('#seminarimage')
+                    .attr('src', e.target.result)
+                    .width(150)
+                    .height(150);
+
+                $('#smpictureimage')
+                    .attr('src', e.target.result)
+                    .width(150)
+                    .height(150);
+
+                $('#institutiontutorimagepic')
+                    .attr('src', e.target.result)
+                    .width(150)
+                    .height(150);
+
+				$('#seminarimagepic')
                     .attr('src', e.target.result)
                     .width(150)
                     .height(150);

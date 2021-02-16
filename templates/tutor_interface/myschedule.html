@@ -1,61 +1,76 @@
-{% extends 'tutor_interface/base.html' %}
-{% block title %} Update Session {% endblock %}
-{% from "tutor_onboarding/__formhelperwithoutlabel.html" import render_field  %}
-
+{% extends "tutor_interface/base.html" %}
+{% block title %} My Schedule {% endblock %}
 {% block custom_CDN %}
-<!-- Feast Your eyes on the monster we are about to create
-    There is no turning back now folks. With that, Here are our cdn for our date picker for scheduler
-Stupid CDN stuff
--->
-<!-- FullCalendar -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.5.1/main.min.css">
-<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.5.1/main.min.js"></script>
-<!-- Moment.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ==" crossorigin="anonymous"></script>
-<!-- Date Range Picker -->
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
-<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+  <link rel="stylesheet" href="../static/css/todo.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.1.0/main.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.1.0/main.min.js"></script>
+  <!--
+  <link rel="stylesheet" href="./fullcalendar/main.min.css">
+  <script src="./fullcalendar/main.min.js" defer></script>
+  https://youtu.be/Un5DrBn5gxc
+  -->
+  <script src="../static/js/todo.js" defer></script>
+
 {% endblock %}
 
 {% block content %}
-
 <div class="container padding-y">
-      <div id='calendar'></div>
+  <h1>My Schedule</h1>
+  <p id="tutor_id"class="text-muted">{{tutor_id}}</p>
 </div>
 
-<script>
-      let calendarEL = document.getElementById('calendar');
-      let calendar = new FullCalendar.Calendar(calendarEL, {
-      showNonCurrentDates : false,
-      events : [
-       {% for event in events%}
-            {
-            title : '{{event.todo}}',
-            start : '{{event.date}}'
-            },
-            {% endfor %}
-      ],
-      selectable: true,
-      selectOverlap: function(event) {
-          return ! event.block;
-      },
-      select: function(start, end, allDay) {
-          var check = $.fullCalendar.formatDate(start,'yyyy-MM-dd');
-          var today = $.fullCalendar.formatDate(new Date(),'yyyy-MM-dd');
-          if(check < today)
-          {
-              // Previous Day. show message if you want otherwise do nothing.
-              // So it will be unselectable
-          }
-          else
-          {
-              // Its a right date
-              // Do something
-          }
-        },
-      });
+<div class="todo-grid-parent container padding-y">
+    <div>
+      <div class="todo-input todo-block">
+        <span>Date:</span>
+        <input type="date" id="dateInput" min="2021-02-14">
+        <span>Time:</span>
+        <input type="time" id="timeInput">
+        <span></span>
+        <button class="btn rounded-pill btn-primary" id="addBtn">Add</button>
+        <span></span>
+      </div>
+      <br>
+      <br>
+      <div id="todotablediv">
+      <table id="todoTable" class="todo-block">
+          <tr>
+            <td>Date</td>
+            <td>Time</td>
+            <td>Category</td>
+            <td></td>
+            <td></td>
+          </tr>
+      </table>
+      </div>
+      <br>
+      <br>
+    </div>
 
-      calendar.render();
-</script>
-{% endblock %}
+    <div class="todo-calendar  todo-block">
+      <div id='calendar'></div>
+    </div>
 
+  </div> <!-- class="todo-grid-parent" -->
+
+  <div class="todo-overlay" id="todo-overlay">
+    <div class="todo-modal" id="todo-modal">
+      <div class="todo-input todo-block">
+        <span>Category: </span>
+        <input type="text" placeholder="Enter category" list="categoryList"  id="todo-edit-category">
+        <datalist id="categoryList">
+          <option value="Personal"></option>
+          <option value="Work"></option>
+        </datalist>
+        <span>Date:</span>
+        <input type="date" id="todo-edit-date" min="2021-02-14">
+        <span>Time:</span>
+        <input type="time" id="todo-edit-time">
+        <button class="btn rounded-pill btn-primary" id="changeBtn">Save Change</button>
+      </div>
+    </div>
+    <div class="todo-modal-close-btn" id="todo-modal-close-btn">X</div>
+  </div>
+  {% endblock %}

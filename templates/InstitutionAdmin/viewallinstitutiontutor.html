@@ -1,0 +1,62 @@
+{% extends "InstitutionAdmin/base.html" %}
+{% block title %}TutorHub- Home{% endblock %}
+
+{% block content %}
+
+{% from "tutor_onboarding/__formhelperwithoutlabel.html" import render_field  %}
+
+<!-- ========================= SECTION INTRO ========================= -->
+<section class="container-fluid" style="min-height: 84vh; width: 90%">
+    <br>
+    <!-- ==================== form content ============ -->
+    <center>
+      <h2>View all tutors registered</h2>
+    </center>
+    <br>
+    <div>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for institutiontutor in institutiontutorlist %}
+            <tr>
+                <td>{{institutiontutor.get_first_name()}}</td>
+                <td>{{institutiontutor.get_last_name()}}</td>
+                <td>
+                    <form action="{{url_for('delete_tutor', id=institutiontutor.get_first_name())}}" method="POST">
+                        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#myModal_{{institutiontutor.get_first_name()">
+                            Delete
+                        </button>
+
+                        <div class="modal" id="myModal_{{institutiontutor.get_first_name()}}">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title">Delete Confirmation</h4>
+                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                    </div>
+                                    <div class="modal-body">
+                                        Are you sure you want to delete {{institutiontutor.get_first_name()}} {{institutiontutor.get_last_name()}}?
+                                    </div>
+                                    <div calss="modal-footer">
+                                        <input type="submit" value="Delete" class="btn btn-danger">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+
+</section>
+{% endblock %}

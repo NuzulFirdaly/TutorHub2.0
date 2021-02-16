@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% block title %} View Profile {% endblock %}
+{% block content %}
+<script type="text/javascript">
+/// some script
+
+// jquery ready start
+$(document).ready(function() {
+	// jQuery code
+
+
+    /////////////////  items slider. /plugins/owlslider/
+    if ($('.slider-items-owl').length > 0) { // check if element exists
+        $('.slider-items-owl').owlCarousel({
+        //change the loop daddy
+            loop:false,
+            margin:15,
+            nav:true,
+            autoWidth:true,
+            navText: ["<i class='fa fa-chevron-left'></i>", "<i class='fa fa-chevron-right'></i>"],
+            responsive:{
+                0:{
+                    items:1
+                },
+                640:{
+                    items:3
+                },
+                1024:{
+                    items: 3
+                }
+            }
+        })
+    } // end if
+
+
+
+
+});
+// jquery end
+</script>
+<div class="container padding-y ">
+    <!-- tutor profile -->
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-header">
+                    <div class="icon"><img class="icon icon-lg rounded-circle" src=/static/images/profilepictures/{{session['profile_pic']}}></div>
+                    <div class="text"><h3>{{session['name']}}</h3></div>
+                </div>
+                <div class="card-body">
+                    <div class="text">
+                        <h5>Description</h5>
+                        {% if session['description'] != '' %}
+                            <p class="text-muted">{{session['description']}}</p>
+                        {% else %}
+                            <p class="text-muted">This user has not left any information about themselves.</p>
+                        {% endif %}
+                    </div>
+                    <br>
+                    <div class="text">
+                        <h5>Languages</h5>
+                        <p class="text-muted">{{session['language']}}({{ session['proficiency'] }})</p>
+                    </div>
+                </div>
+            </div>
+        </div> <!-- end of col-->
+        <div class="col-md-9 ">
+            <h4>My Courses</h4>
+                <!-- ============== COMPONENT SLIDER ITEMS OWL  ============= -->
+                <div class="slider-items-owl owl-carousel owl-theme" style="margin-left:2em;">
+                    {% for courses in coursesarray %}
+                    <div class="item-slide">
+                        <figure class="card card-product-grid" style="width: 18rem;">
+                            <img class="card-img-top" src="static/images/coursethumbnails/{{courses.course_thumbnail}}"height="140" width="240">
+                            <div class="widget-header">
+                                    <a href="#" class="ml-3 icontext" data-toggle="dropdown" data-offset="20,10">
+                                        <div class="icon"><img class="icon icon-xs rounded-circle" src=/static/images/profilepictures/{{session['profile_pic']}}></div>
+                                        <div class="text">
+                                            <small class="text-muted">{{session['name']}}</small> <br>
+                                        </div>
+                                    </a>
+                            </div>
+                            <figcaption class="info-wrap">
+                                <h4 class="title"><a href="{{url_for('updatecourse', course_id = courses.course_id)}}">{{courses.course_title}}</a></h4>
+                                <p class="text-muted">{{courses.short_description}}</p>
+                                <br>
+                                <h5>${{courses.hourlyrate}}/Hour</h5>
+                            </figcaption>
+                        </figure> <!-- card // -->
+                    </div>
+                    {% endfor %}
+                </div>
+                <!-- ============== COMPONENT SLIDER ITEMS OWL .end // ============= -->
+                <br><br>
+        </div><!-- end of col -->
+    </div>
+    <div class="row">
+        <div class="col-md-3">
+        </div>
+        <div class="col-md-9">
+            <h4>Finished Courses</h4>
+        </div>
+    </div>
+    <div class=""></div>
+</div>
+{% endblock %}

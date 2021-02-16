@@ -25,10 +25,6 @@
 	{% if session["loggedin"] == True %}
 	<div class="col-lg-4 col-sm-6 col-12">
 		<div class="widgets-wrap float-lg-right">
-			<div class="widget-header  mr-3">
-				<a href="#" class="icon icon-sm rounded-circle border"><i class="fa fa-shopping-cart"></i></a>
-				<span class="badge badge-pill badge-danger notify">0</span>
-			</div>
 			<div class="widget-header dropdown">
 				<a href="#" class="ml-3 icontext" data-toggle="dropdown" data-offset="20,10">
 					<div class="icon"><img class="icon icon-sm rounded-circle" src=../static/images/profilepictures/{{session['profile_pic']}}></div>
@@ -71,6 +67,18 @@
 </div> <!-- row.// -->
 	</div> <!-- container.// -->
 </section> <!-- header-main .// -->
+	{% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-info alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        {{message}}
+                    </div>
+
+                {% endfor %}
+
+            {% endif %}
+          {% endwith %}
 </header> <!-- section-header.// -->
 
 

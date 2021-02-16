@@ -2,29 +2,173 @@
 {% block title %}TutorHub - login{% endblock %}
 
 {% block content %}
+<script type="text/javascript">
+/// some script
+
+// jquery ready start
+$(document).ready(function() {
+	// jQuery code
 
 
-<form class="container padding-y" method="POST">
-    <h1>Stationery</h1>
+    /////////////////  items slider. /plugins/owlslider/
+    if ($('.slider-items-owl').length > 0) { // check if element exists
+        $('.slider-items-owl').owlCarousel({
+        //change the loop daddy
+            loop:false,
+            nav:true,
+            autoWidth:true,
+            margin:20,
+            navText: ["<i class='fa fa-chevron-left'></i>", "<i class='fa fa-chevron-right'></i>"],
+            responsive:{
+                0:{
+                    items:1
+                },
+                640:{
+                    items:2
+                },
+                1024:{
+                    items: 3
+                }
+            }
+        })
+    } // end if
+
+
+
+
+});
+
+
+// jquery end
+</script>
+
+{% from "tutor_onboarding/__formhelperwithoutlabel.html" import render_field  %}
+
+
+<div class="container padding-y">
+{% if session['loggedin'] == True %}
+    {% if session['istutor'] == True %}
+    <form style="" action="{{ url_for('itemCreation', action='list')}}" method="POST" enctype="multipart/form-data">
+                <figure class="card card-product-grid" style="width: 20rem; padding: 30px;">
+                    <div class="form-group form-row">
+                      <label class="col-md-3 col-form-label">Name</label>
+                      <div class="col-md-9">
+                          {{ render_field(form.name, class="form-control") }}
+                      </div>
+                    </div>
+                    <div class="form-group form-row">
+                      <label class="col-md-3 col-form-label">Price</label>
+                      <div class="col-md-9">
+                          {{ render_field(form.price, class="form-control") }}
+                      </div>
+                    </div>
+                    <div style="position:relative;">
+                        <input type="file" name="image" id="image">
+                           {% if extensionerror %}
+                            <p  style="color:red;" class="error"><strong>Error:</strong> {{ extensionerror }}
+                            {% endif %}
+                    </div>
+                    <br>
+                    <button class="btn btn-primary" type="submit">List Item</button>
+                    {% if logicerror %}
+                        <p  style="color:red;" class="error"><strong>Error:</strong> {{ logicerror }}
+                    {% endif %}
+                </figure> <!-- card // -->
+            </form>
+        <div class="row">
+            <h1>Your Listing</h1>
+        </div>
+        <hr>
+        <div class="row">
+            {% set count = namespace(value=0) %}
+            {% for item in itemlist %}
+                {% if item.get_user_id() == session['user_id'] %}
+                    {% set count.value = count.value + 1 %}
+                    <div class="item-slide">
+                    <form class='block-register' action="{{ url_for('itemDelete', name=item.get_name())}}" method="POST" enctype="multipart/form-data" >
+                        <figure class="card card-product-grid" style="width: 16rem; padding: 30px;">
+                            <img class="card-img-top" src="../static/images/itemlisting/{{ item.get_picture() }}" height="140" width="140">
+                            <figcaption class="info-wrap">
+                                <h5 class="title" style="height:58px;">{{ item.get_name().replace('_', ' ') }}</h5>
+                                <small style="color:red; font-size:14px;">${{ item.get_price() }}
+                                <br>
+                                    <button class="btn btn-danger" type="submit">Delete</button></small>
+                            </figcaption>
+                        </figure> <!-- card // -->
+                    </form>
+                    </div>
+            {% endif %}
+        {% endfor %}
+        </div>
+        {% if count.value == 0 %}
+        <div class="row">
+                <p style="text-align:center" class="text-muted">You have not listed any items.</p>
+            <br>
+        </div>
+        {% endif %}
+    {% endif %}
     <div class="row">
-        <figure class="card card-product-grid" style="width: 14rem; padding: 30px;">
-            <img class="card-img-top" src="../static/images/itemlisting/blackpen.jpg" height="140" width="140">
-            <figcaption class="info-wrap">
-                <h5 class="title" style="height:58px;">Black Pen</h5>
-                <br>
-                <small style="color:red; font-size:14px;">$2.10
-                    <button type="submit" name="add_cart" value='Black_Pen,2.10'>Add to Cart</button></small>
-            </figcaption>
-        </figure> <!-- card // -->
-        <div class="col-md-1"></div>
-        <figure class="card card-product-grid" style="width: 14rem; padding: 30px;">
-            <img class="card-img-top" src="../static/images/itemlisting/Exercisebook.jpg" height="140" width="140">
-            <figcaption class="info-wrap">
-                <h5 class="title" style="height:58px;">Exercise Book</h5>
-                <br>
-                <small style="color:red; font-size:14px;">$1.30
-                    <button type="submit" name="add_cart" value='Exercise_Book,1.30'>Add to Cart</button></small>
-            </figcaption>
-        </figure> <!-- card // -->
+        <h1>Essentials</h1>
     </div>
+        <hr>
+     <div class="row">
+        <div class="slider-items-owl owl-carousel owl-theme center-x" style="position:relative;">
+            {% for item in itemlist %}
+            {% if item.get_user_id() != session['user_id'] %}
+            <div class="item-slide">
+            <form class='block-register' action="{{ url_for('orderitems', action='order')}}" method="POST" enctype="multipart/form-data" >
+                <figure class="card card-product-grid" style="width: 16rem; padding: 30px;">
+                    <img class="card-img-top" src="../static/images/itemlisting/{{ item.get_picture() }}" height="140" width="140">
+                    <br>
+                    <div class="widget-header row">
+                        <a href="#view page of tutor">
+                            <div class="icon"><img class="icon icon-md rounded-circle border" src=/static/images/profilepictures/{{item.get_userpic()}}></div>
+                            <div class="text">
+                                <p style="font-size:1em;">{{item.get_username()}}</p> <br>
+                            </div>
+                        </a>
+                    </div>
+                    <figcaption class="info-wrap">
+                        <h5 class="title" style="height:58px;">{{ item.get_name().replace('_', ' ') }}</h5>
+                        <small style="color:red; font-size:14px;">${{ item.get_price() }}
+                        <br>
+                        <button class="btn btn-primary" type="submit" name="add_cart" value='{{ item.get_name() }},{{ item.get_price() }}'>Add Cart</button></small>
+                    </figcaption>
+                </figure> <!-- card // -->
+            </form>
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% else %}
+    <div class="row">
+    <h1>Essentials</h1>
+        <div class="slider-items-owl owl-carousel owl-theme center-x" style="position:relative;">
+            {% for item in itemlist %}
+            <div class="item-slide">
+            <form class='block-register' action="{{ url_for('orderitems', action='order')}}" method="POST" enctype="multipart/form-data" >
+                <figure class="card card-product-grid" style="width: 16rem; padding: 30px;">
+                    <img class="card-img-top" src="../static/images/itemlisting/{{ item.get_picture() }}" height="140" width="140">
+                    <br>
+                    <div class="widget-header row">
+                        <a href="#view page of tutor">
+                            <div class="icon"><img class="icon icon-md rounded-circle border" src=/static/images/profilepictures/{{item.get_userpic()}}></div>
+                            <div class="text">
+                                <p style="font-size:1em;">{{item.get_username()}}</p> <br>
+                            </div>
+                        </a>
+                    </div>
+                    <figcaption class="info-wrap">
+                        <h5 class="title" style="height:58px;">{{ item.get_name().replace('_', ' ') }}</h5>
+                        <small style="color:red; font-size:14px;">${{ item.get_price() }}</small>
+                       </figcaption>
+                </figure> <!-- card // -->
+            </form>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endif %}
 {% endblock %}

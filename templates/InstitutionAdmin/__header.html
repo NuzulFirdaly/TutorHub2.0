@@ -5,7 +5,7 @@
 <div class="row align-items-center">
 	<div class="col-lg-2 col-6">
 		<a href="/" class="brand-wrap">
-			<img class="logo" src="static/images/logos/222.png">
+			<img class="logo" src="../../static/images/logos/222.png">
 		</a> <!-- brand-wrap.// -->
 	</div>
 	<div class="col-lg-6 col-12 col-sm-12">
@@ -25,33 +25,16 @@
 	{% if session["loggedin"] == True %}
 	<div class="col-lg-4 col-sm-6 col-12">
 		<div class="widgets-wrap float-lg-right">
-			<div class="widget-header  mr-3">
-				<a href="/createcourse" class="icontext mr-4" >
-					<i class="icon mr-2 far fa-plus-square"></i>
-					<div class="text">
-						Create Courses
-					</div>
-				</a> <!-- iconbox // -->
-				<!--<a href="#" class="icon icon-sm rounded-circle border">
-					<i class="fas fa-book-reader"></i>
-					<span class="badge badge-pill badge-danger notify">0</span>
-				</a>
-				<div class="text">
-					<span>My Courses</span>
-				</div> -->
-			</div>
 			<div class="widget-header dropdown">
 				<a href="#" class="ml-3 icontext" data-toggle="dropdown" data-offset="20,10">
-					<div class="icon"><img class="icon icon-sm rounded-circle" src=/static/images/profilepictures/{{session['profile_pic']}}></div>
+					<div class="icon"><img class="icon icon-sm rounded-circle" src=/static/images/institutiontutor/{{session['profilepic']}}></div>
 					<div class="text">
-						<small class="text-muted">{{session['name']}}</small> <br>
+						<small class="text-muted">{{session['username']}}</small> <br>
 						<span>My account <i class="fa fa-caret-down"></i></span>
 					</div>
 				</a>
 				<div class="dropdown-menu dropdown-menu-right">
-					<a class="dropdown-item" href="#">Profile setting</a>
-					<a class="dropdown-item" href="/mycourses">My Courses</a>
-					<a class="dropdown-item" href="#">My schedule</a>
+					<a class="dropdown-item" href="tutorprofile">Profile setting</a>
 					<hr class="dropdown-divider">
 					<a class="dropdown-item" href="/logout">Log out</a>
 				</div> <!--  dropdown-menu .// -->
@@ -95,25 +78,15 @@
       	<li class="nav-item dropdown">
           <a class="nav-link pl-0" data-toggle="dropdown" href="#"><strong> <i class="fa fa-bars"></i> &nbsp  All category</strong></a>
           <div class="dropdown-menu">
-            <a class="dropdown-item" href="#">Foods and Drink</a>
-            <a class="dropdown-item" href="#">Home interior</a>
-            <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="#">Category 1</a>
-            <a class="dropdown-item" href="#">Category 2</a>
-            <a class="dropdown-item" href="#">Category 3</a>
+            <a class="dropdown-item" href="#">Your page</a>
+            <a class="dropdown-item" href="#">Register Tutor</a>
           </div>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">Programming</a>
+          <a class="nav-link" href="{{ url_for('AllInstitutions_admin', name = session['institution']) }}">Your Institution Page</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">Physics</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Photography</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Chemistry</a>
+          <a class="nav-link" href="{{ url_for('RegisterInstituteTutor', name = session['institution']) }}">Register your Tutor</a>
         </li>
       </ul>
     </div> <!-- collapse .// -->
