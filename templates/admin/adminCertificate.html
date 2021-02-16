@@ -1,0 +1,262 @@
+{% extends "admin/adminBase.html" %}
+{% block title %}<title>Certificate</title>{% endblock %}
+
+{% block content %}
+
+<h1 class="display-4">Tutor Certificate</h1>
+<div class="container-fluid">
+    <br>
+    <h2 class="display-6">Overview</h2>
+    <br>
+    <div class="container-fluid bg-light" style="min-height: 755px;">
+        <br>
+        <table id="tutor" class="display" cellspacing="0" width="100%">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in userNamearray %}
+                <tr>
+                    <td>
+                        <h4 class="display-6 float-left" style="margin-top: 13px;">{{ user.get_username() }}</h4>
+                        <form action="{{url_for('view_tutor', id=user.get_user_id(), _anchor='review')}}" method="POST">
+                            <input type="submit" value="View">
+                        </form>
+                        <div class="float-right" style="display:flex;">
+                            <!-- The Modal -->
+                            <form action="{{url_for('approve_tutor', id=user.get_user_id())}}" method="POST">
+                                <!-- Button to Open the Modal -->
+                                <button type="button" class="btn btn-success" data-toggle="modal" data-target="#approve_{{user.get_username()}}">
+                                  Approve
+                                </button>
+
+                                <!-- The Modal -->
+                                <div class="modal" id="approve_{{user.get_username()}}">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+
+                                            <!-- Modal Header -->
+                                            <div class="modal-header">
+                                                <h4 class="modal-title">Approve Confirmation</h4>
+                                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                            </div>
+
+                                            <!-- Modal body -->
+                                            <div class="modal-body">
+                                                Are you sure you want to approve {{user.get_username()}}?
+                                            </div>
+
+                                            <!-- Modal footer -->
+                                            <div class="modal-footer">
+                                                <input type="submit" value="Approve" class="btn btn-success">
+                                                <button type="button" class="btn btn-secondary bg-light" data-dismiss="modal">Cancel</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                            <!-- The Modal -->
+                            <form action="{{url_for('delete_tutor', id=user.get_user_id())}}" method="POST">
+                                <!-- Button to Open the Modal -->
+                                <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete_{{user.get_username()}}">
+                                  Delete
+                                </button>
+
+                                <!-- The Modal -->
+                                <div class="modal" id="delete_{{user.get_username()}}">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+
+                                            <!-- Modal Header -->
+                                            <div class="modal-header">
+                                                <h4 class="modal-title">Delete Confirmation</h4>
+                                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                            </div>
+
+                                            <!-- Modal body -->
+                                            <div class="modal-body">
+                                                Are you sure you want to delete {{user.get_username()}}?
+                                            </div>
+
+                                            <!-- Modal footer -->
+                                            <div class="modal-footer">
+                                                <input type="submit" value="Delete" class="btn btn-danger">
+                                                <button type="button" class="btn btn-secondary bg-light" data-dismiss="modal">Cancel</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+<br><br><br><br>
+<div class="container-fluid" id="review" style="padding-top:5em;">
+    <h2 class="display-6">Review</h2>
+    <br>
+    <div class="container-fluid bg-light" style="height: 750px;">
+        <br><br>
+        <div id="imagescroller" class="carousel slide" data-interval="false">
+            <div class="carousel-inner">
+                {% for cert in selected %}
+                    <div class="carousel-caption d-none d-md-block">
+                        <h2>{{cert[0]}}</h2>
+                    </div>
+                    <div class="carousel-item d-flex active justify-content-center">
+                        <img src="/static/pendingcerts/{{cert[1].certificate}}" style="height: 40em; width: 30em; object-fit: contain;">
+                    </div>
+                {% endfor %}
+            </div>
+            <a class="carousel-control-prev" href="#imagescroller" role="button" data-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="sr-only">Previous</span>
+            </a>
+            <a class="carousel-control-next" href="#imagescroller" role="button" data-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="sr-only">Next</span>
+            </a>
+        </div>
+    </div>
+</div>
+<br><br><br><br><br><br><br>
+<h1 class="display-4">Institution Certificate</h1>
+<div class="container-fluid" id="institutionoverview">
+    <br>
+    <h2 class="display-6">Overview</h2>
+    <br>
+    <div class="container-fluid bg-light" style="min-height: 755px;">
+        <br>
+        <table id="institution" class="display" cellspacing="0" width="100%">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for inst in pendinginstitutionarray %}
+                <tr>
+                    <td>
+                        <h4 class="display-6 float-left" style="margin-top: 13px;">{{ inst.institution_name }}</h4>
+                        <form action="{{url_for('view_institution', id=inst.institution_name, _anchor='institutionreview')}}" method="POST">
+                            <input type="submit" value="View">
+                        </form>
+                        <div class="float-right" style="display:flex;">
+                            <!-- The Modal -->
+                            <form action="{{url_for('approve_institution', id=inst.institution_name, _anchor='institutionoverview')}}" method="POST">
+                                <!-- Button to Open the Modal -->
+                                <button type="button" class="btn btn-success" data-toggle="modal" data-target="#approve_{{inst.institution_name}}">
+                                  Approve
+                                </button>
+
+                                <!-- The Modal -->
+                                <div class="modal" id="approve_{{inst.institution_name}}">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+
+                                            <!-- Modal Header -->
+                                            <div class="modal-header">
+                                                <h4 class="modal-title">Approve Confirmation</h4>
+                                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                            </div>
+
+                                            <!-- Modal body -->
+                                            <div class="modal-body">
+                                                Are you sure you want to approve {{inst.institution_name}}?
+                                            </div>
+
+                                            <!-- Modal footer -->
+                                            <div class="modal-footer">
+                                                <input type="submit" value="Approve" class="btn btn-success">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+
+                            <!-- The Modal -->
+                            <form action="{{url_for('delete_institution', id=inst.institution_name, _anchor='institutionoverview')}}" method="POST">
+                                <!-- Button to Open the Modal -->
+                                <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete_{{inst.institution_name}}">
+                                  Delete
+                                </button>
+
+                                <!-- The Modal -->
+                                <div class="modal" id="delete_{{inst.institution_name}}">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+
+                                            <!-- Modal Header -->
+                                            <div class="modal-header">
+                                                <h4 class="modal-title">Delete Confirmation</h4>
+                                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                            </div>
+
+                                            <!-- Modal body -->
+                                            <div class="modal-body">
+                                                Are you sure you want to delete {{inst.institution_name}}?
+                                            </div>
+
+                                            <!-- Modal footer -->
+                                            <div class="modal-footer">
+                                                <input type="submit" value="Delete" class="btn btn-danger">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+<br><br><br><br>
+<div class="container-fluid" id="institutionreview" style="padding-top:5em;">
+    <h2 class="display-6">Review</h2>
+    <br>
+    <div class="container-fluid bg-light" style="height: 750px;">
+        <br><br>
+        <div id="imagescrolleri" class="carousel slide" data-interval="false">
+            <div class="carousel-inner">
+                {% for icert in iselected %}
+                    <div class="carousel-caption d-none d-md-block">
+                        <h2>{{icert[0]}}</h2>
+                    </div>
+                    <div class="carousel-item d-flex active justify-content-center">
+                        <img src="\static\images\InstitutionLicense\{{icert[1].get_license()}}" style="height: 40em; width: 30em; object-fit: contain;">
+                    </div>
+                {% endfor %}
+            </div>
+            <a class="carousel-control-prev" href="#imagescrolleri" role="button" data-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="sr-only">Previous</span>
+            </a>
+            <a class="carousel-control-next" href="#imagescrolleri" role="button" data-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="sr-only">Next</span>
+            </a>
+        </div>
+    </div>
+</div>
+<br><br>
+{% endblock %}
+
+{% block search %}
+<script>
+$(document).ready(function() {
+    $('table.display').DataTable();
+} );
+
+</script>
+{% endblock %}

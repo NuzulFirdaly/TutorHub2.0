@@ -1,0 +1,51 @@
+<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-left">
+    <a class="navbar-brand" href="/admin">TutorHub</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault"
+            aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle Navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+        <ul class="navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link" href="/admin">Home</a>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link" href="/adminProfile">Profile</a>
+            </li>
+
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Certificate</a>
+                <div class="dropdown-menu">
+                    <h4 class="dropdown-header">Tutor</h4>
+                    <a class="dropdown-item" href="/adminCertificate">Overview</a>
+                    <a class="dropdown-item" href="/adminCertificate#review">Review</a>
+                    <div class="dropdown-divider"></div>
+                    <h4 class="dropdown-header">Institution</h4>
+                    <a class="dropdown-item" href="/adminCertificate#institutionoverview">Overview</a>
+                    <a class="dropdown-item" href="/adminCertificate#institutionreview">Review</a>
+                </div>
+            </li>
+
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Account</a>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" href="/adminAccount">Create Admin</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="/adminAccount#availableid">Available ID</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="/adminAccount#assignrole">Assign Role</a>
+                </div>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="/adminContact">Contact</a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="/adminLogout">Logout</a>
+            </li>
+        </ul>
+    </div>
+</nav>

@@ -1,0 +1,71 @@
+{% extends "admin/adminProfile.html" %}
+{% block title %}<title>Edit Profile</title>{% endblock %}
+
+{% block content %}
+
+{% from "components/__formhelper.html" import render_field  %}
+<!-- ========================= SECTION CONTENT ========================= -->
+<section class="section-content padding-y">
+
+<!-- ============================ COMPONENT REGISTER   ================================= -->
+	<div class="card mx-auto" style="max-width:520px; margin-top:40px;">
+		<article class="card-body">
+			<header class="mb-4"><h4 class="card-title">Edit Profile</h4></header>
+			<form method="POST" action="" enctype="multipart/form-data">
+				<div class="form-row">
+					<div class="col form-group">
+						{{ render_field(form.first_name, class="form-control") }}
+					</div> <!-- form-group end.// -->
+					<div class="col form-group">
+						{{ render_field(form.last_name, class="form-control") }}
+					</div> <!-- form-group end.// -->
+				</div> <!-- form-row end.// -->
+				<div class="form-group">
+						{{ render_field(form.username, class="form-control") }}
+						{% if usernameerror %}
+							<p  style="color:red;" class="error"><strong>Error:</strong> {{ usernameerror }}
+						{% endif %}
+				</div> <!-- form-group end.// -->
+				<div class="form-group">
+						{{ render_field(form.email, class="form-control") }}
+						{% if emailerror %}
+							<p  style="color:red;" class="error"><strong>Error:</strong> {{ emailerror }}
+						{% endif %}
+				</div> <!-- form-group end.// -->
+				<div class="form-group">
+						{{ render_field(form.language, class="form-control") }}
+				</div> <!-- form-group end.// -->
+				<div class="form-group">
+						{{ render_field(form.region, class="form-control") }}
+				</div> <!-- form-group end.// -->
+				<div class="form-group">
+						{{ render_field(form.phonenumber, class="form-control") }}
+				</div> <!-- form-group end.// -->
+				<div class="form-group">
+						{{ render_field(form.description, class="form-control") }}
+				</div> <!-- form-group end.// -->
+				<div class="form-group">
+					<p>Upload Certificate</p>
+					<div class='col-md-3'>
+						<div style="position:relative;">
+						<input type="file" name="image" id="image">
+							{% if extensionerror %}
+								<p  style="color:red;" class="error"><strong>Error:</strong> {{ extensionerror }}
+							{% endif %}
+						</div>
+					</div>
+				</div> <!-- form-group end.// -->
+				<div class="form-group">
+					<button type="submit" value="submit" class="btn btn-primary btn-block"> Save Changes </button>
+				</div> <!-- form-group// -->
+			</form>
+		</article><!-- card-body.// -->
+    </div> <!-- card .// -->
+    <p class="text-center mt-4"><a href="/adminProfile">Back to Profile</a></p>
+    <br><br>
+<!-- ============================ COMPONENT REGISTER  END.// ================================= -->
+
+
+</section>
+<!-- ========================= SECTION CONTENT END// ========================= -->
+{% endblock %}

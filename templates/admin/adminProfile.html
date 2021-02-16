@@ -1,0 +1,55 @@
+{% extends "admin/adminBase.html" %}
+{% block title %}<title>Profile</title>{% endblock %}
+
+{% block content %}
+    <br><br>
+    <div class="bg-white shadow rounded overflow-hidden">
+        <div class="px-4 pt-0 pb-4 cover">
+            <div class="media align-items-end profile-head" style="padding-top: 20px;">
+                <div class="profile mr-3"><img src="\static\images\admin_img\admin_profilepictures\{{ session['admin_profile_pic'] }}" alt="..." width="130" class="rounded mb-2 img-thumbnail"><a href="/adminEditProfile" class="btn btn-outline-dark btn-sm btn-block">Edit profile</a></div>
+                <div class="media-body mb-5 text-white">
+                    <h4 class="mt-0 mb-0">{{session['admin_firstname']+" "+session['admin_lastname']}}</h4>
+                    <h5 class="mt-0 mb-0 text-secondary">{{session['admin_username']}}</h5>
+                    <p class="small mb-4"> <i class="fas fa-map-marker-alt mr-2"></i>New York</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="px-4 py-3">
+            <h5 class="mb-0" style="padding-bottom: 10px;">About</h5>
+            <div class="p-4 rounded shadow-sm bg-light">
+                <h5 class="mt-0 mb-0">Date Joined : {{session['admin_datecreated']}}</h5>
+                <h5 class="mt-0 mb-0" style="padding-top: 10px;">Role : {{session['admin_role']}}</h5>
+                <h5 class="mt-0 mb-0" style="padding-top: 10px;">Language : {{session['admin_language']}}</h5>
+                <h5 class="mt-0 mb-0" style="padding-top: 10px;">Region : {{session['admin_region']}}</h5>
+                <h5 class="mt-0 mb-0" style="padding-top: 10px;">Description : {{session['admin_description']}}</h5>
+            </div>
+        </div>
+
+        <div class="px-4 py-3">
+            <h5 class="mb-0" style="padding-bottom: 10px;">Contact</h5>
+            <div class="p-4 rounded shadow-sm bg-light">
+                <h5 class="mt-0 mb-0">Email : {{session['admin_email']}}</h5>
+                <h5 class="mt-0 mb-0" style="padding-top: 10px;">Phone Number : {{session['admin_phonenumber']}}</h5>
+            </div>
+        </div>
+
+        {% if session['admin_certificate'] != [] %}
+            <div class="px-4 py-3" id="admincertdiv">
+                <h5 class="mb-0" style="padding-bottom: 10px;">Certificate</h5>
+                <div class="p-4 rounded shadow-sm bg-light">
+                    <div class="card-deck">
+                        {% set count = namespace(value=0) %}
+                        {% for item in session['admin_certificate'] %}
+                            <div class="card d-flex justify-content-center" style="max-height: 555px; min-height: 555px;">
+                                <img src="static/images/admin_img/admin_certificate/{{session['admin_certificate'][count.value]}}" style="object-fit: contain;">
+                            </div>
+                        {% set count.value = count.value + 1 %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+    <br><br><br><br><br>
+{% endblock %}
