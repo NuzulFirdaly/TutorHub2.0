@@ -20,6 +20,8 @@ To cater and hopefully solve this outstanding issue, our group has revamped the 
 
 **Overall Idea**
 
+* 4 Main Users: Admin, Tutee, Tutor, Institution Admin
+
 * A platform which brings together teachers and learners alike; All users who sign up will be a learner by default. Even after registering as a tutor, learning capabilities (registering for courses) are still applicable.
 
 * Shifting to online but not losing out on the interactive aspect. (Sessions will be conducted live to ensure lessons are interactive.)
@@ -40,20 +42,30 @@ Pycharm External Modules(need to install this to run flask app):
 * Passlib version 1.7.4
 * Email-validator version 1.1.2
 
-Go to File -> Settings
+**Go to File -> Settings**
 
 ![something](Process/FileSetting.jpg)
 
-Click on Python Interpreter
+**Click on Python Interpreter**
 
 ![something](Process/Pythoninterp.jpg)
 
-Click on '+' icon and enter name of package into search bar
+**Click on '+' icon and enter name of package into search bar**
 
 ![something](Process/ClickSearch.jpg)
 
-Select the package with the correct version then click 'Install Package'
+**Select the package with the correct version then click 'Install Package'**
 
 ![something](Process/Install.jpg)
+
+**Generate Example User Interface**
+
+![something](Process/Generate.jpg)
+
+**Respective User Credentials for Mock Login**
+
+* Tutor - Username = 'user2testing'   Password = 'password'
+* Tutee - Username = 'user1testing'   Password = 'password'
+* Institution Admin & Admin - [Login Steps](https://docs.google.com/document/d/1F576W0iPMKgNMwaEdDM9s79_07KFZtmZx37haQixGa0/edit?usp=sharing)
 
 
